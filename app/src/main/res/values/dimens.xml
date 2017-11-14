@@ -2,4 +2,5 @@
 <resources>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="drawer_menu_width">120dp</dimen>
+    <dimen name="viaplay_logo_width">125dp</dimen>
 </resources>

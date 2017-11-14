@@ -13,5 +13,7 @@
         android:paddingLeft="@dimen/activity_margin"
         android:paddingRight="@dimen/activity_margin"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:text="@string/section_title" />
+        android:textColor="@android:color/white"
+        tools:text="@string/section_title"
+        android:textSize="20sp"/>
 </LinearLayout>
