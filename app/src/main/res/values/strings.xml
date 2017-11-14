@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">ViaplaySections</string>
+
+    <!-- The label of section title in the main screen.
+    Used in activity_main.xml -->
+    <string name="section_title_label">Title:</string>
+    <!-- The fake long title for one section provided for design reason.
+    Used in activity_main.xml -->
+    <string name="section_title">TV-serier online - Streama serier på nätet eller ladda ned</string>
+    <!-- The label of section description in the main screen.
+    Used in activity_main.xml -->
+    <string name="section_description_label">Description:</string>
+    <!-- The fake description for one section provided for design reason.
+    Used in activity_main.xml -->
+    <string name="section_description">Viaplay erbjuder TV-serier på nätet för hela familjen.
+        Streama serier online i hög kvalitet eller ladda ned till tablet eller mobil!</string>
 </resources>
