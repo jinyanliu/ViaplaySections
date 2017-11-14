@@ -66,7 +66,7 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-
+            mClickHandler.onClick(adapterPosition);
         }
     }
 }

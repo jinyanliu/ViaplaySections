@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         if (mSectionAdapter == null) {
-            mSectionAdapter = new SectionAdapter((SectionAdapter.SectionAdapterOnClickHandler) this);
+            mSectionAdapter = new SectionAdapter(this);
         }
         mRecyclerView.setAdapter(mSectionAdapter);
     }
@@ -95,5 +95,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public void onClick(int position) {
         Log.i(LOG_TAG, "User clicked: " + mFakeTitleData.get(position));
+        mDrawerLayout.closeDrawer(mRecyclerView);
     }
 }

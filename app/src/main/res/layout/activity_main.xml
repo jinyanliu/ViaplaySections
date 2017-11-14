@@ -20,34 +20,22 @@
 
         <TextView
             android:id="@+id/section_title_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/section_title_label"
-            android:textSize="24sp" />
+            style="@style/main_activity_section_title_label_style"
+            android:text="@string/section_title_label" />
 
         <TextView
             android:id="@+id/section_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="20sp"
+            style="@style/main_activity_section_description_label_style"
             tools:text="@string/section_long_title" />
 
         <TextView
             android:id="@+id/section_description_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/section_description_label"
-            android:textSize="24sp" />
+            style="@style/main_activity_section_title_label_style"
+            android:text="@string/section_description_label" />
 
         <TextView
             android:id="@+id/section_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="20sp"
+            style="@style/main_activity_section_description_label_style"
             tools:text="@string/section_description" />
     </LinearLayout>
 
@@ -57,8 +45,8 @@
         android:layout_width="@dimen/drawer_menu_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/colorPrimary"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:background="@color/colorPrimary"/>
+        android:dividerHeight="0dp" />
 </android.support.v4.widget.DrawerLayout>
