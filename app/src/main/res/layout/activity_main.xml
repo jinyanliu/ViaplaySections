@@ -2,21 +2,18 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="se.sugarest.jane.viaplaysections.MainActivity">
 
     <include layout="@layout/app_bar" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/drawer_recyclerView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+    <!-- main content view -->
     <LinearLayout
-        android:id="@+id/linear_layout_activity_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/content_activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical"
         android:padding="@dimen/activity_margin">
@@ -25,6 +22,7 @@
             android:id="@+id/section_title_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/section_title_label"
             android:textSize="34sp" />
 
@@ -32,13 +30,15 @@
             android:id="@+id/section_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textSize="24sp"
-            tools:text="@string/section_title" />
+            tools:text="@string/section_long_title" />
 
         <TextView
             android:id="@+id/section_description_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/section_description_label"
             android:textSize="34sp" />
 
@@ -46,7 +46,18 @@
             android:id="@+id/section_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textSize="24sp"
             tools:text="@string/section_description" />
     </LinearLayout>
+
+    <!-- navigation drawer -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/left_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp" />
 </android.support.v4.widget.DrawerLayout>
