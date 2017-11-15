@@ -116,10 +116,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
 
-                setUpFirstSectionState(viaplaySections);
-
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
+                    setUpFirstSectionState(viaplaySections.get(0).getTitle());
                     putSectionDataIntoDatabase(viaplaySections);
                 } else {
                     initLoader();
@@ -191,9 +190,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mTextViewDescription.setText(currentDescription);
     }
 
-    private void setUpFirstSectionState(List<ViaplaySection> viaplaySections) {
-        ViaplaySection currentViaplaySection = viaplaySections.get(0);
-        String currentViaplaySectionTitle = currentViaplaySection.getTitle();
+    private void setUpFirstSectionState(String currentViaplaySectionTitle) {
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
         sendNetworkRequestGetOneSection(currentViaplaySectionTitle.toLowerCase());
     }
@@ -269,6 +266,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mSectionAdapter.swapCursor(cursor);
+
+            cursor.moveToFirst();
+            String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+            setUpFirstSectionState(currentTitle);
+
+
         } else {
             if (mToast != null) {
                 mToast.cancel();

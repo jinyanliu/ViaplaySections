@@ -31,7 +31,7 @@
                 android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/section_title"
+                tools:text="@string/section_title"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="20sp" />
