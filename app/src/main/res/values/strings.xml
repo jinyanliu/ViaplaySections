@@ -5,7 +5,9 @@
     Used in activity_main.xml -->
     <string name="section_title_label" translatable="true">Title:</string>
     <!-- The fake title for one section provided for design reason.
-    Used in drawer_list_item.xml -->
+    Used in drawer_list_item.xml
+    And also to set up the first open main screen title.
+    Used in app_bar.xml -->
     <string name="section_title" translatable="true">SERIER</string>
     <!-- The fake long title for one section provided for design reason.
     Used in activity_main.xml -->
