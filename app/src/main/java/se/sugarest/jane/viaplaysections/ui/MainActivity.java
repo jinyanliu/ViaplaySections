@@ -1,9 +1,12 @@
 package se.sugarest.jane.viaplaysections.ui;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -259,4 +262,21 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoaderReset(Loader<Cursor> loader) {
         mSectionAdapter.swapCursor(null);
     }
+
+    private boolean hasInternet() {
+        if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        return connMgr.getActiveNetworkInfo();
+    }
+
+
 }
