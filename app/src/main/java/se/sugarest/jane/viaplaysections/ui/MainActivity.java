@@ -11,11 +11,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
+import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
+
+import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 
 public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler {
 
@@ -32,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SectionAdapter mSectionAdapter;
 
     private ArrayList<String> mFakeTitleData = new ArrayList<>();
+    private Toast mToast;
 
 
     @Override
@@ -68,6 +82,44 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             }
         });
 
+        sendNetworkRequestGet();
+
+    }
+
+    private void sendNetworkRequestGet() {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        Retrofit.Builder builder =
+                new Retrofit.Builder()
+                        .baseUrl(VIAPLAY_BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create());
+        Retrofit retrofit = builder.client(httpClient.build()).build();
+        ViaplayClient client = retrofit.create(ViaplayClient.class);
+        Call<JSONResponse> call = client.getSections();
+
+        call.enqueue(new Callback<JSONResponse>() {
+            @Override
+            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+                Log.i(LOG_TAG, "GET response success: Complete url to request is: "
+                        + response.raw().request().url().toString()
+                        + "\nresponse.body().toString == " + response.body().toString());
+
+                List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
+                if (viaplaySections != null && !viaplaySections.isEmpty()) {
+                    Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JSONResponse> call, Throwable t) {
+                Log.e(LOG_TAG, "Failed to get photos list back.", t);
+                fetchSectionDataFromDatabase();
+            }
+        });
+    }
+
+    private void fetchSectionDataFromDatabase() {
     }
 
     private void setSectionTitleDataToRecyclerView() {
