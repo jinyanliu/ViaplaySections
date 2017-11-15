@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
 
+
     private Toast mToast;
     private ArrayList<String> mSectionTitles = new ArrayList<>();
 
@@ -149,25 +150,45 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 String currentLongTitle = response.body().getTitle();
                 String currentDescription = response.body().getDescription();
 
-                mTextViewTitle.setText(currentLongTitle);
-                mTextViewDescription.setText(currentDescription);
+                if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
+                        && !currentDescription.isEmpty()) {
+                    populateContentViews(currentLongTitle, currentDescription);
 
-                ContentValues values = new ContentValues();
-                values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
-                values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
-                String selection = SectionEntry.COLUMN_SECTION_TITLE;
-                String[] selectionArgs = {currentTitle};
-                int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values, selection, selectionArgs);
-                if (rowsUpdated > 0) {
-                    Log.i(LOG_TAG, "Update long title and description information for " + currentTitle + " section is successful.");
+                    ContentValues values = new ContentValues();
+                    values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
+                    values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
+                    String selection = SectionEntry.COLUMN_SECTION_TITLE;
+                    String[] selectionArgs = {currentTitle};
+                    int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values, selection, selectionArgs);
+                    if (rowsUpdated > 0) {
+                        Log.i(LOG_TAG, "Update long title and description information for " + currentTitle + " section is successful.");
+                    }
+                } else {
+                    loadContentFromDatabase(currentTitle);
                 }
             }
 
             @Override
             public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
                 Log.e(LOG_TAG, "Failed to get section data back with title: " + currentTitle, t);
+                loadContentFromDatabase(currentTitle);
             }
         });
+    }
+
+    private void loadContentFromDatabase(String currentTitle) {
+        String selection = SectionEntry.COLUMN_SECTION_TITLE + " =?";
+        String[] selectionArgs = {currentTitle};
+        Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, selection, selectionArgs, null);
+        cursor.moveToFirst();
+        String currentLongTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
+        String currentDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
+        populateContentViews(currentLongTitle, currentDescription);
+    }
+
+    private void populateContentViews(String currentLongTitle, String currentDescription) {
+        mTextViewTitle.setText(currentLongTitle);
+        mTextViewDescription.setText(currentDescription);
     }
 
     private void setUpFirstSectionState(List<ViaplaySection> viaplaySections) {
