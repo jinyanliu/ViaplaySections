@@ -32,8 +32,6 @@ public class SectionContract {
 
         public static final String COLUMN_SECTION_TITLE = "section_title";
 
-        public static final String COLUMN_HREF_URL = "href_url";
-
         public static final String COLUMN_SECTION_LONG_TITLE = "section_long_title";
 
         public static final String COLUMN_SECTION_DESCRIPTION = "section_description";

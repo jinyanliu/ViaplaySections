@@ -181,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         for (int i = 0; i < count; i++) {
             ContentValues values = new ContentValues();
             values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-            values.put(SectionEntry.COLUMN_HREF_URL, viaplaySections.get(i).getHref());
             // Temporarily store section short title's information to long title
             // Temporarily store section href url to description
             values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle());

@@ -24,7 +24,6 @@ public class SectionDbHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + SectionContract.SectionEntry.TABLE_NAME + " (" +
                         SectionContract.SectionEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         SectionContract.SectionEntry.COLUMN_SECTION_TITLE + " TEXT NOT NULL, " +
-                        SectionContract.SectionEntry.COLUMN_HREF_URL + " TEXT NOT NULL, " +
                         SectionContract.SectionEntry.COLUMN_SECTION_LONG_TITLE + " TEXT NOT NULL, " +
                         SectionContract.SectionEntry.COLUMN_SECTION_DESCRIPTION + " TEXT NOT NULL);";
 
