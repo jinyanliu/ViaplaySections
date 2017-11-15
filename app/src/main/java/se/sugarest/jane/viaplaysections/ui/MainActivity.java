@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private ImageButton mImageButtonDrawerMenu;
     private TextView mTextViewTitle;
     private TextView mTextViewDescription;
+    private TextView mTextViewTitleOnTheAppBar;
 
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mTextViewTitle = findViewById(R.id.section_title);
         mTextViewDescription = findViewById(R.id.section_description);
+        mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
         mImageButtonDrawerMenu = findViewById(R.id.button_navigation);
 
         setUpRecyclerViewWithAdapter();
@@ -105,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + "\nresponse.body().toString == " + response.body().toString());
 
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
+
+                setUpFirstSectionState(viaplaySections);
+
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
                     putSectionDataIntoDatabase(viaplaySections);
@@ -119,6 +124,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 initLoader();
             }
         });
+    }
+
+    private void setUpFirstSectionState(List<ViaplaySection> viaplaySections) {
+        ViaplaySection currentViaplaySection = viaplaySections.get(0);
+        String currentViaplaySectionTitle = currentViaplaySection.getTitle();
+        mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
     }
 
     private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {

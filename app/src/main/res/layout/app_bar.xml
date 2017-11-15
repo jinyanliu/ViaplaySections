@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -23,16 +24,17 @@
                 android:background="@drawable/ic_menu" />
 
             <TextView
+                android:id="@+id/title_on_the_app_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/section_title"
-                android:textAllCaps="true"
-                android:textSize="20sp"
-                android:textColor="@android:color/white"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_weight="1"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="@string/section_title"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/viaplay_logo"
@@ -40,11 +42,11 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin"
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_toEndOf="@+id/button_navigation"
                 android:layout_toRightOf="@+id/button_navigation"
-                android:src="@drawable/viaplay_logo"
-                android:layout_marginRight="@dimen/activity_margin" />
+                android:src="@drawable/viaplay_logo" />
 
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
