@@ -63,13 +63,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        setUpRecyclerViewWithAdapter();
-
         mTextViewTitle = findViewById(R.id.section_title);
         mTextViewDescription = findViewById(R.id.section_description);
-
         mImageButtonDrawerMenu = findViewById(R.id.button_navigation);
+
+        setUpRecyclerViewWithAdapter();
 
         mImageButtonDrawerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +81,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
 
         sendNetworkRequestGet();
-        initLoader();
+    }
+
+    private void initLoader() {
+        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
     }
 
     private void sendNetworkRequestGet() {
@@ -120,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
     }
 
-    private void initLoader() {
-        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
-    }
-
     private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {
         cleanSectionTableFromDatabase();
         int count = viaplaySections.size();
@@ -153,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + bulkInsertRows + " and the number of data size is: " + cVVector.size());
             }
         }
+        initLoader();
     }
 
     private void cleanSectionTableFromDatabase() {
