@@ -1,20 +1,24 @@
 package se.sugarest.jane.viaplaysections.ui;
 
+import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -25,18 +29,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
+import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
-public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler,
+        android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ImageButton mImageButtonDrawerMenu;
     private TextView mTextViewTitle;
     private TextView mTextViewDescription;
@@ -44,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
 
-    private ArrayList<String> mFakeTitleData = new ArrayList<>();
     private Toast mToast;
 
 
@@ -59,17 +64,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-
         setUpRecyclerViewWithAdapter();
-        setSectionTitleDataToRecyclerView();
-
 
         mTextViewTitle = findViewById(R.id.section_title);
         mTextViewDescription = findViewById(R.id.section_description);
 
         mImageButtonDrawerMenu = findViewById(R.id.button_navigation);
-
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         mImageButtonDrawerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
 
         sendNetworkRequestGet();
-
+        initLoader();
     }
 
     private void sendNetworkRequestGet() {
@@ -106,25 +106,60 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
+                    putSectionDataIntoDatabase(viaplaySections);
                 } else {
-
+                    initLoader();
                 }
             }
 
             @Override
             public void onFailure(Call<JSONResponse> call, Throwable t) {
                 Log.e(LOG_TAG, "Failed to get photos list back.", t);
-                fetchSectionDataFromDatabase();
+                initLoader();
             }
         });
     }
 
-    private void fetchSectionDataFromDatabase() {
+    private void initLoader() {
+        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
     }
 
-    private void setSectionTitleDataToRecyclerView() {
-        getSectionInformation();
-        mSectionAdapter.setSectionData(mFakeTitleData);
+    private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {
+        cleanSectionTableFromDatabase();
+        int count = viaplaySections.size();
+        Vector<ContentValues> cVVector = new Vector<>(count);
+        for (int i = 0; i < count; i++) {
+            ContentValues values = new ContentValues();
+            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle());
+            values.put(SectionEntry.COLUMN_HREF_URL, viaplaySections.get(i).getHref());
+            // Temporarily store section short title's information to long title
+            // Temporarily store section href url to description
+            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle());
+            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
+
+            cVVector.add(values);
+        }
+
+        if (cVVector.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int bulkInsertRows = getContentResolver().bulkInsert(
+                    SectionEntry.CONTENT_URI,
+                    cvArray);
+            if (bulkInsertRows == cVVector.size()) {
+                Log.i(LOG_TAG, "bulkInsert into SectionEntry successful.");
+            } else {
+                Log.e(LOG_TAG, "bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
+                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
+            }
+        }
+    }
+
+    private void cleanSectionTableFromDatabase() {
+        getContentResolver().delete(SectionEntry.CONTENT_URI,
+                null,
+                null);
+        Log.i(LOG_TAG, "section table in section database is been cleaned.");
     }
 
     private void setUpRecyclerViewWithAdapter() {
@@ -138,18 +173,40 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mRecyclerView.setAdapter(mSectionAdapter);
     }
 
-    private void getSectionInformation() {
-        mFakeTitleData.add("SERIER");
-        mFakeTitleData.add("FILM");
-        mFakeTitleData.add("SPORT");
-        mFakeTitleData.add("BARN");
-        mFakeTitleData.add("STORE");
-    }
-
-
     @Override
     public void onClick(int position) {
-        Log.i(LOG_TAG, "User clicked: " + mFakeTitleData.get(position));
+        position = position + 1;
+        Log.i(LOG_TAG, "User clicked the " + position + " section title on the drawer.");
         mDrawerLayout.closeDrawer(mRecyclerView);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                this,
+                SectionEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null && cursor.getCount() > 0) {
+            mSectionAdapter.swapCursor(cursor);
+        } else {
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_no_data_from_database), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSectionAdapter.swapCursor(null);
     }
 }

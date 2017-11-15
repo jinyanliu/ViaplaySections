@@ -17,4 +17,9 @@
     Used in activity_main.xml -->
     <string name="section_description" translatable="true">Viaplay erbjuder TV-serier på nätet för hela familjen.
         Streama serier online i hög kvalitet eller ladda ned till tablet eller mobil!</string>
+    <!-- Toast message shows on main screen when there is no data come back from the database. Since
+    database data is only for offline usage. Probably it is the first time user opens the app without
+    internet, so the database is empty.
+    Used in MainActivity.java -->
+    <string name="toast_message_no_data_from_database" translatable="true">Please enable internet and try again!</string>
 </resources>

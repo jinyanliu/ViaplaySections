@@ -1,14 +1,14 @@
 package se.sugarest.jane.viaplaysections.data;
 
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 
 /**
  * Created by jane on 17-11-14.
@@ -18,7 +18,7 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
 
     private final SectionAdapterOnClickHandler mClickHandler;
 
-    private ArrayList<String> mSectionTitles = new ArrayList<>();
+    private Cursor mCursor;
 
     public SectionAdapter(SectionAdapterOnClickHandler mClickHandler) {
         this.mClickHandler = mClickHandler;
@@ -33,22 +33,27 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
 
     @Override
     public void onBindViewHolder(SectionAdapterViewHolder holder, int position) {
-        String currentTitle = mSectionTitles.get(position);
-        holder.mTitleTextView.setText(currentTitle);
+        if (null != mCursor) {
+            mCursor.moveToPosition(position);
+            String currentTitle = mCursor.getString(mCursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+            holder.mTitleTextView.setText(currentTitle);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mSectionTitles.size();
+        if (null == mCursor) {
+            return 0;
+        }
+        return mCursor.getCount();
     }
 
     public interface SectionAdapterOnClickHandler {
         void onClick(int position);
     }
 
-    public void setSectionData(ArrayList<String> sectionTitles) {
-        mSectionTitles.clear();
-        mSectionTitles.addAll(sectionTitles);
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
         notifyDataSetChanged();
     }
 
