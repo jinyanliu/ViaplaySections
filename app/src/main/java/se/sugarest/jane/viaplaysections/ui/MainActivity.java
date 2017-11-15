@@ -14,13 +14,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -52,14 +50,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private TextView mTextViewTitle;
     private TextView mTextViewDescription;
     private TextView mTextViewTitleOnTheAppBar;
+    private TextView mEmptyView;
+    private LinearLayout mContentView;
 
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
-
-
-    private Toast mToast;
-    private ArrayList<String> mSectionTitles = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mTextViewDescription = findViewById(R.id.section_description);
         mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
         mImageButtonDrawerMenu = findViewById(R.id.button_navigation);
+        mEmptyView = findViewById(R.id.empty_view);
+        mContentView = findViewById(R.id.content_activity_main);
 
         setUpRecyclerViewWithAdapter();
 
@@ -89,8 +86,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             }
         });
 
-        sendNetworkRequestGet();
-
+        if (!hasInternet()) {
+            showEmptyView();
+        } else {
+            showContentView();
+            sendNetworkRequestGet();
+        }
     }
 
     private void initLoader() {
@@ -179,10 +180,18 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         String selection = SectionEntry.COLUMN_SECTION_TITLE + " =?";
         String[] selectionArgs = {currentTitle};
         Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, selection, selectionArgs, null);
-        cursor.moveToFirst();
-        String currentLongTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
-        String currentDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
-        populateContentViews(currentLongTitle, currentDescription);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            String currentLongTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
+            String currentDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
+            if (currentLongTitle.equalsIgnoreCase(currentTitle)) {
+                showEmptyView();
+            } else {
+                populateContentViews(currentLongTitle, currentDescription);
+            }
+        } else {
+            showEmptyView();
+        }
     }
 
     private void populateContentViews(String currentLongTitle, String currentDescription) {
@@ -204,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
             // Temporarily store section short title's information to long title
             // Temporarily store section href url to description
-            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle());
+            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
             values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
 
             cVVector.add(values);
@@ -246,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     @Override
     public void onClick(String sectionTitle) {
+        showContentView();
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
         sendNetworkRequestGetOneSection(sectionTitle);
@@ -266,20 +276,24 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mSectionAdapter.swapCursor(cursor);
-
-            cursor.moveToFirst();
-            String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-            setUpFirstSectionState(currentTitle);
-
-
-        } else {
-            if (mToast != null) {
-                mToast.cancel();
+            if (!hasInternet()) {
+                cursor.moveToFirst();
+                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+                setUpFirstSectionState(currentTitle);
             }
-            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_no_data_from_database), Toast.LENGTH_SHORT);
-            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-            mToast.show();
+        } else {
+            showEmptyView();
         }
+    }
+
+    private void showEmptyView() {
+        mContentView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    private void showContentView() {
+        mContentView.setVisibility(View.VISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -303,4 +317,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!hasInternet()) {
+            showEmptyView();
+        } else {
+            showContentView();
+            sendNetworkRequestGet();
+        }
+    }
 }

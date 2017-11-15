@@ -39,6 +39,15 @@
             tools:text="@string/section_description" />
     </LinearLayout>
 
+    <TextView
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/empty_view"
+        android:text="@string/text_message_empty_view"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
     <!-- navigation drawer -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/left_drawer"
