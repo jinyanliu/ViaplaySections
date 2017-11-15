@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.data.database;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,10 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import se.sugarest.jane.viaplaysections.SectionContract.SectionEntry;
-
-import static se.sugarest.jane.viaplaysections.Constants.SECTIONS;
-import static se.sugarest.jane.viaplaysections.Constants.SECTIONS_ID;
+import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS;
+import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS_ID;
 
 /**
  * Created by jane on 17-11-15.
@@ -49,7 +47,7 @@ public class SectionProvider extends ContentProvider {
         switch (match) {
             case SECTIONS:
                 cursor = database.query(
-                        SectionEntry.TABLE_NAME,
+                        SectionContract.SectionEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -58,9 +56,9 @@ public class SectionProvider extends ContentProvider {
                         sortOrder);
                 break;
             case SECTIONS_ID:
-                selection = SectionEntry._ID + "=?";
+                selection = SectionContract.SectionEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                cursor = database.query(SectionEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(SectionContract.SectionEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             default:
@@ -77,9 +75,9 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
-                return SectionEntry.CONTENT_LIST_TYPE;
+                return SectionContract.SectionEntry.CONTENT_LIST_TYPE;
             case SECTIONS_ID:
-                return SectionEntry.CONTENT_ITEM_TYPE;
+                return SectionContract.SectionEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri + " with match " + match);
         }
@@ -93,7 +91,7 @@ public class SectionProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
-                id = database.insert(SectionEntry.TABLE_NAME, null, contentValues);
+                id = database.insert(SectionContract.SectionEntry.TABLE_NAME, null, contentValues);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot insert unknown URI " + uri);
@@ -113,12 +111,12 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
-                rowsDeleted = database.delete(SectionEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(SectionContract.SectionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case SECTIONS_ID:
-                selection = SectionEntry._ID + "=?";
+                selection = SectionContract.SectionEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = database.delete(SectionEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(SectionContract.SectionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
@@ -141,7 +139,7 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
-                rowsUpdated = database.update(SectionEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                rowsUpdated = database.update(SectionContract.SectionEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
@@ -161,7 +159,7 @@ public class SectionProvider extends ContentProvider {
                 database.beginTransaction();
                 try {
                     for (ContentValues value : values) {
-                        long id = database.insert(SectionEntry.TABLE_NAME, null,
+                        long id = database.insert(SectionContract.SectionEntry.TABLE_NAME, null,
                                 value);
                         if (id != 1) {
                             rowsInserted++;

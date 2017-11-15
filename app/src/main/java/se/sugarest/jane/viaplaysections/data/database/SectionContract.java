@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.data.database;
 
 import android.content.ContentResolver;
 import android.net.Uri;

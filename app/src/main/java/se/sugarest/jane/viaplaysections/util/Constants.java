@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.util;
 
 /**
  * Created by jane on 17-11-15.

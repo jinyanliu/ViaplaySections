@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.ui;
 
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +13,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 
 public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler {
 
