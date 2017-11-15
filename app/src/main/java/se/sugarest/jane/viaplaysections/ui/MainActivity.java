@@ -36,6 +36,7 @@ import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 
+import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
+
+    private String currentTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mImageButtonDrawerMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // initLoader();
                 if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
                     mDrawerLayout.closeDrawer(mRecyclerView);
                 } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
@@ -86,11 +90,34 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             }
         });
 
-        if (!hasInternet()) {
-            showEmptyView();
+        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
+            currentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
+            mTextViewTitleOnTheAppBar.setText(currentTitle);
+            sendNetworkRequestGetOneSection(currentTitle);
+            initLoader();
         } else {
-            showContentView();
-            sendNetworkRequestGet();
+            if (!hasInternet()) {
+                initLoader();
+                Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, null, null, null);
+                if (cursor != null && cursor.getCount()>0){
+                    cursor.moveToFirst();
+                    String title = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+                    mTextViewTitleOnTheAppBar.setText(title);
+                    loadContentFromDatabase(title);
+                }
+            } else {
+                showContentView();
+                sendNetworkRequestGet();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String currentTitle = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
+        if (currentTitle != null && !currentTitle.isEmpty()) {
+            outState.putString(CONFIGURATION_KEY, currentTitle);
         }
     }
 
@@ -201,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private void setUpFirstSectionState(String currentViaplaySectionTitle) {
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
+        currentTitle = currentViaplaySectionTitle;
         sendNetworkRequestGetOneSection(currentViaplaySectionTitle.toLowerCase());
     }
 
@@ -258,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         showContentView();
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
+        currentTitle = sectionTitle;
         sendNetworkRequestGetOneSection(sectionTitle);
     }
 
@@ -276,11 +305,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mSectionAdapter.swapCursor(cursor);
-            if (!hasInternet()) {
-                cursor.moveToFirst();
-                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                setUpFirstSectionState(currentTitle);
-            }
+//            if (!hasInternet()) {
+//                cursor.moveToFirst();
+//                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+//                setUpFirstSectionState(currentTitle);
+//            }
         } else {
             showEmptyView();
         }
@@ -317,14 +346,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (!hasInternet()) {
-            showEmptyView();
-        } else {
-            showContentView();
-            sendNetworkRequestGet();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (!hasInternet()) {
+//            initLoader();
+//        } else {
+//            showContentView();
+//            sendNetworkRequestGet();
+//        }
+//    }
 }
