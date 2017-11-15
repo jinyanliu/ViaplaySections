@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -31,6 +32,7 @@ import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
+import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SectionAdapter mSectionAdapter;
 
     private Toast mToast;
+    private ArrayList<String> mSectionTitles = new ArrayList<>();
 
 
     @Override
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
 
         sendNetworkRequestGet();
+
     }
 
     private void initLoader() {
@@ -126,10 +130,48 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
     }
 
+    private void sendNetworkRequestGetOneSection(final String currentTitle) {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(VIAPLAY_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
+        Retrofit retrofit = builder.build();
+        ViaplayClient client = retrofit.create(ViaplayClient.class);
+        Call<SingleJSONResponse> call = client.getOneSectionByTitle(currentTitle);
+        call.enqueue(new Callback<SingleJSONResponse>() {
+            @Override
+            public void onResponse(Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
+                Log.i(LOG_TAG, "GET ONE response success: Complete url to request is: "
+                        + response.raw().request().url().toString()
+                        + "\nresponse.code() == " + response.code());
+                String currentLongTitle = response.body().getTitle();
+                String currentDescription = response.body().getDescription();
+
+                mTextViewTitle.setText(currentLongTitle);
+                mTextViewDescription.setText(currentDescription);
+
+                ContentValues values = new ContentValues();
+                values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
+                values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
+                String selection = SectionEntry.COLUMN_SECTION_TITLE;
+                String[] selectionArgs = {currentTitle};
+                int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values, selection, selectionArgs);
+                if (rowsUpdated > 0) {
+                    Log.i(LOG_TAG, "Update long title and description information for " + currentTitle + " section is successful.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
+                Log.e(LOG_TAG, "Failed to get section data back with title: " + currentTitle, t);
+            }
+        });
+    }
+
     private void setUpFirstSectionState(List<ViaplaySection> viaplaySections) {
         ViaplaySection currentViaplaySection = viaplaySections.get(0);
         String currentViaplaySectionTitle = currentViaplaySection.getTitle();
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
+        sendNetworkRequestGetOneSection(currentViaplaySectionTitle.toLowerCase());
     }
 
     private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {
@@ -138,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         Vector<ContentValues> cVVector = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             ContentValues values = new ContentValues();
-            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle());
+            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
             values.put(SectionEntry.COLUMN_HREF_URL, viaplaySections.get(i).getHref());
             // Temporarily store section short title's information to long title
             // Temporarily store section href url to description
@@ -183,10 +225,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     @Override
-    public void onClick(int position) {
-        position = position + 1;
-        Log.i(LOG_TAG, "User clicked the " + position + " section title on the drawer.");
+    public void onClick(String sectionTitle) {
         mDrawerLayout.closeDrawer(mRecyclerView);
+        mTextViewTitleOnTheAppBar.setText(sectionTitle);
+        sendNetworkRequestGetOneSection(sectionTitle);
     }
 
     @Override

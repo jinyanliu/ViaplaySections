@@ -1,23 +1,18 @@
 
 package se.sugarest.jane.viaplaysections.data.type;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JSONResponse {
+public class SingleJSONResponse {
 
     private String type;
     private String pageType;
+    private String sectionId;
     private String title;
     private String description;
     private List<Object> styles = null;
-
-    @SerializedName("_links")
-    private Links links;
-
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public String getType() {
@@ -34,6 +29,14 @@ public class JSONResponse {
 
     public void setPageType(String pageType) {
         this.pageType = pageType;
+    }
+
+    public String getSectionId() {
+        return sectionId;
+    }
+
+    public void setSectionId(String sectionId) {
+        this.sectionId = sectionId;
     }
 
     public String getTitle() {
@@ -58,14 +61,6 @@ public class JSONResponse {
 
     public void setStyles(List<Object> styles) {
         this.styles = styles;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public void setLinks(Links links) {
-        this.links = links;
     }
 
     public Map<String, Object> getAdditionalProperties() {

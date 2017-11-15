@@ -111,6 +111,7 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
+                selection = selection + "=?";
                 rowsDeleted = database.delete(SectionContract.SectionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case SECTIONS_ID:
@@ -139,6 +140,7 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
+                selection = selection + "=?";
                 rowsUpdated = database.update(SectionContract.SectionEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             default:

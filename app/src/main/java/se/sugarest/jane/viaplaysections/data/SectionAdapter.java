@@ -51,7 +51,7 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
     }
 
     public interface SectionAdapterOnClickHandler {
-        void onClick(int position);
+        void onClick(String title);
     }
 
     public void swapCursor(Cursor newCursor) {
@@ -85,7 +85,8 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            mClickHandler.onClick(adapterPosition);
+            String currentTitle = mSectionTitleString.get(adapterPosition);
+            mClickHandler.onClick(currentTitle);
         }
     }
 }
