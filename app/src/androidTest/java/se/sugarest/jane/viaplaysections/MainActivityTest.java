@@ -50,41 +50,41 @@ public class MainActivityTest {
 
     @Test
     public void mainScreenHasContent_menuImageOnTheAppBar() {
-        onView(withId(R.id.navigation_menu)).check(matches(notNullValue()))
+        onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withDrawable(R.drawable.ic_menu)));
     }
 
     @Test
     public void mainScreenHasContent_titleOnTheAppBar() {
-        onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()));
+        onView(withId(R.id.title_on_the_app_bar)).check(matches(isDisplayed()));
     }
 
     @Test
     public void mainScreenHasContent_viaplayLogoOnTheAppBar() {
-        onView(withId(R.id.viaplay_logo)).check(matches(notNullValue()))
+        onView(withId(R.id.viaplay_logo)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withDrawable(R.drawable.viaplay_logo)));
     }
 
     @Test
     public void mainScreenHasContent_titleLabelTextView() {
-        onView(withId(R.id.section_title_label)).check(matches(notNullValue()))
+        onView(withId(R.id.section_title_label)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withText(instrumentationCtx.getString(R.string.section_title_label))));
     }
 
     @Test
     public void mainScreenHasContent_titleContentTextView() {
-        onView(withId(R.id.section_title)).check(matches(notNullValue()));
+        onView(withId(R.id.section_title)).check(matches(isDisplayed()));
     }
 
     @Test
     public void mainScreenHasContent_descriptionLabelTextView() {
-        onView(withId(R.id.section_description_label)).check(matches(notNullValue()))
+        onView(withId(R.id.section_description_label)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withText(instrumentationCtx.getString(R.string.section_description_label))));
     }
 
     @Test
     public void mainScreenHasContent_descriptionContentTextView() {
-        onView(withId(R.id.section_description)).check(matches(notNullValue()));
+        onView(withId(R.id.section_description)).check(matches(isDisplayed()));
     }
 
     @Test
