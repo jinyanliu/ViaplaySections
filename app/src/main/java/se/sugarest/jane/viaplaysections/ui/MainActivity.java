@@ -274,9 +274,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             cursor.moveToFirst();
             String currentLongTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
             String currentDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
-            if (currentLongTitle.equalsIgnoreCase(currentTitle)) {
-                showEmptyView();
-            } else {
+            if (!currentLongTitle.equalsIgnoreCase(currentTitle)) {
                 populateContentViews(currentLongTitle, currentDescription);
             }
         } else {
@@ -330,8 +328,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     private void cleanSectionTableFromDatabase() {
-        getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
-        Log.i(LOG_TAG, "section table in section database is been cleaned.");
+        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
+        if (rowsDeleted != -1) {
+            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
+        } else {
+            Log.e(LOG_TAG, "delete section table in database failed.");
+        }
     }
 
     @Override

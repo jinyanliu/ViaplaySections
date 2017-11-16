@@ -15,9 +15,9 @@ import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS;
 import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS_ID;
 
 /**
+ * The {@link ContentProvider} for Section data.
  * Created by jane on 17-11-15.
  */
-
 public class SectionProvider extends ContentProvider {
 
     private static final String LOG_TAG = SectionProvider.class.getSimpleName();
@@ -64,7 +64,6 @@ public class SectionProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
-
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
@@ -111,7 +110,6 @@ public class SectionProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SECTIONS:
-                selection = selection + "=?";
                 rowsDeleted = database.delete(SectionContract.SectionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case SECTIONS_ID:
@@ -134,7 +132,6 @@ public class SectionProvider extends ContentProvider {
         if (contentValues.size() == 0) {
             return 0;
         }
-
         int rowsUpdated;
         SQLiteDatabase database = mSectionDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
