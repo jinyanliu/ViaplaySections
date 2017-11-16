@@ -9,11 +9,17 @@ public class Constants {
     public static final String VIAPLAY_API_END_POINT = "/androidv2-se";
     public static final String VIAPLAY_API_SLASH = "/";
 
-    // Use with onSaveInstanceState method in MainActivity to save current section view on configuration
-    // change on main screen.
+    // Use with overriding onSaveInstanceState method in MainActivity to save current section view
+    // when configuration change happens.
     public static final String CONFIGURATION_KEY = "current_section";
+    // Use with overriding onPause & onResume method in MainActivity to save current section view
+    // when app state transition happens, e.g., from background to foreground.
+    public static final String FORE_BACK_STATE_KEY = "current_title";
+    // Use to recognize cursorLoader in MainActivity
+    public static final int VIAPLAY_LOADER = 0;
 
+    // Use with UriMatcher in SectionProvider to recognize data types, e.g., item type or directory
+    // type.
     public static final int SECTIONS = 100;
     public static final int SECTIONS_ID = 101;
-    public static final int VIAPLAY_LOADER = 0;
 }

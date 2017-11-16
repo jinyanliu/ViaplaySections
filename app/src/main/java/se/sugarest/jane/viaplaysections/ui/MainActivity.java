@@ -40,6 +40,7 @@ import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
+import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         super.onResume();
         if (backgroundState != null) {
 
-            mCurrentTitle = backgroundState.getString("background_state").toLowerCase();
+            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY).toLowerCase();
         }
         String currentStringInTitleContentView = mTextViewTitle.getText().toString();
         if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
         if (mCurrentTitle != null) {
             backgroundState = new Bundle();
-            backgroundState.putString("background_state", mCurrentTitle);
+            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
         }
 
     }
