@@ -5,9 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
+ * Manages a local database for section data
+ * <p>
  * Created by jane on 17-11-15.
  */
-
 public class SectionDbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "section.db";

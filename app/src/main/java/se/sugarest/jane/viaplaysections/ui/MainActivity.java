@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
             mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
             mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
-            sendNetworkRequestGetOneSection(mCurrentTitle);
             loadNavigationBarItemsFromDataBase();
+            loadContentFromDatabase(mCurrentTitle);
         } else {
             refreshScreen();
         }
