@@ -31,7 +31,6 @@ import static se.sugarest.jane.viaplaysections.MainActivityTest.EspressoTestsMat
 /**
  * Created by jane on 17-11-16.
  */
-
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
@@ -111,9 +110,7 @@ public class MainActivityTest {
 
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
                 .check(matches(withText(secondSection)));
-
     }
-
 
     public static class EspressoTestsMatchers {
 
@@ -125,6 +122,4 @@ public class MainActivityTest {
             return new DrawableMatcher(-1);
         }
     }
-
-
 }

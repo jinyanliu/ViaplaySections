@@ -14,11 +14,9 @@ import static org.hamcrest.Matchers.is;
 /**
  * Created by jane on 17-11-16.
  */
-
 public class IgnoreCaseTextMatcher {
     /**
      * Returns a matcher that matches {@link TextView} based on its text property value BUT IGNORES CASE.
-     * Note: View's Sugar for withText(is("string")).
      *
      * @param text {@link String} with the text to match
      */
@@ -37,10 +35,8 @@ public class IgnoreCaseTextMatcher {
 
             @Override
             public boolean matchesSafely(TextView textView) {
-
                 return stringMatcher.matches(textView.getText().toString().toLowerCase());
             }
         };
     }
-
 }
