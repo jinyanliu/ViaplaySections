@@ -98,13 +98,17 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             sendNetworkRequestGetOneSection(mCurrentTitle);
             loadNavigationBarItemsFromDataBase();
         } else {
-            if (!hasInternet()) {
-                loadNavigationBarItemsFromDataBase();
-                loadFirstContentStateFromDatabase();
-            } else {
-                showContentView();
-                sendNetworkRequestGet();
-            }
+            refreshScreen();
+        }
+    }
+
+    private void refreshScreen() {
+        if (!hasInternet()) {
+            loadNavigationBarItemsFromDataBase();
+            loadFirstContentStateFromDatabase();
+        } else {
+            showContentView();
+            sendNetworkRequestGet();
         }
     }
 
@@ -122,13 +126,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         super.onResume();
         if (backgroundState != null){
 
-            mCurrentTitle = backgroundState.getString("background_state");
+            mCurrentTitle = backgroundState.getString("background_state").toLowerCase();
         }
-
-
+        String currentStringInTitleContentView = mTextViewTitle.getText().toString();
+        if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()){
+            refreshScreen();
+        }
     }
-
-
     @Override
     protected void onPause() {
         super.onPause();
