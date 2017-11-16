@@ -10,13 +10,18 @@ import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_END_PO
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_SLASH;
 
 /**
+ * This interface will be used with external lib Retrofit.
+ * Reference: https://github.com/square/retrofit
+ * <p>
  * Created by jane on 17-11-15.
  */
-
 public interface ViaplayClient {
+
+    // Get all the sections
     @GET(VIAPLAY_API_END_POINT)
     Call<JSONResponse> getSections();
 
+    // Get detail information for one section
     @GET(VIAPLAY_API_END_POINT + VIAPLAY_API_SLASH + "{title}")
     Call<SingleJSONResponse> getOneSectionByTitle(@Path("title") String title);
 }

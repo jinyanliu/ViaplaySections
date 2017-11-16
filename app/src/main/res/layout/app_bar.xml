@@ -47,7 +47,7 @@
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_toEndOf="@+id/button_navigation"
                 android:layout_toRightOf="@+id/button_navigation"
-                android:src="@drawable/viaplay_logo" />
+                android:src="@drawable/viaplay_logo"/>
 
         </LinearLayout>
     </android.support.v7.widget.Toolbar>

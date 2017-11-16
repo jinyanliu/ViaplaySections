@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Database -->
         <provider
             android:name=".data.database.SectionProvider"
             android:authorities="se.sugarest.jane.viaplaysections"

@@ -14,10 +14,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SectionAdapter mSectionAdapter;
 
     private String mCurrentTitle;
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +113,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         } else {
             showContentView();
             sendNetworkRequestGet();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, "Data is loading...", Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
         }
     }
 
@@ -125,20 +134,21 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onResume() {
         super.onResume();
-        if (backgroundState != null){
+        if (backgroundState != null) {
 
             mCurrentTitle = backgroundState.getString("background_state").toLowerCase();
         }
         String currentStringInTitleContentView = mTextViewTitle.getText().toString();
-        if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()){
+        if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
             refreshScreen();
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
 
-        if(mCurrentTitle != null){
+        if (mCurrentTitle != null) {
             backgroundState = new Bundle();
             backgroundState.putString("background_state", mCurrentTitle);
         }
@@ -223,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         && !currentDescription.isEmpty()) {
 
                     // To help set up the first state of the app
-                    if (currentTitle.equalsIgnoreCase(mCurrentTitle)){
+                    if (currentTitle.equalsIgnoreCase(mCurrentTitle)) {
                         populateContentViews(currentLongTitle, currentDescription);
                     }
 
@@ -268,6 +278,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     private void populateContentViews(String currentLongTitle, String currentDescription) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+
         showContentView();
         mTextViewTitle.setText(currentLongTitle);
         mTextViewDescription.setText(currentDescription);
@@ -356,14 +370,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
             ArrayList<String> sectionTitlesString = new ArrayList<>();
 
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    cursor.moveToPosition(i);
-                    String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                    if (!sectionTitlesString.contains(currentTitle)) {
-                        sectionTitlesString.add(currentTitle);
-                    }
-                    Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+                if (!sectionTitlesString.contains(currentTitle)) {
+                    sectionTitlesString.add(currentTitle);
                 }
+                Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+            }
 
 
             showContentView();

@@ -22,4 +22,5 @@
     <!-- Empty view text message shows on main screen when no internet, no database data, (offline at first use)
     Used in activity_main.xml -->
     <string name="text_message_empty_view" translatable="true">Please enable internet at first use!</string>
+
 </resources>
