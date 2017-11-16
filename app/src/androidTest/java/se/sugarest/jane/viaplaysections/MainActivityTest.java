@@ -1,14 +1,19 @@
 package se.sugarest.jane.viaplaysections;
 
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
+import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.ui.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -27,9 +32,18 @@ import static se.sugarest.jane.viaplaysections.MainActivityTest.EspressoTestsMat
 
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule
             = new ActivityTestRule<>(MainActivity.class);
+
+    private SectionAdapter sectionAdapter;
+    private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
+
+    @Before
+    public void setUp() {
+        sectionAdapter = new SectionAdapter(null);
+    }
 
     @Test
     public void mainScreenHasContent_navigationButtonOnTheAppBar() {
@@ -77,6 +91,25 @@ public class MainActivityTest {
         onView(withId(R.id.left_drawer)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void clickNavigationMenuItem_DataChangeOnMainScreen() {
+        String firstSection = "Serier";
+        String secondSection = "Film";
+        sectionTitlesStrings.add(firstSection);
+        sectionTitlesStrings.add(secondSection);
+        sectionAdapter.setUpTitleStringArray(sectionTitlesStrings);
+
+        onView(withId(R.id.navigation_menu))
+                .perform(click());
+
+        onView(withId(R.id.left_drawer))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+
+        onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
+                .check(matches(withText(secondSection.toLowerCase())));
+
+    }
+
 
     public static class EspressoTestsMatchers {
 
@@ -88,4 +121,6 @@ public class MainActivityTest {
             return new DrawableMatcher(-1);
         }
     }
+
+
 }
