@@ -163,7 +163,7 @@ public class SectionProvider extends ContentProvider {
                     for (ContentValues value : values) {
                         long id = database.insert(SectionContract.SectionEntry.TABLE_NAME, null,
                                 value);
-                        if (id != 1) {
+                        if (id != -1) {
                             rowsInserted++;
                         }
                     }
