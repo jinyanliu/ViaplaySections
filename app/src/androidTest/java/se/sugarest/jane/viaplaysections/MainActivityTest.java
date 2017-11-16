@@ -1,5 +1,7 @@
 package se.sugarest.jane.viaplaysections;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -21,8 +23,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.notNullValue;
+import static se.sugarest.jane.viaplaysections.IgnoreCaseTextMatcher.withText;
 import static se.sugarest.jane.viaplaysections.MainActivityTest.EspressoTestsMatchers.withDrawable;
 
 
@@ -37,11 +39,13 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> mActivityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
+    private Context instrumentationCtx;
     private SectionAdapter sectionAdapter;
     private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
 
     @Before
     public void setUp() {
+        instrumentationCtx = InstrumentationRegistry.getTargetContext();
         sectionAdapter = new SectionAdapter(null);
     }
 
@@ -65,7 +69,7 @@ public class MainActivityTest {
     @Test
     public void mainScreenHasContent_titleLabelTextView() {
         onView(withId(R.id.section_title_label)).check(matches(notNullValue()))
-                .check(matches(withText(R.string.section_title_label)));
+                .check(matches(withText(instrumentationCtx.getString(R.string.section_title_label))));
     }
 
     @Test
@@ -76,7 +80,7 @@ public class MainActivityTest {
     @Test
     public void mainScreenHasContent_descriptionLabelTextView() {
         onView(withId(R.id.section_description_label)).check(matches(notNullValue()))
-                .check(matches(withText(R.string.section_description_label)));
+                .check(matches(withText(instrumentationCtx.getString(R.string.section_description_label))));
     }
 
     @Test
@@ -106,7 +110,7 @@ public class MainActivityTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
-                .check(matches(withText(secondSection.toLowerCase())));
+                .check(matches(withText(secondSection)));
 
     }
 

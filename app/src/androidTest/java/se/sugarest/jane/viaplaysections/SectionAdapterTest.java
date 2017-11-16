@@ -19,6 +19,7 @@ import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 @RunWith(AndroidJUnit4.class)
 public class SectionAdapterTest {
 
+
     private SectionAdapter sectionAdapter;
     private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
 
