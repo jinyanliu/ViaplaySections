@@ -2,7 +2,9 @@ package se.sugarest.jane.viaplaysections;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.View;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.notNullValue;
+import static se.sugarest.jane.viaplaysections.MainActivityTest.EspressoTestsMatchers.withDrawable;
+
 
 /**
  * Created by jane on 17-11-16.
@@ -37,6 +41,7 @@ public class MainActivityTest {
 
     @Test
     public void mainScreenHasContent() {
+        onView(withId(R.id.viaplay_logo)).check(matches(withDrawable(R.drawable.viaplay_logo)));
         onView(withId(R.id.section_title_label)).check(matches(withText(R.string.section_title_label)));
         onView(withId(R.id.section_description_label)).check(matches(withText(R.string.section_description_label)));
         onView(withId(R.id.section_title)).check(matches(notNullValue()));
@@ -44,5 +49,14 @@ public class MainActivityTest {
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()));
     }
 
+    public static class EspressoTestsMatchers {
 
+        public static Matcher<View> withDrawable(final int resourceId) {
+            return new DrawableMatcher(resourceId);
+        }
+
+        public static Matcher<View> noDrawable() {
+            return new DrawableMatcher(-1);
+        }
+    }
 }
