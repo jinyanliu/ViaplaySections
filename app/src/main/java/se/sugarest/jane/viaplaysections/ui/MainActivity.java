@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             if (!hasInternet()) {
                 initLoader();
                 Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, null, null, null);
-                if (cursor != null && cursor.getCount()>0){
+                if (cursor != null && cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     String title = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
                     mTextViewTitleOnTheAppBar.setText(title);
@@ -148,6 +148,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
                     setUpFirstSectionState(viaplaySections.get(0).getTitle());
                     putSectionDataIntoDatabase(viaplaySections);
+
+                    for (int i = 0; i < viaplaySections.size(); i++) {
+                        sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
+                        Log.i(LOG_TAG, "Send network request to get one section's long title and description: " + viaplaySections.get(i).getTitle());
+                    }
                 } else {
                     initLoader();
                 }
@@ -179,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
                 if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                         && !currentDescription.isEmpty()) {
+
                     populateContentViews(currentLongTitle, currentDescription);
 
                     ContentValues values = new ContentValues();
@@ -222,11 +228,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     private void populateContentViews(String currentLongTitle, String currentDescription) {
+        showContentView();
         mTextViewTitle.setText(currentLongTitle);
         mTextViewDescription.setText(currentDescription);
     }
 
     private void setUpFirstSectionState(String currentViaplaySectionTitle) {
+        showContentView();
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
         currentTitle = currentViaplaySectionTitle;
         sendNetworkRequestGetOneSection(currentViaplaySectionTitle.toLowerCase());
@@ -304,12 +312,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
+            showContentView();
             mSectionAdapter.swapCursor(cursor);
-//            if (!hasInternet()) {
-//                cursor.moveToFirst();
-//                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-//                setUpFirstSectionState(currentTitle);
-//            }
         } else {
             showEmptyView();
         }
@@ -344,16 +348,4 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
     }
-
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (!hasInternet()) {
-//            initLoader();
-//        } else {
-//            showContentView();
-//            sendNetworkRequestGet();
-//        }
-//    }
 }
