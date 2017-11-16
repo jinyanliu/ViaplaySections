@@ -32,22 +32,47 @@ public class MainActivityTest {
             = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void clickMenuButton_OpensDrawerNavigation() {
-        // Find the view and Perform action on the view
-        onView(withId(R.id.button_navigation))
+    public void mainScreenHasContent_navigationButtonOnTheAppBar() {
+        onView(withId(R.id.navigation_menu)).check(matches(notNullValue())).check(matches(withDrawable(R.drawable.ic_menu)));
+    }
+
+    @Test
+    public void mainScreenHasContent_titleOnTheAppBar() {
+        onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()));
+    }
+
+    @Test
+    public void mainScreenHasContent_viaplayLogoOnTheAppBar() {
+        onView(withId(R.id.viaplay_logo)).check(matches(notNullValue())).check(matches(withDrawable(R.drawable.viaplay_logo)));
+    }
+
+    @Test
+    public void mainScreenHasContent_titleLabelTextView() {
+        onView(withId(R.id.section_title_label)).check(matches(notNullValue())).check(matches(withText(R.string.section_title_label)));
+    }
+
+    @Test
+    public void mainScreenHasContent_titleContentTextView() {
+        onView(withId(R.id.section_title)).check(matches(notNullValue()));
+    }
+
+    @Test
+    public void mainScreenHasContent_descriptionLabelTextView() {
+        onView(withId(R.id.section_description_label)).check(matches(notNullValue())).check(matches(withText(R.string.section_description_label)));
+    }
+
+    @Test
+    public void mainScreenHasContent_descriptionContentTextView() {
+        onView(withId(R.id.section_description)).check(matches(notNullValue()));
+    }
+
+    @Test
+    public void clickNavigationMenuImage_OpensDrawerNavigation() {
+        onView(withId(R.id.navigation_menu))
                 .perform(click());
         onView(withId(R.id.left_drawer)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void mainScreenHasContent() {
-        onView(withId(R.id.viaplay_logo)).check(matches(withDrawable(R.drawable.viaplay_logo)));
-        onView(withId(R.id.section_title_label)).check(matches(withText(R.string.section_title_label)));
-        onView(withId(R.id.section_description_label)).check(matches(withText(R.string.section_description_label)));
-        onView(withId(R.id.section_title)).check(matches(notNullValue()));
-        onView(withId(R.id.section_description)).check(matches(notNullValue()));
-        onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()));
-    }
 
     public static class EspressoTestsMatchers {
 

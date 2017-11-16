@@ -15,7 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
-    private ImageButton mImageButtonDrawerMenu;
+    private ImageView mImageNavigationMenu;
     private TextView mTextViewTitle;
     private TextView mTextViewDescription;
     private TextView mTextViewTitleOnTheAppBar;
@@ -72,13 +72,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mTextViewTitle = findViewById(R.id.section_title);
         mTextViewDescription = findViewById(R.id.section_description);
         mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
-        mImageButtonDrawerMenu = findViewById(R.id.button_navigation);
+        mImageNavigationMenu = findViewById(R.id.navigation_menu);
         mEmptyView = findViewById(R.id.empty_view);
         mContentView = findViewById(R.id.content_activity_main);
 
         setUpRecyclerViewWithAdapter();
 
-        mImageButtonDrawerMenu.setOnClickListener(new View.OnClickListener() {
+        mImageNavigationMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // initLoader();
