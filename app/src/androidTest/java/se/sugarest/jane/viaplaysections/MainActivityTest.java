@@ -33,7 +33,8 @@ public class MainActivityTest {
 
     @Test
     public void mainScreenHasContent_navigationButtonOnTheAppBar() {
-        onView(withId(R.id.navigation_menu)).check(matches(notNullValue())).check(matches(withDrawable(R.drawable.ic_menu)));
+        onView(withId(R.id.navigation_menu)).check(matches(notNullValue()))
+                .check(matches(withDrawable(R.drawable.ic_menu)));
     }
 
     @Test
@@ -43,12 +44,14 @@ public class MainActivityTest {
 
     @Test
     public void mainScreenHasContent_viaplayLogoOnTheAppBar() {
-        onView(withId(R.id.viaplay_logo)).check(matches(notNullValue())).check(matches(withDrawable(R.drawable.viaplay_logo)));
+        onView(withId(R.id.viaplay_logo)).check(matches(notNullValue()))
+                .check(matches(withDrawable(R.drawable.viaplay_logo)));
     }
 
     @Test
     public void mainScreenHasContent_titleLabelTextView() {
-        onView(withId(R.id.section_title_label)).check(matches(notNullValue())).check(matches(withText(R.string.section_title_label)));
+        onView(withId(R.id.section_title_label)).check(matches(notNullValue()))
+                .check(matches(withText(R.string.section_title_label)));
     }
 
     @Test
@@ -58,7 +61,8 @@ public class MainActivityTest {
 
     @Test
     public void mainScreenHasContent_descriptionLabelTextView() {
-        onView(withId(R.id.section_description_label)).check(matches(notNullValue())).check(matches(withText(R.string.section_description_label)));
+        onView(withId(R.id.section_description_label)).check(matches(notNullValue()))
+                .check(matches(withText(R.string.section_description_label)));
     }
 
     @Test
