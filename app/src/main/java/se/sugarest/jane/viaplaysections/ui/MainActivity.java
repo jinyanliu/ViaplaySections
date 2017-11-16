@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    Bundle backgroundState;
+
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ImageView mImageNavigationMenu;
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mImageNavigationMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // initLoader();
+                // loadNavigationBarItemsFromDataBase();
                 if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
                     mDrawerLayout.closeDrawer(mRecyclerView);
                 } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
@@ -94,17 +96,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
             mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
             sendNetworkRequestGetOneSection(mCurrentTitle);
-            initLoader();
+            loadNavigationBarItemsFromDataBase();
         } else {
             if (!hasInternet()) {
-                initLoader();
-                Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, null, null, null);
-                if (cursor != null && cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    String title = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                    mTextViewTitleOnTheAppBar.setText(title);
-                    loadContentFromDatabase(title);
-                }
+                loadNavigationBarItemsFromDataBase();
+                loadFirstContentStateFromDatabase();
             } else {
                 showContentView();
                 sendNetworkRequestGet();
@@ -121,7 +117,30 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
     }
 
-    private void initLoader() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundState != null){
+
+            mCurrentTitle = backgroundState.getString("background_state");
+        }
+
+
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if(mCurrentTitle != null){
+            backgroundState = new Bundle();
+            backgroundState.putString("background_state", mCurrentTitle);
+        }
+
+    }
+
+    private void loadNavigationBarItemsFromDataBase() {
         getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
     }
 
@@ -156,16 +175,27 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         Log.i(LOG_TAG, "Send network request to get one section's long title and description: " + viaplaySections.get(i).getTitle());
                     }
                 } else {
-                    initLoader();
+                    loadNavigationBarItemsFromDataBase();
                 }
             }
 
             @Override
             public void onFailure(Call<JSONResponse> call, Throwable t) {
                 Log.e(LOG_TAG, "Failed to get photos list back.", t);
-                initLoader();
+                loadNavigationBarItemsFromDataBase();
+                loadFirstContentStateFromDatabase();
             }
         });
+    }
+
+    private void loadFirstContentStateFromDatabase() {
+        Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            String title = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+            mTextViewTitleOnTheAppBar.setText(title);
+            loadContentFromDatabase(title);
+        }
     }
 
     private void sendNetworkRequestGetOneSection(final String currentTitle) {
@@ -273,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + bulkInsertRows + " and the number of data size is: " + cVVector.size());
             }
         }
-        initLoader();
+        loadNavigationBarItemsFromDataBase();
     }
 
     private void cleanSectionTableFromDatabase() {
