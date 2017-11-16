@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -44,13 +43,15 @@ import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KE
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
+/**
+ * This is the main controller of the whole app.
+ * It initiates the app.
+ */
 public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler,
         android.app.LoaderManager.LoaderCallbacks<Cursor> {
-
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    Bundle backgroundState;
-
+    private Bundle backgroundState;
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ImageView mImageNavigationMenu;
@@ -59,10 +60,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private TextView mTextViewTitleOnTheAppBar;
     private TextView mEmptyView;
     private LinearLayout mContentView;
-
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
-
     private String mCurrentTitle;
     private Toast mToast;
 
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up ToolBar
         mToolBar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
         setUpRecyclerViewWithAdapter();
 
+        // Set up left drawer navigation
         mImageNavigationMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // loadNavigationBarItemsFromDataBase();
                 if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
                     mDrawerLayout.closeDrawer(mRecyclerView);
                 } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             }
         });
 
+        // Current content survive while configuration change happens
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
             mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
             mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
@@ -104,22 +105,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             loadNavigationBarItemsFromDataBase();
         } else {
             refreshScreen();
-        }
-    }
-
-    private void refreshScreen() {
-        if (!hasInternet()) {
-            loadNavigationBarItemsFromDataBase();
-            loadFirstContentStateFromDatabase();
-        } else {
-            showContentView();
-            sendNetworkRequestGet();
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            mToast = Toast.makeText(this, "Data is loading...", Toast.LENGTH_SHORT);
-            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-            mToast.show();
         }
     }
 
@@ -136,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     protected void onResume() {
         super.onResume();
         if (backgroundState != null) {
-
             mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY).toLowerCase();
         }
         String currentStringInTitleContentView = mTextViewTitle.getText().toString();
@@ -148,18 +132,45 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onPause() {
         super.onPause();
-
         if (mCurrentTitle != null) {
             backgroundState = new Bundle();
             backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
         }
+    }
 
+    private void refreshScreen() {
+        if (!hasInternet()) {
+            loadNavigationBarItemsFromDataBase();
+            loadFirstContentStateFromDatabase();
+        } else {
+            showContentView();
+            sendNetworkRequestGet();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
+        }
+    }
+
+    private void setUpRecyclerViewWithAdapter() {
+        mRecyclerView = findViewById(R.id.left_drawer);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        if (mSectionAdapter == null) {
+            mSectionAdapter = new SectionAdapter(this);
+        }
+        mRecyclerView.setAdapter(mSectionAdapter);
     }
 
     private void loadNavigationBarItemsFromDataBase() {
         getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
     }
 
+    // Use External Library Retrofit to GET ViaplaySection object list.
+    // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGet() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         Retrofit.Builder builder =
@@ -169,29 +180,24 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         Retrofit retrofit = builder.client(httpClient.build()).build();
         ViaplayClient client = retrofit.create(ViaplayClient.class);
         Call<JSONResponse> call = client.getSections();
-
         call.enqueue(new Callback<JSONResponse>() {
             @Override
             public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
                 Log.i(LOG_TAG, "GET response success: Complete url to request is: "
                         + response.raw().request().url().toString()
                         + "\nresponse.body().toString == " + response.body().toString());
-
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
-
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
-
-                    putSectionDataIntoDatabase(viaplaySections);
-
+                    putSectionTitleDataIntoDatabase(viaplaySections);
                     setUpFirstSectionState(viaplaySections.get(0).getTitle());
-
                     for (int i = 0; i < viaplaySections.size(); i++) {
                         sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
                         Log.i(LOG_TAG, "Send network request to get one section's long title and description: " + viaplaySections.get(i).getTitle());
                     }
                 } else {
                     loadNavigationBarItemsFromDataBase();
+                    loadFirstContentStateFromDatabase();
                 }
             }
 
@@ -214,6 +220,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
     }
 
+    // Use External Library Retrofit to GET one specific ViaplaySection's detail title and description.
+    // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGetOneSection(final String currentTitle) {
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(VIAPLAY_BASE_URL)
@@ -229,15 +237,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + "\nresponse.code() == " + response.code());
                 String currentLongTitle = response.body().getTitle();
                 String currentDescription = response.body().getDescription();
-
                 if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                         && !currentDescription.isEmpty()) {
-
-                    // To help set up the first state of the app
+                    // Set up the first state of the app
                     if (currentTitle.equalsIgnoreCase(mCurrentTitle)) {
                         populateContentViews(currentLongTitle, currentDescription);
                     }
-
+                    // Update database with complete information for one specific ViaplaySection
                     ContentValues values = new ContentValues();
                     values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
                     values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
@@ -282,7 +288,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         if (mToast != null) {
             mToast.cancel();
         }
-
         showContentView();
         mTextViewTitle.setText(currentLongTitle);
         mTextViewDescription.setText(currentDescription);
@@ -295,21 +300,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         loadContentFromDatabase(currentViaplaySectionTitle.toLowerCase());
     }
 
-    private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {
+    private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
         cleanSectionTableFromDatabase();
         int count = viaplaySections.size();
         Vector<ContentValues> cVVector = new Vector<>(count);
         for (int i = 0; i < count; i++) {
             ContentValues values = new ContentValues();
             values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-            // Temporarily store section short title's information to long title
-            // Temporarily store section href url to description
+            // Temporarily store section title's information to detail title column because they couldn't be null
+            // Temporarily store section href url to description column because they couldn't be null
             values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
             values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
-
             cVVector.add(values);
         }
-
         if (cVVector.size() > 0) {
             ContentValues[] cvArray = new ContentValues[cVVector.size()];
             cVVector.toArray(cvArray);
@@ -327,21 +330,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     private void cleanSectionTableFromDatabase() {
-        getContentResolver().delete(SectionEntry.CONTENT_URI,
-                null,
-                null);
+        getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
         Log.i(LOG_TAG, "section table in section database is been cleaned.");
-    }
-
-    private void setUpRecyclerViewWithAdapter() {
-        mRecyclerView = findViewById(R.id.left_drawer);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        if (mSectionAdapter == null) {
-            mSectionAdapter = new SectionAdapter(this);
-        }
-        mRecyclerView.setAdapter(mSectionAdapter);
     }
 
     @Override
@@ -350,27 +340,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
         mCurrentTitle = sectionTitle;
-        // sendNetworkRequestGetOneSection(sectionTitle);
         loadContentFromDatabase(sectionTitle);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(
-                this,
-                SectionEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
+        return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
+                null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
-
             ArrayList<String> sectionTitlesString = new ArrayList<>();
-
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
@@ -379,14 +361,16 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 }
                 Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
             }
-
-
             showContentView();
-            // mSectionAdapter.swapCursor(cursor);
             mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
         } else {
             showEmptyView();
         }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSectionAdapter.setUpTitleStringArray(null);
     }
 
     private void showEmptyView() {
@@ -399,23 +383,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mEmptyView.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mSectionAdapter.setUpTitleStringArray(null);
-    }
-
     private boolean hasInternet() {
-        if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected()) {
             return true;
         } else {
             return false;
         }
-    }
-
-    private NetworkInfo getNetworkInfo() {
-        // Get a reference to the ConnectivityManager to check state of network connectivity.
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        // Get details on the currently active default data network
-        return connMgr.getActiveNetworkInfo();
     }
 }

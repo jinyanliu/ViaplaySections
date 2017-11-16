@@ -22,5 +22,6 @@
     <!-- Empty view text message shows on main screen when no internet, no database data, (offline at first use)
     Used in activity_main.xml -->
     <string name="text_message_empty_view" translatable="true">Please enable internet at first use!</string>
-
+    <!-- The toast message to indicate the user the data is loading when the user starts the app at the first time. -->
+    <string name="toast_message_data_is_loading">Data is loading...</string>
 </resources>
