@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -352,8 +353,22 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
+
+            ArrayList<String> sectionTitlesString = new ArrayList<>();
+
+                for (int i = 0; i < cursor.getCount(); i++) {
+                    cursor.moveToPosition(i);
+                    String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+                    if (!sectionTitlesString.contains(currentTitle)) {
+                        sectionTitlesString.add(currentTitle);
+                    }
+                    Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+                }
+
+
             showContentView();
-            mSectionAdapter.swapCursor(cursor);
+            // mSectionAdapter.swapCursor(cursor);
+            mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
         } else {
             showEmptyView();
         }
@@ -371,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mSectionAdapter.swapCursor(null);
+        mSectionAdapter.setUpTitleStringArray(null);
     }
 
     private boolean hasInternet() {

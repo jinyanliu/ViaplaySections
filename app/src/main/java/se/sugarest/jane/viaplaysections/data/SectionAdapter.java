@@ -2,7 +2,6 @@ package se.sugarest.jane.viaplaysections.data;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 
 /**
  * Created by jane on 17-11-14.
@@ -54,20 +52,26 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
         void onClick(String title);
     }
 
-    public void swapCursor(Cursor newCursor) {
-        mCursor = newCursor;
-        if (null != mCursor) {
-            for (int i = 0; i < mCursor.getCount(); i++) {
-                mCursor.moveToPosition(i);
-                String currentTitle = mCursor.getString(mCursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                if (!mSectionTitleString.contains(currentTitle)) {
-                    mSectionTitleString.add(currentTitle);
-                }
-                Log.i(LOG_TAG, "There are " + mSectionTitleString.size() + " different section titles available.");
-            }
-        }
+
+    public void setUpTitleStringArray(ArrayList<String> newArray){
+        mSectionTitleString = newArray;
         notifyDataSetChanged();
     }
+
+//    public void swapCursor(Cursor newCursor) {
+//        mCursor = newCursor;
+//        if (null != mCursor) {
+//            for (int i = 0; i < mCursor.getCount(); i++) {
+//                mCursor.moveToPosition(i);
+//                String currentTitle = mCursor.getString(mCursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+//                if (!mSectionTitleString.contains(currentTitle)) {
+//                    mSectionTitleString.add(currentTitle);
+//                }
+//                Log.i(LOG_TAG, "There are " + mSectionTitleString.size() + " different section titles available.");
+//            }
+//        }
+//        notifyDataSetChanged();
+//    }
 
     /**
      * Cache of the children views for a section title.
