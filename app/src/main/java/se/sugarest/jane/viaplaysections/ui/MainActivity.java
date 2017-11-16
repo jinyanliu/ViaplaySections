@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
 
-    private String currentTitle;
+    private String mCurrentTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
-            currentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
-            mTextViewTitleOnTheAppBar.setText(currentTitle);
-            sendNetworkRequestGetOneSection(currentTitle);
+            mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
+            mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
+            sendNetworkRequestGetOneSection(mCurrentTitle);
             initLoader();
         } else {
             if (!hasInternet()) {
@@ -146,8 +146,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
-                    setUpFirstSectionState(viaplaySections.get(0).getTitle());
+
                     putSectionDataIntoDatabase(viaplaySections);
+
+                    setUpFirstSectionState(viaplaySections.get(0).getTitle());
 
                     for (int i = 0; i < viaplaySections.size(); i++) {
                         sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
@@ -185,7 +187,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                         && !currentDescription.isEmpty()) {
 
-                    populateContentViews(currentLongTitle, currentDescription);
+                    // To help set up the first state of the app
+                    if (currentTitle.equalsIgnoreCase(mCurrentTitle)){
+                        populateContentViews(currentLongTitle, currentDescription);
+                    }
 
                     ContentValues values = new ContentValues();
                     values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
@@ -194,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     String[] selectionArgs = {currentTitle};
                     int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values, selection, selectionArgs);
                     if (rowsUpdated > 0) {
-                        Log.i(LOG_TAG, "Update long title and description information for " + currentTitle + " section is successful.");
+                        Log.i(LOG_TAG, "DB Update long title and description information for " + currentTitle + " section is successful.");
                     }
                 } else {
                     loadContentFromDatabase(currentTitle);
@@ -236,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private void setUpFirstSectionState(String currentViaplaySectionTitle) {
         showContentView();
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
-        currentTitle = currentViaplaySectionTitle;
-        sendNetworkRequestGetOneSection(currentViaplaySectionTitle.toLowerCase());
+        mCurrentTitle = currentViaplaySectionTitle;
+        loadContentFromDatabase(currentViaplaySectionTitle.toLowerCase());
     }
 
     private void putSectionDataIntoDatabase(List<ViaplaySection> viaplaySections) {
@@ -262,9 +267,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     SectionEntry.CONTENT_URI,
                     cvArray);
             if (bulkInsertRows == cVVector.size()) {
-                Log.i(LOG_TAG, "bulkInsert into SectionEntry successful.");
+                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
             } else {
-                Log.e(LOG_TAG, "bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
+                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
                         + bulkInsertRows + " and the number of data size is: " + cVVector.size());
             }
         }
@@ -294,8 +299,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         showContentView();
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
-        currentTitle = sectionTitle;
-        sendNetworkRequestGetOneSection(sectionTitle);
+        mCurrentTitle = sectionTitle;
+        // sendNetworkRequestGetOneSection(sectionTitle);
+        loadContentFromDatabase(sectionTitle);
     }
 
     @Override
