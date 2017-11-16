@@ -6,7 +6,7 @@ package se.sugarest.jane.viaplaysections.data.type;
  * Complete Url example to request:
  * https://content.viaplay.se/androidv2-se
  * <p>
- * Class {@link se.sugarest.jane.viaplaysections.data.type.JSONResponse}
+ * Classes {@link se.sugarest.jane.viaplaysections.data.type.JSONResponse}
  * {@link se.sugarest.jane.viaplaysections.data.type.Links}
  * {@link se.sugarest.jane.viaplaysections.data.type.ViaplaySection}
  * {@link se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse} are automatically generated

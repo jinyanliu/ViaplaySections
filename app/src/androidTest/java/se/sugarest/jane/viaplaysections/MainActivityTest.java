@@ -49,7 +49,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void mainScreenHasContent_navigationButtonOnTheAppBar() {
+    public void mainScreenHasContent_menuImageOnTheAppBar() {
         onView(withId(R.id.navigation_menu)).check(matches(notNullValue()))
                 .check(matches(withDrawable(R.drawable.ic_menu)));
     }
@@ -105,6 +105,7 @@ public class MainActivityTest {
         onView(withId(R.id.navigation_menu))
                 .perform(click());
 
+        // Position index starts from 0
         onView(withId(R.id.left_drawer))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 

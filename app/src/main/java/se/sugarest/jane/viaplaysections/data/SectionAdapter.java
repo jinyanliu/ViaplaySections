@@ -12,7 +12,7 @@ import se.sugarest.jane.viaplaysections.R;
 
 /**
  * This class gets a list of section titles from inputs, then populates to the recycler view, which
- * in fact acts as left drawer navigation view.
+ * in fact acts as left side drawer navigation view.
  * <p>
  * That means the controller in the MVC pattern.
  * <p>

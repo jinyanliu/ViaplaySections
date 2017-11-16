@@ -34,7 +34,7 @@ public class SectionProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mSectionDbHelper = new SectionDbHelper(getContext());
-        return false;
+        return true;
     }
 
     @Nullable
