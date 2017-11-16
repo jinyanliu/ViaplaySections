@@ -19,6 +19,10 @@ public class SectionDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Called when the database is created for the first time. This is where the creation of
+     * tables and the initial population of the tables should happen.
+     */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_SECTION_TABLE =
