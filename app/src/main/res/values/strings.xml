@@ -1,27 +1,32 @@
 <resources>
     <string name="app_name" translatable="false">ViaplaySections</string>
 
-    <!-- The label of section title in the main screen.
+    <!-- The fake title for one section provided for design reason.
+   Used in drawer_list_item.xml and app_bar.xml -->
+    <string name="section_title" translatable="true">SERIER</string>
+
+    <!-- The label of section detail title in the main screen.
     Used in activity_main.xml -->
     <string name="section_title_label" translatable="true">Title:</string>
-    <!-- The fake title for one section provided for design reason.
-    Used in drawer_list_item.xml
-    And also to set up the first open main screen title.
-    Used in app_bar.xml -->
-    <string name="section_title" translatable="true">SERIER</string>
-    <!-- The fake long title for one section provided for design reason.
+
+    <!-- The label of section description in the main screen.
+   Used in activity_main.xml -->
+    <string name="section_description_label" translatable="true">Description:</string>
+
+    <!-- The fake detail title content for one section provided for design reason.
     Used in activity_main.xml -->
     <string name="section_long_title" translatable="true">TV-serier online - Streama serier på nätet eller ladda ned</string>
-    <!-- The label of section description in the main screen.
-    Used in activity_main.xml -->
-    <string name="section_description_label" translatable="true">Description:</string>
-    <!-- The fake description for one section provided for design reason.
+
+    <!-- The fake description content for one section provided for design reason.
     Used in activity_main.xml -->
     <string name="section_description" translatable="true">Viaplay erbjuder TV-serier på nätet för hela familjen.
         Streama serier online i hög kvalitet eller ladda ned till tablet eller mobil!</string>
-    <!-- Empty view text message shows on main screen when no internet, no database data, (offline at first use)
+
+    <!-- Empty view text message shows on main screen when there is neither internet, nor database data,
+    witch means offline at first use.
     Used in activity_main.xml -->
     <string name="text_message_empty_view" translatable="true">Please enable internet at first use!</string>
-    <!-- The toast message to indicate the user the data is loading when the user starts the app at the first time. -->
+
+    <!-- The toast message to indicate the user that data is loading when the user starts the app at the first time. -->
     <string name="toast_message_data_is_loading">Data is loading...</string>
 </resources>
