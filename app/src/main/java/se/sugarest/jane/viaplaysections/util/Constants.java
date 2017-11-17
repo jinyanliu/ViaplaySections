@@ -10,11 +10,11 @@ public class Constants {
     public static final String VIAPLAY_API_SLASH = "/";
 
     // Use with overriding onSaveInstanceState method in MainActivity to save current section view
-    // when configuration change happens.
+    // when configuration change happens, e.g., from Portrait to Landscape.
     public static final String CONFIGURATION_KEY = "current_section";
 
     // Use with overriding onPause & onResume method in MainActivity to save current section view
-    // when app state transition happens, e.g., from background to foreground.
+    // when activity lifecycle state transition happens, e.g., from background to foreground.
     public static final String FORE_BACK_STATE_KEY = "current_title";
 
     // Use to recognize cursorLoader in MainActivity
