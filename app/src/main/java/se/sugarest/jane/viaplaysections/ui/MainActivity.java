@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        if (mTextViewTitleOnTheAppBar.getText().toString() == null ||
+                        if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString() == null ||
                                 mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
                             refreshScreen();
                         } else {
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onPause() {
         super.onPause();
-        if (mTextViewTitleOnTheAppBar.getText().toString() != null) {
+        if (mTextViewTitleOnTheAppBar.getText() != null && mTextViewTitleOnTheAppBar.getText().toString() != null) {
             backgroundState = new Bundle();
             backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
         }
