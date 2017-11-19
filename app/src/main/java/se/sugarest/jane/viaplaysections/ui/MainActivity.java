@@ -121,7 +121,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     protected void onResume() {
         super.onResume();
         if (backgroundState != null) {
-            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY).toLowerCase();
+            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY);
+            if (mCurrentTitle != null && !mCurrentTitle.isEmpty()) {
+                loadNavigationBarItemsFromDataBase();
+                loadContentFromDatabase(mCurrentTitle.toLowerCase());
+            }
         }
         String currentStringInTitleContentView = mTextViewTitle.getText().toString();
         if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCurrentTitle != null) {
+        if (mTextViewTitle.getText().toString() != null) {
             backgroundState = new Bundle();
             backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
         }
