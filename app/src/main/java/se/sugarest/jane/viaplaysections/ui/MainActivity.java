@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SectionAdapter mSectionAdapter;
     private String mCurrentTitle;
     private Toast mToast;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mImageNavigationMenu = findViewById(R.id.navigation_menu);
         mEmptyView = findViewById(R.id.empty_view);
         mContentView = findViewById(R.id.content_activity_main);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
 
         setUpRecyclerViewWithAdapter();
 
@@ -96,6 +99,21 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 }
             }
         });
+
+        // Set up swipe refresh function
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (mTextViewTitleOnTheAppBar.getText().toString() == null ||
+                                mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
+                            refreshScreen();
+                        } else {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    }
+                }
+        );
 
         // Current content survive while configuration change happens
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
@@ -136,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onPause() {
         super.onPause();
-        if (mTextViewTitle.getText().toString() != null) {
+        if (mTextViewTitleOnTheAppBar.getText().toString() != null) {
             backgroundState = new Bundle();
             backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
         }
@@ -406,11 +424,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     }
 
     private void showEmptyView() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mContentView.setVisibility(View.INVISIBLE);
         mEmptyView.setVisibility(View.VISIBLE);
     }
 
     private void showContentView() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mContentView.setVisibility(View.VISIBLE);
         mEmptyView.setVisibility(View.INVISIBLE);
     }
