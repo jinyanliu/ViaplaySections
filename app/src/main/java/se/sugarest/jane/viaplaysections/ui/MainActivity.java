@@ -189,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             loadNavigationBarItemsFromDataBase();
             loadFirstContentStateFromDatabase();
         } else {
+
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(false);
+            }
+
             showContentView();
             sendNetworkRequestGet();
             if (mToast != null) {
@@ -218,11 +223,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     // Use External Library Retrofit to GET ViaplaySection object list.
     // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGet() {
-
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
-        }
-
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -244,10 +244,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
 
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
-
-                    if (mIdlingResource != null) {
-                        mIdlingResource.setIdleState(true);
-                    }
 
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
                     putSectionTitleDataIntoDatabase(viaplaySections);
@@ -288,10 +284,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGetOneSection(final String currentTitle) {
 
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
-        }
-
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(VIAPLAY_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
@@ -313,10 +305,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
                 if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                         && !currentDescription.isEmpty()) {
-
-                    if (mIdlingResource != null) {
-                        mIdlingResource.setIdleState(true);
-                    }
 
                     // Set up the first state of the app
                     if (currentTitle.equalsIgnoreCase(mCurrentTitle)) {
@@ -376,6 +364,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         showContentView();
         mTextViewTitle.setText(currentLongTitle);
         mTextViewDescription.setText(currentDescription);
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 
     private void setUpFirstSectionState(String currentViaplaySectionTitle) {
@@ -438,10 +430,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(true);
-        }
-
         return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
                 null, null);
     }
@@ -449,10 +437,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
-
-            if (mIdlingResource != null) {
-                mIdlingResource.setIdleState(true);
-            }
 
             ArrayList<String> sectionTitlesString = new ArrayList<>();
 

@@ -2,7 +2,6 @@ package se.sugarest.jane.viaplaysections.MainActivityTests;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -21,6 +20,7 @@ import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.IdlingRegistry.getInstance;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -47,7 +47,7 @@ public class HasContentMainActivityTest {
     @Before
     public void registerIdlingResource() {
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
-        Espresso.registerIdlingResources(mIdlingResource);
+        getInstance().register(mIdlingResource);
     }
 
     @Before
@@ -98,7 +98,7 @@ public class HasContentMainActivityTest {
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {
-            Espresso.unregisterIdlingResources(mIdlingResource);
+            getInstance().unregister(mIdlingResource);
         }
     }
 
