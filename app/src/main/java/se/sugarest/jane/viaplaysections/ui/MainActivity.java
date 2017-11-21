@@ -7,6 +7,10 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import se.sugarest.jane.viaplaysections.IdlingResource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
@@ -66,6 +71,22 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private String mCurrentTitle;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         } else {
             refreshScreen();
         }
+
+        // Get the IdlingResource instance
+        getIdlingResource();
     }
 
     @Override
@@ -194,6 +218,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     // Use External Library Retrofit to GET ViaplaySection object list.
     // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGet() {
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -207,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         call.enqueue(new Callback<JSONResponse>() {
             @Override
             public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+
                 Log.i(LOG_TAG, "GET response success: Complete url to request is: "
                         + response.raw().request().url().toString()
                         + "\nresponse.body().toString == " + response.body().toString());
@@ -214,6 +244,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
 
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
+
+                    if (mIdlingResource != null) {
+                        mIdlingResource.setIdleState(true);
+                    }
+
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
                     putSectionTitleDataIntoDatabase(viaplaySections);
                     setUpFirstSectionState(viaplaySections.get(0).getTitle());
@@ -252,6 +287,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     // Use External Library Retrofit to GET one specific ViaplaySection's detail title and description.
     // Reference: https://github.com/square/retrofit
     private void sendNetworkRequestGetOneSection(final String currentTitle) {
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(VIAPLAY_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
@@ -263,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         call.enqueue(new Callback<SingleJSONResponse>() {
             @Override
             public void onResponse(Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
+
                 Log.i(LOG_TAG, "GET ONE response success: Complete url to request is: "
                         + response.raw().request().url().toString()
                         + "\nresponse.code() == " + response.code());
@@ -272,6 +313,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
                 if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                         && !currentDescription.isEmpty()) {
+
+                    if (mIdlingResource != null) {
+                        mIdlingResource.setIdleState(true);
+                    }
 
                     // Set up the first state of the app
                     if (currentTitle.equalsIgnoreCase(mCurrentTitle)) {
@@ -392,6 +437,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
+
         return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
                 null, null);
     }
@@ -399,6 +449,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
+
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+            }
+
             ArrayList<String> sectionTitlesString = new ArrayList<>();
 
             for (int i = 0; i < cursor.getCount(); i++) {
