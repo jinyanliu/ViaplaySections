@@ -3,7 +3,6 @@ package se.sugarest.jane.viaplaysections.MainActivityTests;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
@@ -15,7 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import se.sugarest.jane.viaplaysections.DrawableMatcher;
+import se.sugarest.jane.viaplaysections.util.DrawableMatcher;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.MainActivity;
 
@@ -25,7 +24,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.notNullValue;
-import static se.sugarest.jane.viaplaysections.IgnoreCaseTextMatcher.withText;
+import static se.sugarest.jane.viaplaysections.util.IgnoreCaseTextMatcher.withText;
 import static se.sugarest.jane.viaplaysections.MainActivityTests.HasContentMainActivityTest.EspressoTestsMatchers.withDrawable;
 
 
@@ -57,7 +56,7 @@ public class HasContentMainActivityTest {
 
     @Test
     public void mainScreenHasContent_menuImageOnTheAppBar() {
-        onView(ViewMatchers.withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
+        onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withDrawable(R.drawable.ic_menu)));
     }
 

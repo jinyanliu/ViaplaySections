@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.util;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
