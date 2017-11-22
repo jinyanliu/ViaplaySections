@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.MainActivityTests;
+package se.sugarest.jane.viaplaysections.mainActivityTests;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -25,7 +25,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.notNullValue;
 import static se.sugarest.jane.viaplaysections.util.IgnoreCaseTextMatcher.withText;
-import static se.sugarest.jane.viaplaysections.MainActivityTests.HasContentMainActivityTest.EspressoTestsMatchers.withDrawable;
+import static se.sugarest.jane.viaplaysections.mainActivityTests.HasContentMainActivityTest.EspressoTestsMatchers.withDrawable;
 
 
 /**

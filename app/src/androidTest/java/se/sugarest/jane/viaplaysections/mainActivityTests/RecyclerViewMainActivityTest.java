@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.MainActivityTests;
+package se.sugarest.jane.viaplaysections.mainActivityTests;
 
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
