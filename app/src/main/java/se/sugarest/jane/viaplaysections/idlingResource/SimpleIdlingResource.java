@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.IdlingResource;
+package se.sugarest.jane.viaplaysections.idlingResource;
 
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;

@@ -35,7 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import se.sugarest.jane.viaplaysections.IdlingResource.SimpleIdlingResource;
+import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
