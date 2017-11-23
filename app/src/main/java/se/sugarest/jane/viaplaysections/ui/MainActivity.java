@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
     private String mCurrentTitle;
+    private String mFirstTitle;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -246,8 +247,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 if (viaplaySections != null && !viaplaySections.isEmpty()) {
 
                     Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
+
                     putSectionTitleDataIntoDatabase(viaplaySections);
-                    setUpFirstSectionState(viaplaySections.get(0).getTitle());
+
+                    loadNavigationBarItemsFromInternet(viaplaySections);
+
+                    mFirstTitle = viaplaySections.get(0).getTitle();
+
+                    setUpFirstSectionState(mFirstTitle);
 
                     for (int i = 0; i < viaplaySections.size(); i++) {
                         sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
@@ -269,6 +276,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
     }
 
+    private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
+        ArrayList<String> sectionTitlesString = new ArrayList<>();
+        for (int i = 0; i < viaplaySections.size(); i++) {
+            String currentTitle = viaplaySections.get(i).getTitle();
+            if (!sectionTitlesString.contains(currentTitle)) {
+                sectionTitlesString.add(currentTitle);
+            }
+            Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+        }
+        showContentView();
+        mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
+    }
+
     private void loadFirstContentStateFromDatabase() {
         Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null,
                 null, null, null);
@@ -277,6 +297,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             String title = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
             mTextViewTitleOnTheAppBar.setText(title);
             loadContentFromDatabase(title);
+        } else {
+            showEmptyView();
         }
     }
 
@@ -307,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         && !currentDescription.isEmpty()) {
 
                     // Set up the first state of the app
-                    if (currentTitle.equalsIgnoreCase(mCurrentTitle)) {
+                    if (currentTitle.equalsIgnoreCase(mFirstTitle)) {
                         populateContentViews(currentLongTitle, currentDescription);
                     }
 
@@ -340,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private void loadContentFromDatabase(String currentTitle) {
         String selection = SectionEntry.COLUMN_SECTION_TITLE + " =?";
-        String[] selectionArgs = {currentTitle};
+        String[] selectionArgs = {currentTitle.toLowerCase()};
         Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null,
                 selection, selectionArgs, null);
 
@@ -374,7 +396,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         showContentView();
         mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
         mCurrentTitle = currentViaplaySectionTitle;
-        loadContentFromDatabase(currentViaplaySectionTitle.toLowerCase());
     }
 
     private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
@@ -406,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + bulkInsertRows + " and the number of data size is: " + cVVector.size());
             }
         }
-        loadNavigationBarItemsFromDataBase();
     }
 
     private void cleanSectionTableFromDatabase() {
