@@ -140,9 +140,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         // Current content survive while configuration change happens
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
             mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
-            mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
-            loadNavigationBarItemsFromDataBase();
-            loadContentFromDatabase(mCurrentTitle);
+            setPageContent(mCurrentTitle);
         } else {
             refreshScreen();
         }
@@ -166,17 +164,21 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         if (backgroundState != null
                 && backgroundState.getString(FORE_BACK_STATE_KEY) != null
                 && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
-
-            mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
-            loadNavigationBarItemsFromDataBase();
-            loadContentFromDatabase(mCurrentTitle.toLowerCase());
-
+            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY);
+            setPageContent(mCurrentTitle);
         } else {
             String currentStringInTitleContentView = mTextViewTitle.getText().toString();
             if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
                 refreshScreen();
             }
         }
+    }
+
+    private void setPageContent(String currentTitle) {
+        mCurrentTitle = currentTitle.toLowerCase();
+        mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
+        loadNavigationBarItemsFromDataBase();
+        loadContentFromDatabase(mCurrentTitle);
     }
 
     @Override
