@@ -35,7 +35,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
@@ -43,6 +42,7 @@ import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEnt
 import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
+import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
@@ -163,16 +163,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onResume() {
         super.onResume();
-        if (backgroundState != null) {
-            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY);
-            if (mCurrentTitle != null && !mCurrentTitle.isEmpty()) {
-                loadNavigationBarItemsFromDataBase();
-                loadContentFromDatabase(mCurrentTitle.toLowerCase());
+        if (backgroundState != null
+                && backgroundState.getString(FORE_BACK_STATE_KEY) != null
+                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
+
+            mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
+            loadNavigationBarItemsFromDataBase();
+            loadContentFromDatabase(mCurrentTitle.toLowerCase());
+
+        } else {
+            String currentStringInTitleContentView = mTextViewTitle.getText().toString();
+            if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
+                refreshScreen();
             }
-        }
-        String currentStringInTitleContentView = mTextViewTitle.getText().toString();
-        if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
-            refreshScreen();
         }
     }
 
@@ -181,7 +184,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         super.onPause();
         if (mTextViewTitleOnTheAppBar.getText() != null && mTextViewTitleOnTheAppBar.getText().toString() != null) {
             backgroundState = new Bundle();
-            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle);
+            mCurrentTitle = mTextViewTitleOnTheAppBar.getText().toString();
+            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle.toLowerCase());
         }
     }
 
@@ -253,8 +257,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     loadNavigationBarItemsFromInternet(viaplaySections);
 
                     mFirstTitle = viaplaySections.get(0).getTitle();
-
-                    setUpFirstSectionState(mFirstTitle);
+                    showContentView();
+                    mTextViewTitleOnTheAppBar.setText(mFirstTitle);
+                    mCurrentTitle = mFirstTitle;
 
                     for (int i = 0; i < viaplaySections.size(); i++) {
                         sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
@@ -390,12 +395,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
         }
-    }
-
-    private void setUpFirstSectionState(String currentViaplaySectionTitle) {
-        showContentView();
-        mTextViewTitleOnTheAppBar.setText(currentViaplaySectionTitle);
-        mCurrentTitle = currentViaplaySectionTitle;
     }
 
     private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
