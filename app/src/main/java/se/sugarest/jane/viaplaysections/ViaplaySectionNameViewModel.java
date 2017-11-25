@@ -83,14 +83,14 @@ public class ViaplaySectionNameViewModel extends ViewModel {
                         setValue(viaplaySections);
 
                     } else {
-                        Log.e(LOG_TAG, "There is no sectionNames comes back from internet with this url: "
+                        Log.e(LOG_TAG, "There is no ViaplaySections comes back from internet with this url: "
                                 + response.raw().request().url().toString());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<JSONResponse> call, Throwable t) {
-                    Log.e(LOG_TAG, "Failed to get sectionNames list back.", t);
+                    Log.e(LOG_TAG, "Failed to get ViaplaySections back.", t);
                 }
             });
         }

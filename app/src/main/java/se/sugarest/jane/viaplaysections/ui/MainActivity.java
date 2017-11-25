@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.ViaplaySectionInformationViewModel;
 import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
@@ -61,7 +62,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private String mFirstTitle;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ViaplaySectionNameViewModel mViewModel;
+    private ViaplaySectionNameViewModel mSectionNameViewModel;
+    private ViaplaySectionInformationViewModel mSectionInformationViewModel;
+
+    private ArrayList<String> mSectionTitlesString = new ArrayList<>();
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -130,11 +134,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         if (hasInternet()) {
             // Create a ViewModel the first time the system calls an activity's onCreate() method.
             // Re-created activities receive the same MyViewModel instance created by the first activity.
-            mViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
-            mViewModel.getSectionNames().observe(this, sectionNames -> {
+            mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
+            mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
                 // Update Navigation Bar items
                 loadNavigationBarItemsFromInternet(sectionNames);
                 putSectionTitleDataIntoDatabase(sectionNames);
+
+
             });
         } else {
             loadNavigationBarItemsFromDataBase();
@@ -289,14 +295,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //    }
 //
     private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
-        ArrayList<String> sectionTitlesString = new ArrayList<>();
         for (int i = 0; i < viaplaySections.size(); i++) {
-            if (!sectionTitlesString.contains(viaplaySections.get(i).getTitle())) {
-                sectionTitlesString.add(viaplaySections.get(i).getTitle());
+            if (!mSectionTitlesString.contains(viaplaySections.get(i).getTitle())) {
+                mSectionTitlesString.add(viaplaySections.get(i).getTitle());
             }
         }
         showContentView();
-        mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
+        mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
     }
 
 
@@ -464,20 +469,18 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
 
-            ArrayList<String> sectionTitlesString = new ArrayList<>();
-
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
 
-                if (!sectionTitlesString.contains(currentTitle)) {
-                    sectionTitlesString.add(currentTitle);
+                if (!mSectionTitlesString.contains(currentTitle)) {
+                    mSectionTitlesString.add(currentTitle);
                 }
-                Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+                Log.i(LOG_TAG, "There are " + mSectionTitlesString.size() + " different section titles available.");
             }
 
             showContentView();
-            mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
+            mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
         } else {
             showEmptyView();
         }
