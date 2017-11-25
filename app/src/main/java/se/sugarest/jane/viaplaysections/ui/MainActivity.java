@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
-import se.sugarest.jane.viaplaysections.data.type.ViaplaySectionNameViewModel;
+import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
 /**
