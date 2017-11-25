@@ -1,6 +1,12 @@
 package se.sugarest.jane.viaplaysections.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,19 +27,23 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
+
+import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
 /**
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler {
-    //, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler
+        , android.app.LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Bundle backgroundState;
@@ -116,13 +127,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //                }
 //        );
 
-        // Create a ViewModel the first time the system calls an activity's onCreate() method.
-        // Re-created activities receive the same MyViewModel instance created by the first activity.
-        mViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
-        mViewModel.getSectionNames().observe(this, sectionNames -> {
-            // Update Navigation Bar items
-            loadNavigationBarItemsFromInternet(sectionNames);
-        });
+        if (hasInternet()) {
+            // Create a ViewModel the first time the system calls an activity's onCreate() method.
+            // Re-created activities receive the same MyViewModel instance created by the first activity.
+            mViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
+            mViewModel.getSectionNames().observe(this, sectionNames -> {
+                // Update Navigation Bar items
+                loadNavigationBarItemsFromInternet(sectionNames);
+                putSectionTitleDataIntoDatabase(sectionNames);
+            });
+        } else {
+            loadNavigationBarItemsFromDataBase();
+        }
+
 
 //        // Current content survive while configuration change happens
 //        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
@@ -209,11 +226,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
         mRecyclerView.setAdapter(mSectionAdapter);
     }
-//
-//    private void loadNavigationBarItemsFromDataBase() {
-//        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
-//    }
-//
+
+    private void loadNavigationBarItemsFromDataBase() {
+        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
+    }
+
+    //
 //    // Use External Library Retrofit to GET ViaplaySection object list.
 //    // Reference: https://github.com/square/retrofit
 //    private void sendNetworkRequestGet() {
@@ -273,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
         ArrayList<String> sectionTitlesString = new ArrayList<>();
         for (int i = 0; i < viaplaySections.size(); i++) {
-            if (!sectionTitlesString.contains(viaplaySections.get(i).getTitle())){
+            if (!sectionTitlesString.contains(viaplaySections.get(i).getTitle())) {
                 sectionTitlesString.add(viaplaySections.get(i).getTitle());
             }
         }
@@ -386,46 +404,46 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        }
 //    }
 //
-//    private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
-//        cleanSectionTableFromDatabase();
-//        int count = viaplaySections.size();
-//        Vector<ContentValues> cVVector = new Vector<>(count);
-//
-//        for (int i = 0; i < count; i++) {
-//            ContentValues values = new ContentValues();
-//            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-//            // Temporarily store section title's information to detail title column because they couldn't be null
-//            // Temporarily store section href url to description column because they couldn't be null
-//            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-//            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
-//            cVVector.add(values);
-//        }
-//
-//        if (cVVector.size() > 0) {
-//            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-//            cVVector.toArray(cvArray);
-//            int bulkInsertRows = getContentResolver().bulkInsert(
-//                    SectionEntry.CONTENT_URI,
-//                    cvArray);
-//
-//            if (bulkInsertRows == cVVector.size()) {
-//                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
-//            } else {
-//                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
-//                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
-//            }
-//        }
-//    }
-//
-//    private void cleanSectionTableFromDatabase() {
-//        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
-//        if (rowsDeleted != -1) {
-//            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
-//        } else {
-//            Log.e(LOG_TAG, "delete section table in database failed.");
-//        }
-//    }
-//
+    private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
+        cleanSectionTableFromDatabase();
+        int count = viaplaySections.size();
+        Vector<ContentValues> cVVector = new Vector<>(count);
+
+        for (int i = 0; i < count; i++) {
+            ContentValues values = new ContentValues();
+            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
+            // Temporarily store section title's information to detail title column because they couldn't be null
+            // Temporarily store section href url to description column because they couldn't be null
+            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
+            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
+            cVVector.add(values);
+        }
+
+        if (cVVector.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int bulkInsertRows = getContentResolver().bulkInsert(
+                    SectionEntry.CONTENT_URI,
+                    cvArray);
+
+            if (bulkInsertRows == cVVector.size()) {
+                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
+            } else {
+                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
+                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
+            }
+        }
+    }
+
+    private void cleanSectionTableFromDatabase() {
+        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
+        if (rowsDeleted != -1) {
+            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
+        } else {
+            Log.e(LOG_TAG, "delete section table in database failed.");
+        }
+    }
+
     @Override
     public void onClick(String sectionTitle) {
         showContentView();
@@ -434,47 +452,47 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mCurrentTitle = sectionTitle;
         // loadContentFromDatabase(sectionTitle);
     }
-//
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-//
-//        return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
-//                null, null);
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-//        if (cursor != null && cursor.getCount() > 0) {
-//
-//            ArrayList<String> sectionTitlesString = new ArrayList<>();
-//
-//            for (int i = 0; i < cursor.getCount(); i++) {
-//                cursor.moveToPosition(i);
-//                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-//
-//                if (!sectionTitlesString.contains(currentTitle)) {
-//                    sectionTitlesString.add(currentTitle);
-//                }
-//                Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
-//            }
-//
-//            showContentView();
-//            mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
-//        } else {
-//            showEmptyView();
-//        }
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//        mSectionAdapter.setUpTitleStringArray(null);
-//    }
-//
-//    private void showEmptyView() {
-//        mSwipeRefreshLayout.setRefreshing(false);
-//        mContentView.setVisibility(View.INVISIBLE);
-//        mEmptyView.setVisibility(View.VISIBLE);
-//    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+        return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
+                null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null && cursor.getCount() > 0) {
+
+            ArrayList<String> sectionTitlesString = new ArrayList<>();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+
+                if (!sectionTitlesString.contains(currentTitle)) {
+                    sectionTitlesString.add(currentTitle);
+                }
+                Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
+            }
+
+            showContentView();
+            mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
+        } else {
+            showEmptyView();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSectionAdapter.setUpTitleStringArray(null);
+    }
+
+    private void showEmptyView() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        mContentView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.VISIBLE);
+    }
 
     private void showContentView() {
         mSwipeRefreshLayout.setRefreshing(false);
@@ -482,12 +500,12 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mEmptyView.setVisibility(View.INVISIBLE);
     }
 
-//    private boolean hasInternet() {
-//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        if (connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected()) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
+    private boolean hasInternet() {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
