@@ -2,6 +2,8 @@ package se.sugarest.jane.viaplaysections.data.type;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.os.FileObserver;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -33,8 +35,28 @@ public class ViaplaySectionNameViewModel extends ViewModel {
 
     public class SectionNamesLiveData extends LiveData<List<String>> {
 
+        private final FileObserver fileObserver;
+
         public SectionNamesLiveData() {
+            String path = VIAPLAY_BASE_URL;
+            fileObserver = new FileObserver(path) {
+                @Override
+                public void onEvent(int i, @Nullable String s) {
+                    // The path, the basic url for Viaplay API has changed, so let's reload the data
+                    loadData();
+                }
+            };
             loadData();
+        }
+
+        @Override
+        protected void onActive() {
+            fileObserver.startWatching();
+        }
+
+        @Override
+        protected void onInactive() {
+            fileObserver.stopWatching();
         }
 
         private void loadData() {
