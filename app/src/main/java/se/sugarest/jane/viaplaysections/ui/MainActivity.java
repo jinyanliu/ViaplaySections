@@ -19,10 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
+import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
 /**
@@ -30,7 +32,7 @@ import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
  * It initiates the app.
  */
 public class MainActivity extends AppCompatActivity implements SectionAdapter.SectionAdapterOnClickHandler {
-        //, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+    //, android.app.LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Bundle backgroundState;
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
         mViewModel.getSectionNames().observe(this, sectionNames -> {
             // Update Navigation Bar items
-            mSectionAdapter.setUpTitleStringArray((ArrayList<String>) sectionNames);
+            loadNavigationBarItemsFromInternet(sectionNames);
         });
 
 //        // Current content survive while configuration change happens
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         getIdlingResource();
     }
 
-//    @Override
+    //    @Override
 //    protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
 //        String currentTitle = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
@@ -268,19 +270,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        });
 //    }
 //
-//    private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
-//        ArrayList<String> sectionTitlesString = new ArrayList<>();
-//        for (int i = 0; i < viaplaySections.size(); i++) {
-//            String currentTitle = viaplaySections.get(i).getTitle();
-//            if (!sectionTitlesString.contains(currentTitle)) {
-//                sectionTitlesString.add(currentTitle);
-//            }
-//            Log.i(LOG_TAG, "There are " + sectionTitlesString.size() + " different section titles available.");
-//        }
-//        showContentView();
-//        mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
-//    }
-//
+    private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
+        ArrayList<String> sectionTitlesString = new ArrayList<>();
+        for (int i = 0; i < viaplaySections.size(); i++) {
+            if (!sectionTitlesString.contains(viaplaySections.get(i).getTitle())){
+                sectionTitlesString.add(viaplaySections.get(i).getTitle());
+            }
+        }
+        showContentView();
+        mSectionAdapter.setUpTitleStringArray(sectionTitlesString);
+    }
+
+
+    //
 //    private void loadFirstContentStateFromDatabase() {
 //        Cursor cursor = getContentResolver().query(SectionEntry.CONTENT_URI, null,
 //                null, null, null);

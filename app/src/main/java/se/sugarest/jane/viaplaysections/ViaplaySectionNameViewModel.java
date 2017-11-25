@@ -6,7 +6,6 @@ import android.os.FileObserver;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -31,11 +30,11 @@ public class ViaplaySectionNameViewModel extends ViewModel {
 
     private final SectionNamesLiveData sectionNamesLiveData = new SectionNamesLiveData();
 
-    public LiveData<List<String>> getSectionNames() {
+    public LiveData<List<ViaplaySection>> getSectionNames() {
         return sectionNamesLiveData;
     }
 
-    public class SectionNamesLiveData extends LiveData<List<String>> {
+    public class SectionNamesLiveData extends LiveData<List<ViaplaySection>> {
 
         private final FileObserver fileObserver;
 
@@ -81,15 +80,7 @@ public class ViaplaySectionNameViewModel extends ViewModel {
 
                     if (viaplaySections != null && !viaplaySections.isEmpty()) {
 
-                        List<String> sectionNamesStringList = new ArrayList<>();
-                        for (int i = 0; i < viaplaySections.size(); i++) {
-                            String currentTitle = viaplaySections.get(i).getTitle();
-                            if (!sectionNamesStringList.contains(currentTitle)) {
-                                sectionNamesStringList.add(currentTitle);
-                            }
-                        }
-
-                        setValue(sectionNamesStringList);
+                        setValue(viaplaySections);
 
                     } else {
                         Log.e(LOG_TAG, "There is no sectionNames comes back from internet with this url: "
