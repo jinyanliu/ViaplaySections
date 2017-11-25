@@ -1,7 +1,6 @@
 package se.sugarest.jane.viaplaysections.data.type;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
@@ -26,56 +25,60 @@ public class ViaplaySectionNameViewModel extends ViewModel {
 
     private static final String LOG_TAG = ViaplaySectionNameViewModel.class.getSimpleName();
 
-    private MutableLiveData<List<String>> sectionNames;
+    private final SectionNamesLiveData sectionNamesLiveData = new SectionNamesLiveData();
 
     public LiveData<List<String>> getSectionNames() {
-        if (sectionNames == null) {
-            sectionNames = new MutableLiveData<>();
-            loadData();
-        }
-        return sectionNames;
+        return sectionNamesLiveData;
     }
 
-    private void loadData() {
+    public class SectionNamesLiveData extends LiveData<List<String>> {
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        public SectionNamesLiveData() {
+            loadData();
+        }
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(VIAPLAY_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create());
+        private void loadData() {
 
-        Retrofit retrofit = builder.client(httpClient.build()).build();
-        ViaplayClient client = retrofit.create(ViaplayClient.class);
-        Call<JSONResponse> call = client.getSections();
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-        call.enqueue(new Callback<JSONResponse>() {
-            @Override
-            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl(VIAPLAY_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
 
-                List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
+            Retrofit retrofit = builder.client(httpClient.build()).build();
+            ViaplayClient client = retrofit.create(ViaplayClient.class);
+            Call<JSONResponse> call = client.getSections();
 
-                if (viaplaySections != null && !viaplaySections.isEmpty()) {
+            call.enqueue(new Callback<JSONResponse>() {
+                @Override
+                public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
 
-                    List<String> sectionNamesStringList = new ArrayList<>();
-                    for (int i = 0; i < viaplaySections.size(); i++) {
-                        String currentTitle = viaplaySections.get(i).getTitle();
-                        if (!sectionNamesStringList.contains(currentTitle)) {
-                            sectionNamesStringList.add(currentTitle);
+                    List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
+
+                    if (viaplaySections != null && !viaplaySections.isEmpty()) {
+
+                        List<String> sectionNamesStringList = new ArrayList<>();
+                        for (int i = 0; i < viaplaySections.size(); i++) {
+                            String currentTitle = viaplaySections.get(i).getTitle();
+                            if (!sectionNamesStringList.contains(currentTitle)) {
+                                sectionNamesStringList.add(currentTitle);
+                            }
                         }
+
+                        setValue(sectionNamesStringList);
+
+                    } else {
+                        Log.e(LOG_TAG, "There is no sectionNames comes back from internet with this url: "
+                                + response.raw().request().url().toString());
                     }
-
-                    sectionNames.setValue(sectionNamesStringList);
-
-                } else {
-                    Log.e(LOG_TAG, "There is no sectionNames comes back from internet with this url: "
-                            + response.raw().request().url().toString());
                 }
-            }
 
-            @Override
-            public void onFailure(Call<JSONResponse> call, Throwable t) {
-                Log.e(LOG_TAG, "Failed to get sectionNames list back.", t);
-            }
-        });
+                @Override
+                public void onFailure(Call<JSONResponse> call, Throwable t) {
+                    Log.e(LOG_TAG, "Failed to get sectionNames list back.", t);
+                }
+            });
+        }
+
     }
 }
