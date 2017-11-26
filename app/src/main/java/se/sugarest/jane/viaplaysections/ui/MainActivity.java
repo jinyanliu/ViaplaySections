@@ -39,6 +39,7 @@ import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
+import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
 /**
@@ -141,20 +142,20 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 }
         );
 
-        if (hasInternet()) {
-            initialScreenWithInternet();
-        } else {
+
+
+        // Current content survive while rotates the phone
+        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
+            mClickedSectionName = savedInstanceState.getString(CONFIGURATION_KEY);
+            mTextViewTitleOnTheAppBar.setText(mClickedSectionName);
             loadEverythingFromDataBase();
+        } else {
+            if (hasInternet()) {
+                initialScreenWithInternet();
+            } else {
+                loadEverythingFromDataBase();
+            }
         }
-
-
-//        // Current content survive while configuration change happens
-//        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
-//            mCurrentTitleLowerCase = savedInstanceState.getString(CONFIGURATION_KEY);
-//            setPageContent(mCurrentTitleLowerCase);
-//        } else {
-//            refreshScreen();
-//        }
 
         // Get the IdlingResource instance
         getIdlingResource();
@@ -181,14 +182,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         });
     }
 
-    //    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        String currentTitle = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
-//        if (currentTitle != null && !currentTitle.isEmpty()) {
-//            outState.putString(CONFIGURATION_KEY, currentTitle);
-//        }
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String currentTitle = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
+        if (!currentTitle.isEmpty()) {
+            outState.putString(CONFIGURATION_KEY, currentTitle);
+        }
+    }
 //
 //    @Override
 //    protected void onResume() {
