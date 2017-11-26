@@ -1,11 +1,9 @@
 package se.sugarest.jane.viaplaysections;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
-import java.util.concurrent.Executor;
-
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import retrofit2.Call;
@@ -28,57 +26,41 @@ public class SectionProfileRepository {
     private static final String LOG_TAG = SectionProfileRepository.class.getSimpleName();
 
     private ViaplayClient client;
-    private SectionProfileDao sectionProfileDao;
-    private Executor executor;
-
-    @Inject
-    public SectionProfileRepository(ViaplayClient client, SectionProfileDao sectionProfileDao, Executor executor) {
-        this.client = client;
-        this.sectionProfileDao = sectionProfileDao;
-        this.executor = executor;
-    }
-
 
     public LiveData<SingleJSONResponse> getSingleJSONResponse(String sectionName) {
 
-        refreshSectionProfile(sectionName);
-        // return a LiveData directly from the database.
-        return sectionProfileDao.load(sectionName);
-    }
+        final MutableLiveData<SingleJSONResponse> data = new MutableLiveData<>();
 
-    private void refreshSectionProfile(String sectionName) {
-        executor.execute(() -> {
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(VIAPLAY_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create());
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(VIAPLAY_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
 
-            Retrofit retrofit = builder.build();
-            client = retrofit.create(ViaplayClient.class);
-            Call<SingleJSONResponse> call = client.getOneSectionByTitle(sectionName);
+        Retrofit retrofit = builder.build();
+        client = retrofit.create(ViaplayClient.class);
+        Call<SingleJSONResponse> call = client.getOneSectionByTitle(sectionName);
 
-            call.enqueue(new Callback<SingleJSONResponse>()
+        call.enqueue(new Callback<SingleJSONResponse>() {
+            @Override
+            public void onResponse
+                    (Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
 
-            {
-                @Override
-                public void onResponse
-                        (Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
+                if (null != response) {
 
-                    if (null != response) {
+                    data.setValue(response.body());
 
-                        sectionProfileDao.save(response.body());
-                        Log.i(LOG_TAG, "sectionProfileDao is saving " + sectionName + "\'s information.");
+                    Log.i(LOG_TAG, "sectionProfileDao is saving " + sectionName + "\'s information.");
 
-                    } else {
-                        Log.e(LOG_TAG, "There is no SingleJSONResponse comes back from internet with this url: "
-                                + response.raw().request().url().toString());
-                    }
+                } else {
+                    Log.e(LOG_TAG, "There is no SingleJSONResponse comes back from internet with this url: "
+                            + response.raw().request().url().toString());
                 }
+            }
 
-                @Override
-                public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
-                    Log.e(LOG_TAG, "Failed to get SingleJSONResponse back.", t);
-                }
-            });
+            @Override
+            public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
+                Log.e(LOG_TAG, "Failed to get SingleJSONResponse back.", t);
+            }
         });
+        return data;
     }
 }

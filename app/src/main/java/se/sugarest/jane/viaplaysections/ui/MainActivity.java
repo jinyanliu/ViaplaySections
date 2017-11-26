@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
     private String mCurrentTitleLowerCase;
-    private String mFirstTitle;
+    private String mFirstSectionName;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ViaplaySectionNameViewModel mSectionNameViewModel;
@@ -140,19 +140,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 // Update Navigation Bar items
                 loadNavigationBarItemsFromInternet(sectionNames);
                 putSectionTitleDataIntoDatabase();
+                getSectionsInformationFromInternet();
             });
         } else {
             loadNavigationBarItemsFromDataBase();
         }
-
-
-        mSectionInformationViewModel = ViewModelProviders.of(this)
-                .get(ViaplaySectionInformationViewModel.class);
-        mSectionInformationViewModel.init("film");
-        mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
-            populateContentViews(singleJSONResponse.getTitle(), singleJSONResponse.getDescription());
-        });
-
 
 
 //        // Current content survive while configuration change happens
@@ -245,63 +237,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
     }
 
-    //
-//    // Use External Library Retrofit to GET ViaplaySection object list.
-//    // Reference: https://github.com/square/retrofit
-//    private void sendNetworkRequestGet() {
-//        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-//
-//        Retrofit.Builder builder = new Retrofit.Builder()
-//                .baseUrl(VIAPLAY_BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create());
-//
-//        Retrofit retrofit = builder.client(httpClient.build()).build();
-//        ViaplayClient client = retrofit.create(ViaplayClient.class);
-//        Call<JSONResponse> call = client.getSections();
-//
-//        call.enqueue(new Callback<JSONResponse>() {
-//            @Override
-//            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
-//
-//                Log.i(LOG_TAG, "GET response success: Complete url to request is: "
-//                        + response.raw().request().url().toString()
-//                        + "\nresponse.body().toString == " + response.body().toString());
-//
-//                List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
-//
-//                if (viaplaySections != null && !viaplaySections.isEmpty()) {
-//
-//                    Log.i(LOG_TAG, "The list of ViaplaySections are: " + viaplaySections.toString());
-//
-//                    putSectionTitleDataIntoDatabase(viaplaySections);
-//
-//                    loadNavigationBarItemsFromInternet(viaplaySections);
-//
-//                    mFirstTitle = viaplaySections.get(0).getTitle();
-//                    showContentView();
-//                    mTextViewTitleOnTheAppBar.setText(mFirstTitle);
-//                    mCurrentTitleLowerCase = mFirstTitle;
-//
-//                    for (int i = 0; i < viaplaySections.size(); i++) {
-//                        sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
-//                        Log.i(LOG_TAG, "Send network request to get one section's long title and description: "
-//                                + viaplaySections.get(i).getTitle());
-//                    }
-//                } else {
-//                    loadNavigationBarItemsFromDataBase();
-//                    loadFirstContentStateFromDatabase();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<JSONResponse> call, Throwable t) {
-//                Log.e(LOG_TAG, "Failed to get titles list back.", t);
-//                loadNavigationBarItemsFromDataBase();
-//                loadFirstContentStateFromDatabase();
-//            }
-//        });
-//    }
-//
     private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
         for (int i = 0; i < viaplaySections.size(); i++) {
             if (!mSectionTitlesString.contains(viaplaySections.get(i).getTitle())) {
@@ -350,51 +285,47 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             Log.e(LOG_TAG, "delete section table in database failed.");
         }
     }
-//
-//    private void getSectionsInformationFromInternet() {
-//        for (int i = 0; i < mSectionTitlesString.size(); i++) {
-//            mCurrentTitleLowerCase = mSectionTitlesString.get(i).toLowerCase();
-//            mSectionInformationViewModel = ViewModelProviders.of(this).get(ViaplaySectionInformationViewModel.class);
-//            mSectionInformationViewModel.getSingleJSONResponse().observe(this, singleJSONResponse -> {
-//                putSectionInformationIntoDatabase(singleJSONResponse);
-//            });
-//        }
-//    }
-//
-//    private void getFirstSectionInformationFromInternet(){
-//        mCurrentTitleLowerCase = mSectionTitlesString.get(0).toLowerCase();
-//        mSectionInformationViewModel = ViewModelProviders.of(this).get(ViaplaySectionInformationViewModel.class);
-//        mSectionInformationViewModel.init(mCurrentTitleLowerCase);
-//        mSectionInformationViewModel.getSingleJSONResponse().observe(this, singleJSONResponse -> {
-//           populateContentViews(singleJSONResponse.getTitle(),singleJSONResponse.getDescription());
-//        });
-//    }
 
-    private void putSectionInformationIntoDatabase(SingleJSONResponse singleJSONResponse) {
+    private void getSectionsInformationFromInternet() {
+        mFirstSectionName = mSectionTitlesString.get(0).toLowerCase();
+        for (int i = 0; i < mSectionTitlesString.size(); i++) {
+            String sectionName = mSectionTitlesString.get(i).toLowerCase();
+            mSectionInformationViewModel = ViewModelProviders.of(this)
+                    .get(ViaplaySectionInformationViewModel.class);
+            mSectionInformationViewModel.init(sectionName);
+            mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
+                putSectionInformationIntoDatabase(sectionName, singleJSONResponse);
+            });
+        }
+    }
+
+
+    private void putSectionInformationIntoDatabase(String sectionName, SingleJSONResponse singleJSONResponse) {
         String currentLongTitle = singleJSONResponse.getTitle();
         String currentDescription = singleJSONResponse.getDescription();
 
         if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
                 && !currentDescription.isEmpty()) {
-//
-//                    // Set up the first state of the app
-//                    if (currentTitle.equalsIgnoreCase(mFirstTitle)) {
-//                        populateContentViews(currentLongTitle, currentDescription);
-//                    }
+
+            // Set up the first state of the app
+            if (sectionName.equalsIgnoreCase(mFirstSectionName)) {
+                populateContentViews(currentLongTitle, currentDescription);
+                mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
+            }
 
             // Update database with complete information for one specific ViaplaySection
             ContentValues values = new ContentValues();
             values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
             values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
             String selection = SectionEntry.COLUMN_SECTION_TITLE;
-            String[] selectionArgs = {mCurrentTitleLowerCase};
+            String[] selectionArgs = {sectionName};
 
             int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values,
                     selection, selectionArgs);
 
             if (rowsUpdated > 0) {
                 Log.i(LOG_TAG, "DB Update long title and description information for "
-                        + mCurrentTitleLowerCase + " section is successful.");
+                        + sectionName + " section is successful.");
             }
         }
     }
@@ -412,65 +343,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //            showEmptyView();
 //        }
 //    }
-//
-//    // Use External Library Retrofit to GET one specific ViaplaySection's detail title and description.
-//    // Reference: https://github.com/square/retrofit
-//    private void sendNetworkRequestGetOneSection(final String currentTitle) {
-//
-//        Retrofit.Builder builder = new Retrofit.Builder()
-//                .baseUrl(VIAPLAY_BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create());
-//
-//        Retrofit retrofit = builder.build();
-//        ViaplayClient client = retrofit.create(ViaplayClient.class);
-//        Call<SingleJSONResponse> call = client.getOneSectionByTitle(currentTitle);
-//
-//        call.enqueue(new Callback<SingleJSONResponse>() {
-//            @Override
-//            public void onResponse(Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
-//
-//                Log.i(LOG_TAG, "GET ONE response success: Complete url to request is: "
-//                        + response.raw().request().url().toString()
-//                        + "\nresponse.code() == " + response.code());
-//
-//                String currentLongTitle = response.body().getTitle();
-//                String currentDescription = response.body().getDescription();
-//
-//                if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
-//                        && !currentDescription.isEmpty()) {
-//
-//                    // Set up the first state of the app
-//                    if (currentTitle.equalsIgnoreCase(mFirstTitle)) {
-//                        populateContentViews(currentLongTitle, currentDescription);
-//                    }
-//
-//                    // Update database with complete information for one specific ViaplaySection
-//                    ContentValues values = new ContentValues();
-//                    values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
-//                    values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
-//                    String selection = SectionEntry.COLUMN_SECTION_TITLE;
-//                    String[] selectionArgs = {currentTitle};
-//
-//                    int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values,
-//                            selection, selectionArgs);
-//
-//                    if (rowsUpdated > 0) {
-//                        Log.i(LOG_TAG, "DB Update long title and description information for "
-//                                + currentTitle + " section is successful.");
-//                    }
-//                } else {
-//                    loadContentFromDatabase(currentTitle);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
-//                Log.e(LOG_TAG, "Failed to get section data back with title: " + currentTitle, t);
-//                loadContentFromDatabase(currentTitle);
-//            }
-//        });
-//    }
-//
+
+
+    //
 //    private void loadContentFromDatabase(String currentTitle) {
 //        String selection = SectionEntry.COLUMN_SECTION_TITLE + " =?";
 //        String[] selectionArgs = {currentTitle.toLowerCase()};
@@ -524,6 +399,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
 
+            cursor.moveToFirst();
+            mFirstSectionName = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+            String firstSectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
+            String firstSectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
+
+            mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
+            populateContentViews(firstSectionTitle, firstSectionDescription);
+
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
@@ -536,6 +419,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
             showContentView();
             mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
+
+
         } else {
             showEmptyView();
         }

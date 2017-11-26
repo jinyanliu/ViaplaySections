@@ -3,8 +3,6 @@ package se.sugarest.jane.viaplaysections;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import javax.inject.Inject;
-
 import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 
 /**
@@ -13,12 +11,7 @@ import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 public class ViaplaySectionInformationViewModel extends ViewModel {
 
     private LiveData<SingleJSONResponse> singleJSONResponseLiveData;
-    private SectionProfileRepository sectionProfileRepository;
-
-    @Inject
-    public ViaplaySectionInformationViewModel(SectionProfileRepository sectionProfileRepository) {
-        this.sectionProfileRepository = sectionProfileRepository;
-    }
+    private SectionProfileRepository sectionProfileRepository = new SectionProfileRepository();
 
     public void init(String sectionName) {
         if (this.singleJSONResponseLiveData != null) {
