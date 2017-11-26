@@ -3,7 +3,7 @@
 
     <!-- The fake title for one section provided for design reason.
    Used in drawer_list_item.xml and app_bar.xml -->
-    <string name="section_title" translatable="true">SERIER</string>
+    <string name="section_title" translatable="false">SERIER</string>
 
     <!-- The label of section detail title in the main screen.
     Used in activity_main.xml -->
@@ -27,6 +27,11 @@
     Used in activity_main.xml -->
     <string name="text_message_empty_view" translatable="true">Please enable internet and swipe to refresh!</string>
 
-    <!-- The toast message to indicate the user that data is loading when the user starts the app at the first time. -->
-    <string name="toast_message_data_is_loading">Data is loading...</string>
+    <!-- The toast message to indicate the user that data is loading when the user starts the app at the first time.
+    Used in MainActivity.java -->
+    <string name="toast_message_data_is_loading" translatable="true">Data is loading...</string>
+
+    <!-- The toast message to indicate the user that he wants to refresh page while offline.
+    Used in MainActivity.java -->
+    <string name="toast_message_offline_cannot_refresh" translatable="true">Cannot refresh page without internet !</string>
 </resources>

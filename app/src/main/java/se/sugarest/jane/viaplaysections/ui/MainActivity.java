@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -117,31 +118,31 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             }
         });
 
-//        // Set up swipe refresh function
-//        mSwipeRefreshLayout.setOnRefreshListener(
-//                new SwipeRefreshLayout.OnRefreshListener() {
-//                    @Override
-//                    public void onRefresh() {
-//                        if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString() == null ||
-//                                mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
-//                            refreshScreen();
-//                        } else {
-//                            mSwipeRefreshLayout.setRefreshing(false);
-//                        }
-//                    }
-//                }
-//        );
+        // Set up swipe refresh function
+        mSwipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    if (!hasInternet()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString() == null ||
+                                mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
+                            initialScreenWithInternet();
+                        } else {
+                            mClickedSectionName = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
+                            refreshOneScreenWithInternet();
+                        }
+                    }
+                }
+        );
 
         if (hasInternet()) {
-            // Create a ViewModel the first time the system calls an activity's onCreate() method.
-            // Re-created activities receive the same MyViewModel instance created by the first activity.
-            mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
-            mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
-                // Update Navigation Bar items
-                loadNavigationBarItemsFromInternet(sectionNames);
-                putSectionTitleDataIntoDatabase();
-                getSectionsInformationFromInternet();
-            });
+            initialScreenWithInternet();
         } else {
             loadEverythingFromDataBase();
         }
@@ -157,6 +158,27 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
         // Get the IdlingResource instance
         getIdlingResource();
+    }
+
+    private void initialScreenWithInternet() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+        mToast.show();
+        // Create a ViewModel the first time the system calls an activity's onCreate() method.
+        // Re-created activities receive the same MyViewModel instance created by the first activity.
+        mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
+        mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
+            // Update Navigation Bar items
+            loadNavigationBarItemsFromInternet(sectionNames);
+            putSectionTitleDataIntoDatabase();
+            getSectionsInformationFromInternet();
+        });
     }
 
     //    @Override
@@ -200,28 +222,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitleLowerCase.toLowerCase());
 //        }
 //    }
-//
-//    private void refreshScreen() {
-//        if (!hasInternet()) {
-//            loadEverythingFromDataBase();
-//            loadFirstContentStateFromDatabase();
-//        } else {
-//
-//            if (mIdlingResource != null) {
-//                mIdlingResource.setIdleState(false);
-//            }
-//
-//            showContentView();
-//            sendNetworkRequestGet();
-//            if (mToast != null) {
-//                mToast.cancel();
-//            }
-//            mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
-//            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-//            mToast.show();
-//        }
-//    }
-//
+
     private void setUpRecyclerViewWithAdapter() {
         mRecyclerView = findViewById(R.id.left_drawer);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -349,21 +350,36 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     @Override
     public void onClick(String sectionTitle) {
+
         showContentView();
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
         mClickedSectionName = sectionTitle.toLowerCase();
 
         if (hasInternet()) {
-            mSectionInformationViewModel = ViewModelProviders.of(this)
-                    .get(ViaplaySectionInformationViewModel.class);
-            mSectionInformationViewModel.init(mClickedSectionName);
-            mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
-                putSectionInformationIntoDatabase(mClickedSectionName, singleJSONResponse);
-            });
+            refreshOneScreenWithInternet();
         } else {
             loadEverythingFromDataBase();
         }
+    }
+
+    private void refreshOneScreenWithInternet() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+        mToast.show();
+
+        mSectionInformationViewModel = ViewModelProviders.of(this)
+                .get(ViaplaySectionInformationViewModel.class);
+        mSectionInformationViewModel.init(mClickedSectionName);
+        mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
+            putSectionInformationIntoDatabase(mClickedSectionName, singleJSONResponse);
+        });
     }
 
     @Override
