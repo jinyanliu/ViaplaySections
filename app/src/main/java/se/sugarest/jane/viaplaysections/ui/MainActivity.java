@@ -34,6 +34,7 @@ import se.sugarest.jane.viaplaysections.ViaplaySectionInformationViewModel;
 import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
+import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private LinearLayout mContentView;
     private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
-    private String mCurrentTitle;
+    private String mCurrentTitleLowerCase;
     private String mFirstTitle;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -138,19 +139,26 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
                 // Update Navigation Bar items
                 loadNavigationBarItemsFromInternet(sectionNames);
-                putSectionTitleDataIntoDatabase(sectionNames);
-
-
+                putSectionTitleDataIntoDatabase();
             });
         } else {
             loadNavigationBarItemsFromDataBase();
         }
 
 
+        mSectionInformationViewModel = ViewModelProviders.of(this)
+                .get(ViaplaySectionInformationViewModel.class);
+        mSectionInformationViewModel.init("film");
+        mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
+            populateContentViews(singleJSONResponse.getTitle(), singleJSONResponse.getDescription());
+        });
+
+
+
 //        // Current content survive while configuration change happens
 //        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
-//            mCurrentTitle = savedInstanceState.getString(CONFIGURATION_KEY);
-//            setPageContent(mCurrentTitle);
+//            mCurrentTitleLowerCase = savedInstanceState.getString(CONFIGURATION_KEY);
+//            setPageContent(mCurrentTitleLowerCase);
 //        } else {
 //            refreshScreen();
 //        }
@@ -174,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        if (backgroundState != null
 //                && backgroundState.getString(FORE_BACK_STATE_KEY) != null
 //                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
-//            mCurrentTitle = backgroundState.getString(FORE_BACK_STATE_KEY);
-//            setPageContent(mCurrentTitle);
+//            mCurrentTitleLowerCase = backgroundState.getString(FORE_BACK_STATE_KEY);
+//            setPageContent(mCurrentTitleLowerCase);
 //        } else {
 //            String currentStringInTitleContentView = mTextViewTitle.getText().toString();
 //            if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
@@ -185,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //    }
 //
 //    private void setPageContent(String currentTitle) {
-//        mCurrentTitle = currentTitle.toLowerCase();
-//        mTextViewTitleOnTheAppBar.setText(mCurrentTitle);
+//        mCurrentTitleLowerCase = currentTitle.toLowerCase();
+//        mTextViewTitleOnTheAppBar.setText(mCurrentTitleLowerCase);
 //        loadNavigationBarItemsFromDataBase();
-//        loadContentFromDatabase(mCurrentTitle);
+//        loadContentFromDatabase(mCurrentTitleLowerCase);
 //    }
 //
 //    @Override
@@ -196,8 +204,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        super.onPause();
 //        if (mTextViewTitleOnTheAppBar.getText() != null && mTextViewTitleOnTheAppBar.getText().toString() != null) {
 //            backgroundState = new Bundle();
-//            mCurrentTitle = mTextViewTitleOnTheAppBar.getText().toString();
-//            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitle.toLowerCase());
+//            mCurrentTitleLowerCase = mTextViewTitleOnTheAppBar.getText().toString();
+//            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitleLowerCase.toLowerCase());
 //        }
 //    }
 //
@@ -272,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //                    mFirstTitle = viaplaySections.get(0).getTitle();
 //                    showContentView();
 //                    mTextViewTitleOnTheAppBar.setText(mFirstTitle);
-//                    mCurrentTitle = mFirstTitle;
+//                    mCurrentTitleLowerCase = mFirstTitle;
 //
 //                    for (int i = 0; i < viaplaySections.size(); i++) {
 //                        sendNetworkRequestGetOneSection(viaplaySections.get(i).getTitle().toLowerCase());
@@ -304,6 +312,92 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
     }
 
+    private void putSectionTitleDataIntoDatabase() {
+        cleanSectionTableFromDatabase();
+        int count = mSectionTitlesString.size();
+        Vector<ContentValues> cVVector = new Vector<>(count);
+
+        for (int i = 0; i < count; i++) {
+            ContentValues values = new ContentValues();
+            // Temporarily store section title's information to every column because they couldn't be null
+            values.put(SectionEntry.COLUMN_SECTION_TITLE, mSectionTitlesString.get(i).toLowerCase());
+            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, mSectionTitlesString.get(i));
+            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, mSectionTitlesString.get(i));
+            cVVector.add(values);
+        }
+
+        if (cVVector.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int bulkInsertRows = getContentResolver().bulkInsert(
+                    SectionEntry.CONTENT_URI,
+                    cvArray);
+
+            if (bulkInsertRows == cVVector.size()) {
+                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
+            } else {
+                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
+                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
+            }
+        }
+    }
+
+    private void cleanSectionTableFromDatabase() {
+        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
+        if (rowsDeleted != -1) {
+            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
+        } else {
+            Log.e(LOG_TAG, "delete section table in database failed.");
+        }
+    }
+//
+//    private void getSectionsInformationFromInternet() {
+//        for (int i = 0; i < mSectionTitlesString.size(); i++) {
+//            mCurrentTitleLowerCase = mSectionTitlesString.get(i).toLowerCase();
+//            mSectionInformationViewModel = ViewModelProviders.of(this).get(ViaplaySectionInformationViewModel.class);
+//            mSectionInformationViewModel.getSingleJSONResponse().observe(this, singleJSONResponse -> {
+//                putSectionInformationIntoDatabase(singleJSONResponse);
+//            });
+//        }
+//    }
+//
+//    private void getFirstSectionInformationFromInternet(){
+//        mCurrentTitleLowerCase = mSectionTitlesString.get(0).toLowerCase();
+//        mSectionInformationViewModel = ViewModelProviders.of(this).get(ViaplaySectionInformationViewModel.class);
+//        mSectionInformationViewModel.init(mCurrentTitleLowerCase);
+//        mSectionInformationViewModel.getSingleJSONResponse().observe(this, singleJSONResponse -> {
+//           populateContentViews(singleJSONResponse.getTitle(),singleJSONResponse.getDescription());
+//        });
+//    }
+
+    private void putSectionInformationIntoDatabase(SingleJSONResponse singleJSONResponse) {
+        String currentLongTitle = singleJSONResponse.getTitle();
+        String currentDescription = singleJSONResponse.getDescription();
+
+        if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
+                && !currentDescription.isEmpty()) {
+//
+//                    // Set up the first state of the app
+//                    if (currentTitle.equalsIgnoreCase(mFirstTitle)) {
+//                        populateContentViews(currentLongTitle, currentDescription);
+//                    }
+
+            // Update database with complete information for one specific ViaplaySection
+            ContentValues values = new ContentValues();
+            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
+            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
+            String selection = SectionEntry.COLUMN_SECTION_TITLE;
+            String[] selectionArgs = {mCurrentTitleLowerCase};
+
+            int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values,
+                    selection, selectionArgs);
+
+            if (rowsUpdated > 0) {
+                Log.i(LOG_TAG, "DB Update long title and description information for "
+                        + mCurrentTitleLowerCase + " section is successful.");
+            }
+        }
+    }
 
     //
 //    private void loadFirstContentStateFromDatabase() {
@@ -396,65 +490,26 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        }
 //    }
 //
-//    private void populateContentViews(String currentLongTitle, String currentDescription) {
-//        if (mToast != null) {
-//            mToast.cancel();
-//        }
-//        showContentView();
-//        mTextViewTitle.setText(currentLongTitle);
-//        mTextViewDescription.setText(currentDescription);
-//
-//        if (mIdlingResource != null) {
-//            mIdlingResource.setIdleState(true);
-//        }
-//    }
-//
-    private void putSectionTitleDataIntoDatabase(List<ViaplaySection> viaplaySections) {
-        cleanSectionTableFromDatabase();
-        int count = viaplaySections.size();
-        Vector<ContentValues> cVVector = new Vector<>(count);
-
-        for (int i = 0; i < count; i++) {
-            ContentValues values = new ContentValues();
-            values.put(SectionEntry.COLUMN_SECTION_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-            // Temporarily store section title's information to detail title column because they couldn't be null
-            // Temporarily store section href url to description column because they couldn't be null
-            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, viaplaySections.get(i).getTitle().toLowerCase());
-            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, viaplaySections.get(i).getHref());
-            cVVector.add(values);
+    private void populateContentViews(String currentLongTitle, String currentDescription) {
+        if (mToast != null) {
+            mToast.cancel();
         }
+        showContentView();
+        mTextViewTitle.setText(currentLongTitle);
+        mTextViewDescription.setText(currentDescription);
 
-        if (cVVector.size() > 0) {
-            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-            cVVector.toArray(cvArray);
-            int bulkInsertRows = getContentResolver().bulkInsert(
-                    SectionEntry.CONTENT_URI,
-                    cvArray);
-
-            if (bulkInsertRows == cVVector.size()) {
-                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
-            } else {
-                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
-                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
-            }
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
         }
     }
 
-    private void cleanSectionTableFromDatabase() {
-        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
-        if (rowsDeleted != -1) {
-            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
-        } else {
-            Log.e(LOG_TAG, "delete section table in database failed.");
-        }
-    }
 
     @Override
     public void onClick(String sectionTitle) {
         showContentView();
         mDrawerLayout.closeDrawer(mRecyclerView);
         mTextViewTitleOnTheAppBar.setText(sectionTitle);
-        mCurrentTitle = sectionTitle;
+        mCurrentTitleLowerCase = sectionTitle;
         // loadContentFromDatabase(sectionTitle);
     }
 
