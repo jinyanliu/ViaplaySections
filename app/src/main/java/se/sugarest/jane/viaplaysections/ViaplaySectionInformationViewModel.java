@@ -14,9 +14,9 @@ public class ViaplaySectionInformationViewModel extends ViewModel {
     private SectionProfileRepository sectionProfileRepository = new SectionProfileRepository();
 
     public void init(String sectionName) {
-        if (this.singleJSONResponseLiveData != null) {
-            return;
-        }
+//        if (this.singleJSONResponseLiveData != null) {
+//            return;
+//        }
         singleJSONResponseLiveData = sectionProfileRepository.getSingleJSONResponse(sectionName);
     }
 
