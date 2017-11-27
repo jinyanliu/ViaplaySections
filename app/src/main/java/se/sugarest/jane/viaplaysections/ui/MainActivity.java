@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mToast.setGravity(Gravity.BOTTOM, 0, 0);
         mToast.show();
         // Create a ViewModel the first time the system calls an activity's onCreate() method.
-        // Re-created activities receive the same MyViewModel instance created by the first activity.
+        // Re-created activities receive the same SectionNameViewModel instance created by the first activity.
         mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
         mSectionNameViewModel.init();
         mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
