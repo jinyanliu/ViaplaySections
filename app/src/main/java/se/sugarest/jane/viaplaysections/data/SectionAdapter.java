@@ -79,9 +79,11 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
      * This method is used to set the sections' titles string list data on a SectionAdapter
      */
     public void setUpTitleStringArray(ArrayList<String> newArray) {
-        mSectionTitleString.clear();
-        mSectionTitleString.addAll(newArray);
-        notifyDataSetChanged();
+        if (newArray != null) {
+            mSectionTitleString.clear();
+            mSectionTitleString.addAll(newArray);
+            notifyDataSetChanged();
+        }
     }
 
     /**

@@ -40,6 +40,7 @@ import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
+import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
 /**
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         mToast.setGravity(Gravity.BOTTOM, 0, 0);
                         mToast.show();
                     } else {
-                        if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString() == null ||
+                        if (mTextViewTitleOnTheAppBar.getText() == null ||
                                 mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
                             initialScreenWithInternet();
                         } else {
@@ -189,34 +190,39 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             outState.putString(CONFIGURATION_KEY, currentTitle);
         }
     }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (backgroundState != null
-//                && backgroundState.getString(FORE_BACK_STATE_KEY) != null
-//                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
-//            mCurrentTitleLowerCase = backgroundState.getString(FORE_BACK_STATE_KEY);
-//            setPageContent(mCurrentTitleLowerCase);
-//        } else {
-//            String currentStringInTitleContentView = mTextViewTitle.getText().toString();
-//            if (currentStringInTitleContentView == null || currentStringInTitleContentView.isEmpty()) {
-//                refreshScreen();
-//            }
-//        }
-//    }
-//
 
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (mTextViewTitleOnTheAppBar.getText() != null && mTextViewTitleOnTheAppBar.getText().toString() != null) {
-//            backgroundState = new Bundle();
-//            mCurrentTitleLowerCase = mTextViewTitleOnTheAppBar.getText().toString();
-//            backgroundState.putString(FORE_BACK_STATE_KEY, mCurrentTitleLowerCase.toLowerCase());
-//        }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundState != null
+                && backgroundState.getString(FORE_BACK_STATE_KEY) != null && backgroundState.getString(FORE_BACK_STATE_KEY) != null
+                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
+            mClickedSectionName = backgroundState.getString(FORE_BACK_STATE_KEY);
+            mTextViewTitleOnTheAppBar.setText(mClickedSectionName);
+            if (hasInternet()) {
+                refreshOneScreenWithInternet();
+            } else {
+                loadEverythingFromDataBase();
+            }
+        } else {
+            if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
+                if (hasInternet()) {
+                    initialScreenWithInternet();
+                } else {
+                    loadEverythingFromDataBase();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mTextViewTitleOnTheAppBar.getText() != null) {
+            backgroundState = new Bundle();
+            backgroundState.putString(FORE_BACK_STATE_KEY, mTextViewTitleOnTheAppBar.getText().toString().toLowerCase());
+        }
+    }
 
     private void setUpRecyclerViewWithAdapter() {
         mRecyclerView = findViewById(R.id.left_drawer);
@@ -235,11 +241,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
         for (int i = 0; i < viaplaySections.size(); i++) {
-            if (!mSectionTitlesString.contains(viaplaySections.get(i).getTitle())) {
-                mSectionTitlesString.add(viaplaySections.get(i).getTitle());
+            if (!mSectionTitlesString.contains(viaplaySections.get(i).getTitle().toLowerCase())) {
+                mSectionTitlesString.add(viaplaySections.get(i).getTitle().toLowerCase());
             }
         }
-        showContentView();
         mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
     }
 
@@ -389,15 +394,17 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
         if (cursor != null && cursor.getCount() > 0) {
 
-            // Opens the app, show first section's information.
-            if (mClickedSectionName == null || mClickedSectionName.isEmpty()) {
-                cursor.moveToFirst();
-                mFirstSectionName = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
+            if (!hasInternet()) {
+                // Opens the app, show first section's information.
+                if (mClickedSectionName == null || mClickedSectionName.isEmpty()) {
+                    cursor.moveToFirst();
+                    mFirstSectionName = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
+                    mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
 
-                String firstSectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
-                String firstSectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
-                populateContentViews(firstSectionTitle, firstSectionDescription);
+                    String firstSectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
+                    String firstSectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
+                    populateContentViews(firstSectionTitle, firstSectionDescription);
+                }
             }
 
             for (int i = 0; i < cursor.getCount(); i++) {
@@ -419,11 +426,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     }
                 }
 
-                if (!mSectionTitlesString.contains(currentTitle)) {
-                    mSectionTitlesString.add(currentTitle);
+                if (!mSectionTitlesString.contains(currentTitle.toLowerCase())) {
+                    mSectionTitlesString.add(currentTitle.toLowerCase());
                 }
                 Log.i(LOG_TAG, "There are " + mSectionTitlesString.size() + " different section titles available.");
-                showContentView();
                 mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
             }
 
@@ -434,7 +440,9 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
         mSectionAdapter.setUpTitleStringArray(null);
+
     }
 
     private void showEmptyView() {
