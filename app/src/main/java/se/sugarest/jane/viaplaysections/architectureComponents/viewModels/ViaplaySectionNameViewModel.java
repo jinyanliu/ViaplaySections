@@ -1,11 +1,12 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.architectureComponents.viewModels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
+import se.sugarest.jane.viaplaysections.architectureComponents.repositories.SectionNameRepository;
+import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
 /**
  * A ViewModel Class.

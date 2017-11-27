@@ -1,5 +1,5 @@
 
-package se.sugarest.jane.viaplaysections.data.type;
+package se.sugarest.jane.viaplaysections.data.datatype;
 
 import com.google.gson.annotations.SerializedName;
 

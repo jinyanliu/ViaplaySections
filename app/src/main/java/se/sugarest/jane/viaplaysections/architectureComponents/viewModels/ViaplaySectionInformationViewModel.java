@@ -1,9 +1,10 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.architectureComponents.viewModels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
+import se.sugarest.jane.viaplaysections.architectureComponents.repositories.SectionProfileRepository;
+import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
 /**
  * Created by jane on 17-11-25.
@@ -14,9 +15,6 @@ public class ViaplaySectionInformationViewModel extends ViewModel {
     private SectionProfileRepository sectionProfileRepository = new SectionProfileRepository();
 
     public void init(String sectionName) {
-//        if (this.singleJSONResponseLiveData != null) {
-//            return;
-//        }
         singleJSONResponseLiveData = sectionProfileRepository.getSingleJSONResponse(sectionName);
     }
 

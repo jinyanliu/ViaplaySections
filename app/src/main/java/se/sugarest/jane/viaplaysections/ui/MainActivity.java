@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.ViaplaySectionInformationViewModel;
-import se.sugarest.jane.viaplaysections.ViaplaySectionNameViewModel;
+import se.sugarest.jane.viaplaysections.architectureComponents.viewModels.ViaplaySectionInformationViewModel;
+import se.sugarest.jane.viaplaysections.architectureComponents.viewModels.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
-import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
-import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
+import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;

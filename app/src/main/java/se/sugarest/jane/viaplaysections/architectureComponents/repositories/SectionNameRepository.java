@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.architectureComponents.repositories;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -15,15 +15,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
-import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
-import se.sugarest.jane.viaplaysections.data.type.ViaplaySection;
+import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 
 /**
  * Created by jane on 17-11-27.
  */
-@Singleton
+
+@Singleton // Informs Dagger that this class should be constructed once
 public class SectionNameRepository {
 
     private static final String LOG_TAG = SectionNameRepository.class.getSimpleName();

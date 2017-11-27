@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.architectureComponents.repositories;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -12,7 +12,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
-import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 
