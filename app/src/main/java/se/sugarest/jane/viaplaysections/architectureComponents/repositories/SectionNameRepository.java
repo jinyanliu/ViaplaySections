@@ -23,7 +23,6 @@ import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 /**
  * Created by jane on 17-11-27.
  */
-
 @Singleton // Informs Dagger that this class should be constructed once
 public class SectionNameRepository {
 

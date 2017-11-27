@@ -19,7 +19,6 @@ import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 /**
  * Created by jane on 17-11-26.
  */
-
 @Singleton // Informs Dagger that this class should be constructed once
 public class SectionProfileRepository {
 
@@ -47,8 +46,6 @@ public class SectionProfileRepository {
                 if (null != response) {
 
                     data.setValue(response.body());
-
-                    Log.i(LOG_TAG, "sectionProfileDao is saving " + sectionName + "\'s information.");
 
                 } else {
                     Log.e(LOG_TAG, "There is no SingleJSONResponse comes back from internet with this url: "

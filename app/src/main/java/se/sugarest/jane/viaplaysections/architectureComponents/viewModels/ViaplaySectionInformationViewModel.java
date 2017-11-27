@@ -7,6 +7,8 @@ import se.sugarest.jane.viaplaysections.architectureComponents.repositories.Sect
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
 /**
+ * A SectionInformation ViewModel Class.
+ * <p>
  * Created by jane on 17-11-25.
  */
 public class ViaplaySectionInformationViewModel extends ViewModel {

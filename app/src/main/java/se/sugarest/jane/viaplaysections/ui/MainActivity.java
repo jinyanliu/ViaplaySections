@@ -109,14 +109,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         setUpRecyclerViewWithAdapter();
 
         // Set up left drawer navigation
-        mImageNavigationMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
-                    mDrawerLayout.closeDrawer(mRecyclerView);
-                } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
-                    mDrawerLayout.openDrawer(mRecyclerView);
-                }
+        mImageNavigationMenu.setOnClickListener(view -> {
+            if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
+                mDrawerLayout.closeDrawer(mRecyclerView);
+            } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
+                mDrawerLayout.openDrawer(mRecyclerView);
             }
         });
 
@@ -241,9 +238,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
         for (int i = 0; i < viaplaySections.size(); i++) {
-            if (!mSectionTitlesString.contains(viaplaySections.get(i).getTitle().toLowerCase())) {
-                mSectionTitlesString.add(viaplaySections.get(i).getTitle().toLowerCase());
-            }
+            filterOutDifferentSectionNames(viaplaySections.get(i).getTitle());
         }
         mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
     }
@@ -426,15 +421,18 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                     }
                 }
 
-                if (!mSectionTitlesString.contains(currentTitle.toLowerCase())) {
-                    mSectionTitlesString.add(currentTitle.toLowerCase());
-                }
-                Log.i(LOG_TAG, "There are " + mSectionTitlesString.size() + " different section titles available.");
+                filterOutDifferentSectionNames(currentTitle);
                 mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
             }
 
         } else {
             showEmptyView();
+        }
+    }
+
+    private void filterOutDifferentSectionNames(String sectionName) {
+        if (!mSectionTitlesString.contains(sectionName.toLowerCase())) {
+            mSectionTitlesString.add(sectionName.toLowerCase());
         }
     }
 

@@ -9,7 +9,8 @@ import se.sugarest.jane.viaplaysections.architectureComponents.repositories.Sect
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
 /**
- * A ViewModel Class.
+ * A SectionNames ViewModel Class.
+ * <p>
  * Created by jane on 17-11-25.
  */
 public class ViaplaySectionNameViewModel extends ViewModel {
