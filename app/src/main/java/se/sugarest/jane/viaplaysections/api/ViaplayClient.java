@@ -3,8 +3,8 @@ package se.sugarest.jane.viaplaysections.api;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import se.sugarest.jane.viaplaysections.data.type.JSONResponse;
-import se.sugarest.jane.viaplaysections.data.type.SingleJSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_END_POINT;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_SLASH;
