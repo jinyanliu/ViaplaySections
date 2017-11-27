@@ -142,8 +142,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 }
         );
 
-
-
         // Current content survive while rotates the phone
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
             mClickedSectionName = savedInstanceState.getString(CONFIGURATION_KEY);
@@ -174,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         // Create a ViewModel the first time the system calls an activity's onCreate() method.
         // Re-created activities receive the same MyViewModel instance created by the first activity.
         mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
+        mSectionNameViewModel.init();
         mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
             // Update Navigation Bar items
             loadNavigationBarItemsFromInternet(sectionNames);
@@ -207,12 +206,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 //        }
 //    }
 //
-//    private void setPageContent(String currentTitle) {
-//        mCurrentTitleLowerCase = currentTitle.toLowerCase();
-//        mTextViewTitleOnTheAppBar.setText(mCurrentTitleLowerCase);
-//        loadEverythingFromDataBase();
-//        loadContentFromDatabase(mCurrentTitleLowerCase);
-//    }
+
 //
 //    @Override
 //    protected void onPause() {
@@ -423,16 +417,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                             populateContentViews(sectionTitle, sectionDescription);
                         }
                     }
-                } else {
-                    // Opens the app, show drawer navigation items list
-                    if (!mSectionTitlesString.contains(currentTitle)) {
-                        mSectionTitlesString.add(currentTitle);
-                    }
-                    Log.i(LOG_TAG, "There are " + mSectionTitlesString.size() + " different section titles available.");
-
-                    showContentView();
-                    mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
                 }
+
+                if (!mSectionTitlesString.contains(currentTitle)) {
+                    mSectionTitlesString.add(currentTitle);
+                }
+                Log.i(LOG_TAG, "There are " + mSectionTitlesString.size() + " different section titles available.");
+                showContentView();
+                mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
             }
 
         } else {
