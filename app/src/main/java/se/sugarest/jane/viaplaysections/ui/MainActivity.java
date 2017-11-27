@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.architectureComponents.viewModels.ViaplaySectionInformationViewModel;
-import se.sugarest.jane.viaplaysections.architectureComponents.viewModels.ViaplaySectionNameViewModel;
+import se.sugarest.jane.viaplaysections.architecture_components.viewModels.ViaplaySectionInformationViewModel;
+import se.sugarest.jane.viaplaysections.architecture_components.viewModels.ViaplaySectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
-import se.sugarest.jane.viaplaysections.idlingResource.SimpleIdlingResource;
+import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
@@ -69,7 +69,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private ViaplaySectionNameViewModel mSectionNameViewModel;
     private ViaplaySectionInformationViewModel mSectionInformationViewModel;
 
-    private ArrayList<String> mSectionTitlesString = new ArrayList<>();
+    public ArrayList<String> mSectionTitlesString = new ArrayList<>();
+
+    public ArrayList<String> getmSectionTitlesString() {
+        return mSectionTitlesString;
+    }
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -430,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
     }
 
-    private void filterOutDifferentSectionNames(String sectionName) {
+    public void filterOutDifferentSectionNames(String sectionName) {
         if (!mSectionTitlesString.contains(sectionName.toLowerCase())) {
             mSectionTitlesString.add(sectionName.toLowerCase());
         }

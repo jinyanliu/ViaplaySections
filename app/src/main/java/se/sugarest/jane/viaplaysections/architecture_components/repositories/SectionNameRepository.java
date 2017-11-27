@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.architectureComponents.repositories;
+package se.sugarest.jane.viaplaysections.architecture_components.repositories;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

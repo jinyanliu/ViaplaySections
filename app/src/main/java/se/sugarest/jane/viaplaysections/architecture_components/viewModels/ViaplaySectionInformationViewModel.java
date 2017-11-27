@@ -1,9 +1,9 @@
-package se.sugarest.jane.viaplaysections.architectureComponents.viewModels;
+package se.sugarest.jane.viaplaysections.architecture_components.viewModels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-import se.sugarest.jane.viaplaysections.architectureComponents.repositories.SectionProfileRepository;
+import se.sugarest.jane.viaplaysections.architecture_components.repositories.SectionProfileRepository;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
 /**
