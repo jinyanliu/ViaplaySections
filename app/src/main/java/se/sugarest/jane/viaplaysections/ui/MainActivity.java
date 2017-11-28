@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ImageView mImageNavigationMenu;
-    private TextView mTextViewTitle;
-    private TextView mTextViewDescription;
     private TextView mTextViewTitleOnTheAppBar;
     private TextView mEmptyView;
     private LinearLayout mContentView;
@@ -102,8 +101,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        mTextViewTitle = findViewById(R.id.section_title);
-        mTextViewDescription = findViewById(R.id.section_description);
         mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
         mImageNavigationMenu = findViewById(R.id.navigation_menu);
         mEmptyView = findViewById(R.id.empty_view);
@@ -339,8 +336,20 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             mToast.cancel();
         }
         showContentView();
-        mTextViewTitle.setText(currentLongTitle);
-        mTextViewDescription.setText(currentDescription);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        SectionContentFragment titleContentFragment = new SectionContentFragment();
+        titleContentFragment.setmContentText(currentLongTitle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.section_title_container, titleContentFragment)
+                .commit();
+
+        SectionContentFragment descriptionContentFragment = new SectionContentFragment();
+        descriptionContentFragment.setmContentText(currentDescription);
+        fragmentManager.beginTransaction()
+                .replace(R.id.section_description_container, descriptionContentFragment)
+                .commit();
 
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
@@ -461,10 +470,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private boolean hasInternet() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
+        return connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected();
     }
 }
