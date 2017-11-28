@@ -43,7 +43,7 @@ public class SectionProfileRepository {
             public void onResponse
                     (Call<SingleJSONResponse> call, Response<SingleJSONResponse> response) {
 
-                if (null != response) {
+                if (response.body() != null) {
 
                     data.setValue(response.body());
 
