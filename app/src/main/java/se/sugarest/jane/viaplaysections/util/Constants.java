@@ -24,4 +24,9 @@ public class Constants {
     // type.
     public static final int SECTIONS = 100;
     public static final int SECTIONS_ID = 101;
+
+    // Use with SectionTextViewFragment to set different textSize for label textViews and content
+    // textView.
+    public static final float SECTION_INFORMATION_LABEL_TEXT_SIZE = 24;
+    public static final float SECTION_INFORMATION_CONTENT_TEXT_STIZE = 20;
 }

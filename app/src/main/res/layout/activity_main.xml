@@ -22,19 +22,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/section_title_label"
-                style="@style/main_activity_section_label_style"
-                android:text="@string/section_title_label" />
+            <FrameLayout
+                android:id="@+id/section_title_label_container"
+                style="@style/main_activity_section_label_style" />
 
             <FrameLayout
                 android:id="@+id/section_title_container"
                 style="@style/main_activity_section_content_container_style" />
 
-            <TextView
-                android:id="@+id/section_description_label"
-                style="@style/main_activity_section_label_style"
-                android:text="@string/section_description_label" />
+            <FrameLayout
+                android:id="@+id/section_description_label_container"
+                style="@style/main_activity_section_label_style" />
 
             <FrameLayout
                 android:id="@+id/section_description_container"

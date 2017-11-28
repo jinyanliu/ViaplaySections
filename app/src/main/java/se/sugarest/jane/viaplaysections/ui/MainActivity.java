@@ -42,6 +42,8 @@ import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
+import static se.sugarest.jane.viaplaysections.util.Constants.SECTION_INFORMATION_CONTENT_TEXT_STIZE;
+import static se.sugarest.jane.viaplaysections.util.Constants.SECTION_INFORMATION_LABEL_TEXT_SIZE;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
 /**
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ViaplaySectionNameViewModel mSectionNameViewModel;
     private ViaplaySectionInformationViewModel mSectionInformationViewModel;
+    private FragmentManager fragmentManager;
 
     public ArrayList<String> mSectionTitlesString = new ArrayList<>();
 
@@ -99,6 +102,22 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mToolBar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        fragmentManager = getSupportFragmentManager();
+
+        SectionTextViewFragment titleLabelFragment = new SectionTextViewFragment();
+        titleLabelFragment.setmContentText(getString(R.string.section_title_label));
+        titleLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
+        fragmentManager.beginTransaction()
+                .add(R.id.section_title_label_container, titleLabelFragment)
+                .commit();
+
+        SectionTextViewFragment descriptionLabelFragment = new SectionTextViewFragment();
+        descriptionLabelFragment.setmContentText(getString(R.string.section_description_label));
+        descriptionLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
+        fragmentManager.beginTransaction()
+                .add(R.id.section_description_label_container, descriptionLabelFragment)
+                .commit();
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
@@ -337,16 +356,16 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
         showContentView();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        SectionContentFragment titleContentFragment = new SectionContentFragment();
+        SectionTextViewFragment titleContentFragment = new SectionTextViewFragment();
         titleContentFragment.setmContentText(currentLongTitle);
+        titleContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
         fragmentManager.beginTransaction()
                 .replace(R.id.section_title_container, titleContentFragment)
                 .commit();
 
-        SectionContentFragment descriptionContentFragment = new SectionContentFragment();
+        SectionTextViewFragment descriptionContentFragment = new SectionTextViewFragment();
         descriptionContentFragment.setmContentText(currentDescription);
+        descriptionContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
         fragmentManager.beginTransaction()
                 .replace(R.id.section_description_container, descriptionContentFragment)
                 .commit();

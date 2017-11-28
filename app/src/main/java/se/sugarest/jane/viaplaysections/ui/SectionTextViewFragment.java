@@ -15,23 +15,23 @@ import se.sugarest.jane.viaplaysections.R;
 /**
  * Created by jane on 17-11-28.
  */
+public class SectionTextViewFragment extends Fragment {
 
-public class SectionContentFragment extends Fragment {
-
-    private static final String LOG_TAG = SectionContentFragment.class.getSimpleName();
+    private static final String LOG_TAG = SectionTextViewFragment.class.getSimpleName();
 
     private String mContentText;
+    private float mTextSize;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
-    public SectionContentFragment() {
+    public SectionTextViewFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_section_content_text_view, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_content_text_view);
+        TextView textView = rootView.findViewById(R.id.section_content_text_view);
 
         if (mContentText != null && !mContentText.isEmpty()) {
             textView.setText(mContentText);
@@ -39,10 +39,18 @@ public class SectionContentFragment extends Fragment {
             Log.e(LOG_TAG, "This fragment doesn't have a text to show.");
         }
 
+        if (mTextSize != 0.0f) {
+            textView.setTextSize(mTextSize);
+        }
+
         return rootView;
     }
 
     public void setmContentText(String mContentText) {
         this.mContentText = mContentText;
+    }
+
+    public void setmTextSize(float mTextSize) {
+        this.mTextSize = mTextSize;
     }
 }
