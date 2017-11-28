@@ -79,7 +79,7 @@ public class HasContentMainActivityTest {
 
     @Test
     public void mainScreenHasContent_titleContentTextView() {
-        onView(withId(R.id.section_title)).check(matches(isDisplayed())).check(matches(notNullValue()));
+        onView(withId(R.id.section_title_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class HasContentMainActivityTest {
 
     @Test
     public void mainScreenHasContent_descriptionContentTextView() {
-        onView(withId(R.id.section_description)).check(matches(isDisplayed())).check(matches(notNullValue()));
+        onView(withId(R.id.section_description_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
     }
 
     // Remember to unregister resources when not needed to avoid malfunction.
