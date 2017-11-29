@@ -13,7 +13,7 @@ import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
  * <p>
  * Created by jane on 17-11-25.
  */
-public class ViaplaySectionNameViewModel extends ViewModel {
+public class SectionNameViewModel extends ViewModel {
 
     private LiveData<List<ViaplaySection>> sectionNames;
     private SectionNameRepository sectionNameRepository = new SectionNameRepository();

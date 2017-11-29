@@ -11,7 +11,7 @@ import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
  * <p>
  * Created by jane on 17-11-25.
  */
-public class ViaplaySectionInformationViewModel extends ViewModel {
+public class SectionProfileViewModel extends ViewModel {
 
     private LiveData<SingleJSONResponse> singleJSONResponseLiveData;
     private SectionProfileRepository sectionProfileRepository = new SectionProfileRepository();

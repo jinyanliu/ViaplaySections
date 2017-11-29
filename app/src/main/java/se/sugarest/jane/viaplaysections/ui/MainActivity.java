@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.architecture_components.viewModels.ViaplaySectionInformationViewModel;
-import se.sugarest.jane.viaplaysections.architecture_components.viewModels.ViaplaySectionNameViewModel;
+import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionProfileViewModel;
+import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionNameViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private String mFirstSectionName;
     private Toast mToast;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ViaplaySectionNameViewModel mSectionNameViewModel;
-    private ViaplaySectionInformationViewModel mSectionInformationViewModel;
+    private SectionNameViewModel mSectionNameViewModel;
+    private SectionProfileViewModel mSectionProfileViewModel;
     private FragmentManager mFragmentManager;
 
     public ArrayList<String> mSectionTitlesString = new ArrayList<>();
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mToast.show();
         // Create a ViewModel the first time the system calls an activity's onCreate() method.
         // Re-created activities receive the same SectionNameViewModel instance created by the first activity.
-        mSectionNameViewModel = ViewModelProviders.of(this).get(ViaplaySectionNameViewModel.class);
+        mSectionNameViewModel = ViewModelProviders.of(this).get(SectionNameViewModel.class);
         mSectionNameViewModel.init();
         mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
             // Update Navigation Bar items
@@ -306,10 +306,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mFirstSectionName = mSectionTitlesString.get(0).toLowerCase();
         for (int i = 0; i < mSectionTitlesString.size(); i++) {
             String sectionName = mSectionTitlesString.get(i).toLowerCase();
-            mSectionInformationViewModel = ViewModelProviders.of(this)
-                    .get(ViaplaySectionInformationViewModel.class);
-            mSectionInformationViewModel.init(sectionName);
-            mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
+            mSectionProfileViewModel = ViewModelProviders.of(this)
+                    .get(SectionProfileViewModel.class);
+            mSectionProfileViewModel.init(sectionName);
+            mSectionProfileViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
                 putSectionInformationIntoDatabase(sectionName, singleJSONResponse);
             });
         }
@@ -401,10 +401,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         mToast.setGravity(Gravity.BOTTOM, 0, 0);
         mToast.show();
 
-        mSectionInformationViewModel = ViewModelProviders.of(this)
-                .get(ViaplaySectionInformationViewModel.class);
-        mSectionInformationViewModel.init(mClickedSectionName);
-        mSectionInformationViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
+        mSectionProfileViewModel = ViewModelProviders.of(this)
+                .get(SectionProfileViewModel.class);
+        mSectionProfileViewModel.init(mClickedSectionName);
+        mSectionProfileViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
             putSectionInformationIntoDatabase(mClickedSectionName, singleJSONResponse);
         });
     }
