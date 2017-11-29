@@ -6,6 +6,7 @@ import android.util.Log;
 
 import javax.inject.Singleton;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -14,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 
 /**
@@ -30,12 +32,20 @@ public class SectionProfileRepository {
 
         final MutableLiveData<SingleJSONResponse> data = new MutableLiveData<>();
 
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        httpClient.connectTimeout(1, MINUTES)
+                .writeTimeout(1, MINUTES)
+                .readTimeout(1, MINUTES);
+
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(VIAPLAY_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
-        Retrofit retrofit = builder.build();
+        Retrofit retrofit = builder.client(httpClient.build()).build();
+
         client = retrofit.create(ViaplayClient.class);
+
         Call<SingleJSONResponse> call = client.getOneSectionByTitle(sectionName);
 
         call.enqueue(new Callback<SingleJSONResponse>() {

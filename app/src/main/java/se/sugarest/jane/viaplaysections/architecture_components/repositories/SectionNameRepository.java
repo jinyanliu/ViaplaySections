@@ -18,6 +18,7 @@ import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
 
 /**
@@ -36,12 +37,18 @@ public class SectionNameRepository {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
+        httpClient.connectTimeout(1, MINUTES)
+                .writeTimeout(1, MINUTES)
+                .readTimeout(1, MINUTES);
+
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(VIAPLAY_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.client(httpClient.build()).build();
+
         client = retrofit.create(ViaplayClient.class);
+
         Call<JSONResponse> call = client.getSections();
 
         call.enqueue(new Callback<JSONResponse>() {
