@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ViaplaySectionNameViewModel mSectionNameViewModel;
     private ViaplaySectionInformationViewModel mSectionInformationViewModel;
-    private FragmentManager fragmentManager;
+    private FragmentManager mFragmentManager;
 
     public ArrayList<String> mSectionTitlesString = new ArrayList<>();
 
@@ -103,19 +103,19 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        fragmentManager = getSupportFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
 
         SectionTextViewFragment titleLabelFragment = new SectionTextViewFragment();
         titleLabelFragment.setmContentText(getString(R.string.section_title_label));
         titleLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .add(R.id.section_title_label_container, titleLabelFragment)
                 .commit();
 
         SectionTextViewFragment descriptionLabelFragment = new SectionTextViewFragment();
         descriptionLabelFragment.setmContentText(getString(R.string.section_description_label));
         descriptionLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .add(R.id.section_description_label_container, descriptionLabelFragment)
                 .commit();
 
@@ -359,14 +359,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         SectionTextViewFragment titleContentFragment = new SectionTextViewFragment();
         titleContentFragment.setmContentText(currentLongTitle);
         titleContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.section_title_container, titleContentFragment)
                 .commit();
 
         SectionTextViewFragment descriptionContentFragment = new SectionTextViewFragment();
         descriptionContentFragment.setmContentText(currentDescription);
         descriptionContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.section_description_container, descriptionContentFragment)
                 .commit();
 

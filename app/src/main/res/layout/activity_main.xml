@@ -24,19 +24,19 @@
 
             <FrameLayout
                 android:id="@+id/section_title_label_container"
-                style="@style/main_activity_section_label_style" />
+                style="@style/main_activity_section_text_view_style" />
 
             <FrameLayout
                 android:id="@+id/section_title_container"
-                style="@style/main_activity_section_content_container_style" />
+                style="@style/main_activity_section_text_view_style" />
 
             <FrameLayout
                 android:id="@+id/section_description_label_container"
-                style="@style/main_activity_section_label_style" />
+                style="@style/main_activity_section_text_view_style" />
 
             <FrameLayout
                 android:id="@+id/section_description_container"
-                style="@style/main_activity_section_content_container_style" />
+                style="@style/main_activity_section_text_view_style" />
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 

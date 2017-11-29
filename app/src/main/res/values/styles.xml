@@ -8,17 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="main_activity_section_label_style">
+    <style name="main_activity_section_text_view_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:visibility">visible</item>
-    </style>
-
-    <style name="main_activity_section_content_container_style">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:visibility">visible</item>
