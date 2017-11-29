@@ -1,62 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="se.sugarest.jane.viaplaysections.ui.MainActivity">
 
-    <include layout="@layout/app_bar" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:padding="@dimen/activity_margin">
+        android:layout_height="match_parent">
 
-        <!-- main content view -->
-        <LinearLayout
-            android:id="@+id/content_activity_main"
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/app_bar" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginTop="?attr/actionBarSize"
+            android:padding="@dimen/activity_margin">
 
-            <FrameLayout
-                android:id="@+id/section_title_label_container"
-                style="@style/main_activity_section_text_view_style" />
+            <!-- main content view -->
+            <LinearLayout
+                android:id="@+id/content_activity_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/section_title_container"
-                style="@style/main_activity_section_text_view_style" />
+                <FrameLayout
+                    android:id="@+id/section_title_label_container"
+                    style="@style/main_activity_section_text_view_style" />
 
-            <FrameLayout
-                android:id="@+id/section_description_label_container"
-                style="@style/main_activity_section_text_view_style" />
+                <FrameLayout
+                    android:id="@+id/section_title_container"
+                    style="@style/main_activity_section_text_view_style" />
 
-            <FrameLayout
-                android:id="@+id/section_description_container"
-                style="@style/main_activity_section_text_view_style" />
-        </LinearLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+                <FrameLayout
+                    android:id="@+id/section_description_label_container"
+                    style="@style/main_activity_section_text_view_style" />
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/text_message_empty_view"
-        android:textSize="20sp"
-        android:visibility="invisible" />
+                <FrameLayout
+                    android:id="@+id/section_description_container"
+                    style="@style/main_activity_section_text_view_style" />
+            </LinearLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-    <!-- navigation drawer -->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/left_drawer"
-        android:layout_width="@dimen/drawer_menu_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/colorPrimary"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
-</android.support.v4.widget.DrawerLayout>
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/text_message_empty_view"
+            android:textSize="20sp"
+            android:visibility="invisible" />
+
+        <!-- navigation drawer -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/drawer_menu_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorPrimary"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp" />
+    </android.support.v4.widget.DrawerLayout>
+</layout>

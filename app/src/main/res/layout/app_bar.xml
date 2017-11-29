@@ -1,56 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/app_bar"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary">
 
-            <ImageView
-                android:id="@+id/navigation_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:src="@drawable/ic_menu" />
-
-            <TextView
-                android:id="@+id/title_on_the_app_bar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/activity_margin"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textAllCaps="true"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                tools:text="@string/section_title" />
-
-            <ImageView
-                android:id="@+id/viaplay_logo"
-                android:layout_width="@dimen/viaplay_logo_width"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/activity_margin"
-                android:layout_marginRight="@dimen/activity_margin"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_toEndOf="@+id/button_navigation"
-                android:layout_toRightOf="@+id/button_navigation"
-                android:src="@drawable/viaplay_logo" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
-    </android.support.v7.widget.Toolbar>
-</android.support.constraint.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/navigation_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:src="@drawable/ic_menu" />
+
+                <TextView
+                    android:id="@+id/title_on_the_app_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    tools:text="@string/section_title" />
+
+                <ImageView
+                    android:id="@+id/viaplay_logo"
+                    android:layout_width="@dimen/viaplay_logo_width"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/activity_margin"
+                    android:layout_marginRight="@dimen/activity_margin"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_toEndOf="@+id/button_navigation"
+                    android:layout_toRightOf="@+id/button_navigation"
+                    android:src="@drawable/viaplay_logo" />
+
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.constraint.ConstraintLayout>
+</layout>

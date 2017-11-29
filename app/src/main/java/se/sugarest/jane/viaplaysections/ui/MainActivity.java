@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,18 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,12 +26,13 @@ import java.util.List;
 import java.util.Vector;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionProfileViewModel;
 import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionNameViewModel;
+import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionProfileViewModel;
 import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 import se.sugarest.jane.viaplaysections.data.database.SectionContract.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
+import se.sugarest.jane.viaplaysections.databinding.ActivityMainBinding;
 import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
@@ -55,21 +50,15 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Bundle backgroundState;
-    private Toolbar mToolBar;
-    private DrawerLayout mDrawerLayout;
-    private ImageView mImageNavigationMenu;
-    private TextView mTextViewTitleOnTheAppBar;
-    private TextView mEmptyView;
-    private LinearLayout mContentView;
-    private RecyclerView mRecyclerView;
     private SectionAdapter mSectionAdapter;
     private String mClickedSectionName;
     private String mFirstSectionName;
     private Toast mToast;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private SectionNameViewModel mSectionNameViewModel;
     private SectionProfileViewModel mSectionProfileViewModel;
     private FragmentManager mFragmentManager;
+
+    private ActivityMainBinding mBinding;
 
     public ArrayList<String> mSectionTitlesString = new ArrayList<>();
 
@@ -96,11 +85,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         // Set up ToolBar
-        mToolBar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolBar);
+        setSupportActionBar(mBinding.appBar.toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mFragmentManager = getSupportFragmentManager();
@@ -119,29 +108,22 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 .add(R.id.section_description_label_container, descriptionLabelFragment)
                 .commit();
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mTextViewTitleOnTheAppBar = findViewById(R.id.title_on_the_app_bar);
-        mImageNavigationMenu = findViewById(R.id.navigation_menu);
-        mEmptyView = findViewById(R.id.empty_view);
-        mContentView = findViewById(R.id.content_activity_main);
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
-
         setUpRecyclerViewWithAdapter();
 
         // Set up left drawer navigation
-        mImageNavigationMenu.setOnClickListener(view -> {
-            if (mDrawerLayout.isDrawerOpen(mRecyclerView)) {
-                mDrawerLayout.closeDrawer(mRecyclerView);
-            } else if (!mDrawerLayout.isDrawerOpen(mRecyclerView)) {
-                mDrawerLayout.openDrawer(mRecyclerView);
+        mBinding.appBar.navigationMenu.setOnClickListener(view -> {
+            if (mBinding.drawerLayout.isDrawerOpen(mBinding.leftDrawer)) {
+                mBinding.drawerLayout.closeDrawer(mBinding.leftDrawer);
+            } else if (!mBinding.drawerLayout.isDrawerOpen(mBinding.leftDrawer)) {
+                mBinding.drawerLayout.openDrawer(mBinding.leftDrawer);
             }
         });
 
         // Set up swipe refresh function
-        mSwipeRefreshLayout.setOnRefreshListener(
+        mBinding.swipeRefresh.setOnRefreshListener(
                 () -> {
                     if (!hasInternet()) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        mBinding.swipeRefresh.setRefreshing(false);
                         if (mToast != null) {
                             mToast.cancel();
                         }
@@ -149,11 +131,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         mToast.setGravity(Gravity.BOTTOM, 0, 0);
                         mToast.show();
                     } else {
-                        if (mTextViewTitleOnTheAppBar.getText() == null ||
-                                mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
+                        if (getCurrentTitleOnTheAppBarText() == null ||
+                                getCurrentTitleOnTheAppBarText().toString().isEmpty()) {
                             initialScreenWithInternet();
                         } else {
-                            mClickedSectionName = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
+                            mClickedSectionName = getCurrentTitleOnTheAppBarText().toString().toLowerCase();
                             refreshOneScreenWithInternet();
                         }
                     }
@@ -163,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         // Current content survive while rotates the phone
         if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
             mClickedSectionName = savedInstanceState.getString(CONFIGURATION_KEY);
-            mTextViewTitleOnTheAppBar.setText(mClickedSectionName);
+            populateSectionNameOnTheAppBar(mClickedSectionName);
             loadEverythingFromDataBase();
         } else {
             if (hasInternet()) {
@@ -202,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        String currentTitle = mTextViewTitleOnTheAppBar.getText().toString().toLowerCase();
+        String currentTitle = getCurrentTitleOnTheAppBarText().toString().toLowerCase();
         if (!currentTitle.isEmpty()) {
             outState.putString(CONFIGURATION_KEY, currentTitle);
         }
@@ -215,14 +197,14 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 && backgroundState.getString(FORE_BACK_STATE_KEY) != null && backgroundState.getString(FORE_BACK_STATE_KEY) != null
                 && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
             mClickedSectionName = backgroundState.getString(FORE_BACK_STATE_KEY);
-            mTextViewTitleOnTheAppBar.setText(mClickedSectionName);
+            populateSectionNameOnTheAppBar(mClickedSectionName);
             if (hasInternet()) {
                 refreshOneScreenWithInternet();
             } else {
                 loadEverythingFromDataBase();
             }
         } else {
-            if (mTextViewTitleOnTheAppBar.getText() == null || mTextViewTitleOnTheAppBar.getText().toString().isEmpty()) {
+            if (getCurrentTitleOnTheAppBarText() == null || getCurrentTitleOnTheAppBarText().toString().isEmpty()) {
                 if (hasInternet()) {
                     initialScreenWithInternet();
                 } else {
@@ -235,21 +217,20 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     @Override
     protected void onPause() {
         super.onPause();
-        if (mTextViewTitleOnTheAppBar.getText() != null) {
+        if (getCurrentTitleOnTheAppBarText() != null) {
             backgroundState = new Bundle();
-            backgroundState.putString(FORE_BACK_STATE_KEY, mTextViewTitleOnTheAppBar.getText().toString().toLowerCase());
+            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentTitleOnTheAppBarText().toString().toLowerCase());
         }
     }
 
     private void setUpRecyclerViewWithAdapter() {
-        mRecyclerView = findViewById(R.id.left_drawer);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
+        mBinding.leftDrawer.setLayoutManager(layoutManager);
+        mBinding.leftDrawer.setHasFixedSize(true);
         if (mSectionAdapter == null) {
             mSectionAdapter = new SectionAdapter(this);
         }
-        mRecyclerView.setAdapter(mSectionAdapter);
+        mBinding.leftDrawer.setAdapter(mSectionAdapter);
     }
 
     private void loadEverythingFromDataBase() {
@@ -325,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
             // Set up the first state of the app
             if (sectionName.equalsIgnoreCase(mFirstSectionName)) {
                 populateContentViews(currentLongTitle, currentDescription);
-                mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
+                populateSectionNameOnTheAppBar(mFirstSectionName);
             }
 
             // Set up clicked section information
@@ -348,6 +329,10 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                         + sectionName + " section is successful.");
             }
         }
+    }
+
+    private void populateSectionNameOnTheAppBar(String sectionName) {
+        mBinding.appBar.titleOnTheAppBar.setText(sectionName);
     }
 
     private void populateContentViews(String currentLongTitle, String currentDescription) {
@@ -379,8 +364,8 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     public void onClick(String sectionTitle) {
 
         showContentView();
-        mDrawerLayout.closeDrawer(mRecyclerView);
-        mTextViewTitleOnTheAppBar.setText(sectionTitle);
+        mBinding.drawerLayout.closeDrawer(mBinding.leftDrawer);
+        populateSectionNameOnTheAppBar(sectionTitle);
         mClickedSectionName = sectionTitle.toLowerCase();
 
         if (hasInternet()) {
@@ -426,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
                 if (mClickedSectionName == null || mClickedSectionName.isEmpty()) {
                     cursor.moveToFirst();
                     mFirstSectionName = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-                    mTextViewTitleOnTheAppBar.setText(mFirstSectionName);
+                    populateSectionNameOnTheAppBar(mFirstSectionName);
 
                     String firstSectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
                     String firstSectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
@@ -462,29 +447,31 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
     }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mSectionAdapter.setUpTitleStringArray(null);
+    }
+
     public void filterOutDifferentSectionNames(String sectionName) {
         if (!mSectionTitlesString.contains(sectionName.toLowerCase())) {
             mSectionTitlesString.add(sectionName.toLowerCase());
         }
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-        mSectionAdapter.setUpTitleStringArray(null);
-
+    private CharSequence getCurrentTitleOnTheAppBarText() {
+        return mBinding.appBar.titleOnTheAppBar.getText();
     }
 
     private void showEmptyView() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        mContentView.setVisibility(View.INVISIBLE);
-        mEmptyView.setVisibility(View.VISIBLE);
+        mBinding.swipeRefresh.setRefreshing(false);
+        mBinding.contentActivityMain.setVisibility(View.INVISIBLE);
+        mBinding.emptyView.setVisibility(View.VISIBLE);
     }
 
     private void showContentView() {
-        mSwipeRefreshLayout.setRefreshing(false);
-        mContentView.setVisibility(View.VISIBLE);
-        mEmptyView.setVisibility(View.INVISIBLE);
+        mBinding.swipeRefresh.setRefreshing(false);
+        mBinding.contentActivityMain.setVisibility(View.VISIBLE);
+        mBinding.emptyView.setVisibility(View.INVISIBLE);
     }
 
     private boolean hasInternet() {
