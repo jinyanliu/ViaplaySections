@@ -1,6 +1,6 @@
 package se.sugarest.jane.viaplaysections.ui;
 
-
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,9 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.databinding.FragmentSectionContentTextViewBinding;
 
 /**
  * This class is a Fragment class re-usable for 4 TextViews on main screen: title label text,
@@ -25,6 +25,8 @@ public class SectionTextViewFragment extends Fragment {
     private String mContentText;
     private float mTextSize;
 
+    private FragmentSectionContentTextViewBinding mBinding;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
@@ -33,17 +35,19 @@ public class SectionTextViewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_section_content_text_view, container, false);
-        TextView textView = rootView.findViewById(R.id.section_content_text_view);
+        mBinding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_section_content_text_view, container, false);
+
+        View rootView = mBinding.getRoot();
 
         if (mContentText != null && !mContentText.isEmpty()) {
-            textView.setText(mContentText);
+            mBinding.sectionContentTextView.setText(mContentText);
         } else {
             Log.e(LOG_TAG, "This fragment doesn't have a text to show.");
         }
 
         if (mTextSize != 0.0f) {
-            textView.setTextSize(mTextSize);
+            mBinding.sectionContentTextView.setTextSize(mTextSize);
         }
 
         return rootView;
