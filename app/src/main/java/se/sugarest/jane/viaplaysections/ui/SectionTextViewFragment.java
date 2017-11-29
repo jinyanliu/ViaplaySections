@@ -13,6 +13,9 @@ import android.widget.TextView;
 import se.sugarest.jane.viaplaysections.R;
 
 /**
+ * This class is a Fragment class re-usable for 4 TextViews on main screen: title label text,
+ * title content text, description label text and description content text.
+ * <p>
  * Created by jane on 17-11-28.
  */
 public class SectionTextViewFragment extends Fragment {
