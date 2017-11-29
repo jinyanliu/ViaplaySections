@@ -47,12 +47,11 @@ public class SectionNameRepository {
         call.enqueue(new Callback<JSONResponse>() {
             @Override
             public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+                if (response.body() != null && response.body().getLinks() != null
+                        && response.body().getLinks().getViaplaySections() != null
+                        && !response.body().getLinks().getViaplaySections().isEmpty()) {
 
-                List<ViaplaySection> viaplaySections = response.body().getLinks().getViaplaySections();
-
-                if (viaplaySections != null && !viaplaySections.isEmpty()) {
-
-                    data.setValue(viaplaySections);
+                    data.setValue(response.body().getLinks().getViaplaySections());
 
                 } else {
                     Log.e(LOG_TAG, "There is no ViaplaySections comes back from internet with this url: "

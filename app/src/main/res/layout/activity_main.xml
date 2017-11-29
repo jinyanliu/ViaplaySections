@@ -20,28 +20,23 @@
             android:id="@+id/content_activity_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="invisible">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/section_title_label"
-                style="@style/main_activity_section_label_style"
-                android:text="@string/section_title_label" />
+            <FrameLayout
+                android:id="@+id/section_title_label_container"
+                style="@style/main_activity_section_label_style" />
 
-            <TextView
-                android:id="@+id/section_title"
-                style="@style/main_activity_section_content_style"
-                tools:text="@string/section_long_title" />
+            <FrameLayout
+                android:id="@+id/section_title_container"
+                style="@style/main_activity_section_content_container_style" />
 
-            <TextView
-                android:id="@+id/section_description_label"
-                style="@style/main_activity_section_label_style"
-                android:text="@string/section_description_label" />
+            <FrameLayout
+                android:id="@+id/section_description_label_container"
+                style="@style/main_activity_section_label_style" />
 
-            <TextView
-                android:id="@+id/section_description"
-                style="@style/main_activity_section_content_style"
-                tools:text="@string/section_description" />
+            <FrameLayout
+                android:id="@+id/section_description_container"
+                style="@style/main_activity_section_content_container_style" />
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 

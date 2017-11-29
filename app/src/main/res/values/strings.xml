@@ -13,15 +13,6 @@
    Used in activity_main.xml -->
     <string name="section_description_label" translatable="true">Description:</string>
 
-    <!-- The fake detail title content for one section provided for design reason.
-    Used in activity_main.xml -->
-    <string name="section_long_title" translatable="true">TV-serier online - Streama serier på nätet eller ladda ned</string>
-
-    <!-- The fake description content for one section provided for design reason.
-    Used in activity_main.xml -->
-    <string name="section_description" translatable="true">Viaplay erbjuder TV-serier på nätet för hela familjen.
-        Streama serier online i hög kvalitet eller ladda ned till tablet eller mobil!</string>
-
     <!-- Empty view text message shows on main screen when there is neither internet, nor database data,
     witch means offline at first use.
     Used in activity_main.xml -->
@@ -29,7 +20,7 @@
 
     <!-- The toast message to indicate the user that data is loading when the user starts the app at the first time.
     Used in MainActivity.java -->
-    <string name="toast_message_data_is_loading" translatable="true">Data is loading...</string>
+    <string name="toast_message_data_is_loading" translatable="true">Data is loading &#8230;</string>
 
     <!-- The toast message to indicate the user that he wants to refresh page while offline.
     Used in MainActivity.java -->

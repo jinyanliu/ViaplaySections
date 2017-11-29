@@ -6,7 +6,7 @@ package se.sugarest.jane.viaplaysections.util;
 public class Constants {
     // Ending slash in base url is required by Retrofit
     public static final String VIAPLAY_BASE_URL = "https://content.viaplay.se/";
-    public static final String VIAPLAY_API_END_POINT = "/androidv2-se";
+    public static final String VIAPLAY_API_END_POINT = "/androiddash-se";
     public static final String VIAPLAY_API_SLASH = "/";
 
     // Use with overriding onSaveInstanceState method in MainActivity to save current section view
@@ -24,4 +24,9 @@ public class Constants {
     // type.
     public static final int SECTIONS = 100;
     public static final int SECTIONS_ID = 101;
+
+    // Use with SectionTextViewFragment to set different textSize for label textViews and content
+    // textView.
+    public static final float SECTION_INFORMATION_LABEL_TEXT_SIZE = 24;
+    public static final float SECTION_INFORMATION_CONTENT_TEXT_STIZE = 20;
 }
