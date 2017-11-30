@@ -26,7 +26,7 @@ import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListFragment.OnFirstSectionNameGetListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private DetailFragmentViewModel mDetailFragmentViewModel;
     private ImageView menuImage;
     private DrawerLayout drawerLayout;
+    private FragmentManager fragmentManager;
+    private Boolean mInitialized = false;
 
 //    private ActivityMainBinding mBinding;
 
@@ -78,12 +80,7 @@ public class MainActivity extends AppCompatActivity {
         menuImage = findViewById(R.id.navigation_menu);
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        DetailFragment sectionDetailContentFragment = new DetailFragment();
-        sectionDetailContentFragment.setSectionName("serier");
-        fragmentManager.beginTransaction()
-                .add(R.id.detail_fragment_container, sectionDetailContentFragment)
-                .commit();
+        fragmentManager = getSupportFragmentManager();
 
         ListFragment navigationDrawerFragment = new ListFragment();
         fragmentManager.beginTransaction()
@@ -138,6 +135,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the IdlingResource instance
         getIdlingResource();
+    }
+
+    @Override
+    public void onFirstSectionNameGet(String firstSectionName) {
+        DetailFragment sectionDetailContentFragment = new DetailFragment();
+        sectionDetailContentFragment.setSectionName(firstSectionName);
+        fragmentManager.beginTransaction()
+                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
+                .commit();
     }
 
 //    private void initialScreenWithInternet() {
@@ -386,4 +392,6 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected();
     }
+
+
 }

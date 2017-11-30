@@ -84,8 +84,8 @@ public class DetailFragment extends LifecycleFragment {
     private void bindSectionToUI(SectionEntry sectionEntry) {
 //        mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
-        if (sectionEntry.getTitle().equals( sectionEntry.getName())) {
-            showProgressBar();
+        if (sectionEntry.getTitle().equals(sectionEntry.getName())) {
+            // showProgressBar();
         } else {
             showLinearLayout();
             title.setText(sectionEntry.getTitle());
