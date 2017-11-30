@@ -47,10 +47,10 @@ public class DetailFragment extends LifecycleFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        mBinding = DataBindingUtil.inflate(
-//                inflater, R.layout.fragment_section_content_text_view, container, false);
+//                inflater, R.layout.fragment_section_detail, container, false);
 //        View rootView = mBinding.getRoot();
 
-        View rootView = inflater.inflate(R.layout.fragment_section_content_text_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_section_detail, container, false);
 
 //        mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
 //        mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);

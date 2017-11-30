@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.ui;
+package se.sugarest.jane.viaplaysections.ui.list;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -18,7 +18,6 @@ import se.sugarest.jane.viaplaysections.architecture_components.viewModels.Secti
 import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragmentViewModel;
-import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 
 /**
  * This is the main controller of the whole app.

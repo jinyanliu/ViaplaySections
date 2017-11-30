@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.ui.MainActivity;
+import se.sugarest.jane.viaplaysections.ui.list.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
