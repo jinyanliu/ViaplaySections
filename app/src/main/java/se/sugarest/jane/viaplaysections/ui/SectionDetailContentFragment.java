@@ -18,19 +18,19 @@ import se.sugarest.jane.viaplaysections.databinding.FragmentSectionContentTextVi
  * <p>
  * Created by jane on 17-11-28.
  */
-public class SectionTextViewFragment extends Fragment {
+public class SectionDetailContentFragment extends Fragment {
 
-    private static final String LOG_TAG = SectionTextViewFragment.class.getSimpleName();
+    private static final String LOG_TAG = SectionDetailContentFragment.class.getSimpleName();
 
-    private String mContentText;
-    private float mTextSize;
+    private String mTitleContentText;
+    private String mDescriptionContentText;
 
     private FragmentSectionContentTextViewBinding mBinding;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
-    public SectionTextViewFragment() {
+    public SectionDetailContentFragment() {
     }
 
     @Override
@@ -40,24 +40,22 @@ public class SectionTextViewFragment extends Fragment {
 
         View rootView = mBinding.getRoot();
 
-        if (mContentText != null && !mContentText.isEmpty()) {
-            mBinding.sectionContentTextView.setText(mContentText);
-        } else {
-            Log.e(LOG_TAG, "This fragment doesn't have a text to show.");
-        }
+        mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
+        mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
 
-        if (mTextSize != 0.0f) {
-            mBinding.sectionContentTextView.setTextSize(mTextSize);
+        if (mTitleContentText != null && !mTitleContentText.isEmpty()
+                && mDescriptionContentText != null && !mDescriptionContentText.isEmpty()) {
+            mBinding.sectionTitleContentTextView.setText(mTitleContentText);
+            mBinding.sectionDescriptionContentTextView.setText(mDescriptionContentText);
+        } else {
+            Log.e(LOG_TAG, "This detail fragment doesn't have title and description content to show.");
         }
 
         return rootView;
     }
 
-    public void setmContentText(String mContentText) {
-        this.mContentText = mContentText;
-    }
-
-    public void setmTextSize(float mTextSize) {
-        this.mTextSize = mTextSize;
+    public void setContentText(String titleContent, String descriptionContent) {
+        this.mTitleContentText = titleContent;
+        this.mDescriptionContentText = descriptionContent;
     }
 }

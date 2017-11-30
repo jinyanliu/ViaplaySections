@@ -37,8 +37,6 @@ import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 
 import static se.sugarest.jane.viaplaysections.util.Constants.CONFIGURATION_KEY;
 import static se.sugarest.jane.viaplaysections.util.Constants.FORE_BACK_STATE_KEY;
-import static se.sugarest.jane.viaplaysections.util.Constants.SECTION_INFORMATION_CONTENT_TEXT_STIZE;
-import static se.sugarest.jane.viaplaysections.util.Constants.SECTION_INFORMATION_LABEL_TEXT_SIZE;
 import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_LOADER;
 
 /**
@@ -56,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
     private Toast mToast;
     private SectionNameViewModel mSectionNameViewModel;
     private SectionProfileViewModel mSectionProfileViewModel;
-    private FragmentManager mFragmentManager;
 
     private ActivityMainBinding mBinding;
 
@@ -91,22 +88,6 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         // Set up ToolBar
         setSupportActionBar(mBinding.appBar.toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        mFragmentManager = getSupportFragmentManager();
-
-        SectionTextViewFragment titleLabelFragment = new SectionTextViewFragment();
-        titleLabelFragment.setmContentText(getString(R.string.section_title_label));
-        titleLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
-        mFragmentManager.beginTransaction()
-                .add(R.id.section_title_label_container, titleLabelFragment)
-                .commit();
-
-        SectionTextViewFragment descriptionLabelFragment = new SectionTextViewFragment();
-        descriptionLabelFragment.setmContentText(getString(R.string.section_description_label));
-        descriptionLabelFragment.setmTextSize(SECTION_INFORMATION_LABEL_TEXT_SIZE);
-        mFragmentManager.beginTransaction()
-                .add(R.id.section_description_label_container, descriptionLabelFragment)
-                .commit();
 
         setUpRecyclerViewWithAdapter();
 
@@ -341,18 +322,11 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
         }
         showContentView();
 
-        SectionTextViewFragment titleContentFragment = new SectionTextViewFragment();
-        titleContentFragment.setmContentText(currentLongTitle);
-        titleContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
-        mFragmentManager.beginTransaction()
-                .replace(R.id.section_title_container, titleContentFragment)
-                .commit();
-
-        SectionTextViewFragment descriptionContentFragment = new SectionTextViewFragment();
-        descriptionContentFragment.setmContentText(currentDescription);
-        descriptionContentFragment.setmTextSize(SECTION_INFORMATION_CONTENT_TEXT_STIZE);
-        mFragmentManager.beginTransaction()
-                .replace(R.id.section_description_container, descriptionContentFragment)
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        SectionDetailContentFragment sectionDetailContentFragment = new SectionDetailContentFragment();
+        sectionDetailContentFragment.setContentText(currentLongTitle, currentDescription);
+        fragmentManager.beginTransaction()
+                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
                 .commit();
 
         if (mIdlingResource != null) {
@@ -464,13 +438,13 @@ public class MainActivity extends AppCompatActivity implements SectionAdapter.Se
 
     private void showEmptyView() {
         mBinding.swipeRefresh.setRefreshing(false);
-        mBinding.contentActivityMain.setVisibility(View.INVISIBLE);
+        mBinding.detailFragmentContainer.setVisibility(View.INVISIBLE);
         mBinding.emptyView.setVisibility(View.VISIBLE);
     }
 
     private void showContentView() {
         mBinding.swipeRefresh.setRefreshing(false);
-        mBinding.contentActivityMain.setVisibility(View.VISIBLE);
+        mBinding.detailFragmentContainer.setVisibility(View.VISIBLE);
         mBinding.emptyView.setVisibility(View.INVISIBLE);
     }
 
