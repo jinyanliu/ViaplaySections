@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 
 /**
  * Created by jane on 17-11-16.

@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.data;
+package se.sugarest.jane.viaplaysections.ui.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

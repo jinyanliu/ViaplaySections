@@ -6,8 +6,8 @@ import retrofit2.http.Path;
 import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 
-import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_END_POINT;
-import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_API_SLASH;
+import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_API_END_POINT;
+import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_API_SLASH;
 
 /**
  * This interface will be used with external lib Retrofit.

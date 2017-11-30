@@ -19,7 +19,7 @@ import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static se.sugarest.jane.viaplaysections.util.Constants.VIAPLAY_BASE_URL;
+import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_BASE_URL;
 
 /**
  * Created by jane on 17-11-27.

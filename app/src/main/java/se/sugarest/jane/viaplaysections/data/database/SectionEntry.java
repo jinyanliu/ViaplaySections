@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.architecture_components.room;
+package se.sugarest.jane.viaplaysections.data.database;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
@@ -41,5 +41,17 @@ public class SectionEntry {
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -11,8 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS;
-import static se.sugarest.jane.viaplaysections.util.Constants.SECTIONS_ID;
+import static se.sugarest.jane.viaplaysections.utilities.Constants.SECTIONS;
+import static se.sugarest.jane.viaplaysections.utilities.Constants.SECTIONS_ID;
 
 /**
  * The {@link ContentProvider} for Section data.

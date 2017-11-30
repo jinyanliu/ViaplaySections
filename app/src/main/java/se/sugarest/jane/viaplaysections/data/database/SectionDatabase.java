@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.architecture_components.room;
+package se.sugarest.jane.viaplaysections.data.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
@@ -21,7 +21,7 @@ public abstract class SectionDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static SectionDatabase sInstance;
 
-    public static SectionDatabase getsInstance(Context context) {
+    public static SectionDatabase getInstance(Context context) {
         Log.d(LOG_TAG, "Getting the database");
         if (sInstance == null) {
             synchronized (LOCK) {

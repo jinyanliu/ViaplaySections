@@ -1,5 +1,6 @@
-package se.sugarest.jane.viaplaysections.architecture_components.room;
+package se.sugarest.jane.viaplaysections.data.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -39,7 +40,7 @@ public interface SectionDao {
     void updateSection(SectionEntry sectionEntry);
 
     @Delete
-    void deleteAll();
+    void deleteSection(SectionEntry sectionEntry);
 
     /**
      * Gets all the sections
@@ -52,10 +53,10 @@ public interface SectionDao {
     /**
      * Gets one section for a specific name
      *
-     * @param sectionName The name of the section to query
+     * @param name The name of the section to query
      * @return section for a specific name
      */
     @Query("SELECT * FROM sections WHERE name = :name")
-    SectionEntry getSectionByName(String sectionName);
+    LiveData<SectionEntry> getSectionByName(String name);
 }
 
