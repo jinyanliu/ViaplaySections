@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.ui.list;
+package se.sugarest.jane.viaplaysections.ui;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -8,7 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,23 +21,25 @@ import se.sugarest.jane.viaplaysections.architecture_components.viewModels.Secti
 import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragmentViewModel;
+import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 
 /**
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity //implements SectionAdapter.SectionAdapterOnClickHandler
-        //, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity //implements android.app.LoaderManager.LoaderCallbacks<Cursor> {
 {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Bundle backgroundState;
-    private SectionAdapter mSectionAdapter;
+
     private String mClickedSectionName;
     private String mFirstSectionName;
     private Toast mToast;
     private SectionNameViewModel mSectionNameViewModel;
     private DetailFragmentViewModel mDetailFragmentViewModel;
+    private ImageView menuImage;
+    private DrawerLayout drawerLayout;
 
 //    private ActivityMainBinding mBinding;
 
@@ -72,16 +77,8 @@ public class MainActivity extends AppCompatActivity //implements SectionAdapter.
 //        setSupportActionBar(mBinding.appBar.toolbar);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-//        setUpRecyclerViewWithAdapter();
-
-//        // Set up left drawer navigation
-//        mBinding.appBar.navigationMenu.setOnClickListener(view -> {
-//            if (mBinding.drawerLayout.isDrawerOpen(mBinding.leftDrawer)) {
-//                mBinding.drawerLayout.closeDrawer(mBinding.leftDrawer);
-//            } else if (!mBinding.drawerLayout.isDrawerOpen(mBinding.leftDrawer)) {
-//                mBinding.drawerLayout.openDrawer(mBinding.leftDrawer);
-//            }
-//        });
+        menuImage = findViewById(R.id.navigation_menu);
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         DetailFragment sectionDetailContentFragment = new DetailFragment();
@@ -89,6 +86,20 @@ public class MainActivity extends AppCompatActivity //implements SectionAdapter.
         fragmentManager.beginTransaction()
                 .add(R.id.detail_fragment_container, sectionDetailContentFragment)
                 .commit();
+
+        ListFragment navigationDrawerFragment = new ListFragment();
+        fragmentManager.beginTransaction()
+                .add(R.id.navigation_drawer_container, navigationDrawerFragment)
+                .commit();
+
+        // Set up left drawer navigation
+        menuImage.setOnClickListener((View view) -> {
+            if (drawerLayout.isDrawerOpen(findViewById(R.id.navigation_drawer_container))) {
+                drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
+            } else if (!drawerLayout.isDrawerOpen(findViewById(R.id.navigation_drawer_container))) {
+                drawerLayout.openDrawer(findViewById(R.id.navigation_drawer_container));
+            }
+        });
 
 
 
@@ -197,15 +208,7 @@ public class MainActivity extends AppCompatActivity //implements SectionAdapter.
 //        }
 //    }
 
-//    private void setUpRecyclerViewWithAdapter() {
-//        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        mBinding.leftDrawer.setLayoutManager(layoutManager);
-//        mBinding.leftDrawer.setHasFixedSize(true);
-//        if (mSectionAdapter == null) {
-//            mSectionAdapter = new SectionAdapter(this);
-//        }
-//        mBinding.leftDrawer.setAdapter(mSectionAdapter);
-//    }
+//
 //
 //    private void loadEverythingFromDataBase() {
 //        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);

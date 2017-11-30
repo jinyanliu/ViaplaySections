@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
-import se.sugarest.jane.viaplaysections.ui.list.MainActivity;
+import se.sugarest.jane.viaplaysections.ui.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

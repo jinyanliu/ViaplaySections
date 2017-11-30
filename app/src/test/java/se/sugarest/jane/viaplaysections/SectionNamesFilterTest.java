@@ -10,7 +10,7 @@
 //import java.util.ArrayList;
 //import java.util.stream.Stream;
 //
-//import se.sugarest.jane.viaplaysections.ui.list.MainActivity;
+//import se.sugarest.jane.viaplaysections.ui.MainActivity;
 //
 ///**
 // * Created by jane on 17-11-27.
