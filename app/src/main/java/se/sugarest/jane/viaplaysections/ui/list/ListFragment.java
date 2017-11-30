@@ -34,26 +34,35 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
     private boolean mInitialized = false;
 
-    // Define a new interface OnFirstSectionNameGetListener that triggers a callback in the host activity
-    OnFirstSectionNameGetListener mCallback;
+//    // Define a new interface OnCurrentSectionSelectedListener that triggers a callback in the host activity
+//    OnCurrentSectionSelectedListener mSectionNameCallback;
 
-    // OnFirstSectionNameGetListener interface, calls a method in the host activity named onImageSelected
-    public interface OnFirstSectionNameGetListener {
-        void onFirstSectionNameGet(String firstSectionName);
+    // Define a new interface OnDataBackListener that triggers a callback in the host activity
+    OnDataBackListener mDataCallback;
+
+//    // OnCurrentSectionSelectedListener interface, calls a method in the host activity named onImageSelected
+//    public interface OnCurrentSectionSelectedListener {
+//        void onCurrentSectionSelected(String sectionName);
+//    }
+
+    // OnDataBackListener interface, calls a method in the host activity named onDataBack
+    public interface OnDataBackListener {
+        void onDataBack(ArrayList<String> sectionNamesList);
     }
 
-    // Override onAttach to make sure that the container activity has implemented the callback
+    // Override onAttach to make sure that the container activity has implemented the callbacks
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        // This makes sure that the host activity has implemented the callback interface
+        // This makes sure that the host activity has implemented the callbacks interface
         // If not, it throws an exception
         try {
-            mCallback = (OnFirstSectionNameGetListener) context;
+            // mSectionNameCallback = (OnCurrentSectionSelectedListener) context;
+            mDataCallback = (OnDataBackListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnFirstSectionNameGetListener");
+                    + " must implement OnCurrentSectionSelectedListener");
         }
     }
 
@@ -76,20 +85,23 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
         ListViewModelFactory factory = InjectorUtils.provideListFragmentViewModelFactory(getActivity().getApplicationContext());
         mViewModel = ViewModelProviders.of(this, factory).get(ListFragmentViewModel.class);
 
+        factory.getRepository().getAndSaveSectionEntryList();
+
         mViewModel.getSections().observe(this, sectionEntries -> {
 
             if (sectionEntries != null && sectionEntries.size() != 0) {
-
-                if (mInitialized == false) {
-                    mInitialized = true;
-                    mCallback.onFirstSectionNameGet(sectionEntries.get(0).getName().toLowerCase());
-                }
 
                 ArrayList<String> sectionNamesList = new ArrayList<>();
 
                 for (int i = 0; i < sectionEntries.size(); i++) {
                     String currentSectionName = sectionEntries.get(i).getName().toLowerCase();
                     sectionNamesList.add(currentSectionName);
+                }
+
+                if (mInitialized == false) {
+                    mInitialized = true;
+                    // mSectionNameCallback.onCurrentSectionSelected(sectionNamesList.get(0));
+                    mDataCallback.onDataBack(sectionNamesList);
                 }
 
                 mSectionAdapter.setUpTitleStringArray(sectionNamesList);
@@ -113,6 +125,10 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
     @Override
     public void onClick(String title) {
-        mCallback.onFirstSectionNameGet(title.toLowerCase());
+        ArrayList<String> sectionNamesList = new ArrayList<>();
+        sectionNamesList.add(title);
+
+        //mSectionNameCallback.onCurrentSectionSelected(title.toLowerCase());
+        mDataCallback.onDataBack(sectionNamesList);
     }
 }

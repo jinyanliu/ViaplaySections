@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 import se.sugarest.jane.viaplaysections.utilities.InjectorUtils;
@@ -24,15 +26,21 @@ public class DetailFragment extends LifecycleFragment {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
-    private String mSectionName;
+//    private String mSectionName;
 
     private TextView title;
     private TextView description;
     private ProgressBar progressBar;
     private LinearLayout linearLayout;
 
-    public void setSectionName(String mSectionName) {
-        this.mSectionName = mSectionName;
+    private ArrayList<String> sectionNamesList;
+
+//    public void setSectionName(String mSectionName) {
+//        this.mSectionName = mSectionName;
+//    }
+
+    public void setSectionNamesList(ArrayList<String> sectionNamesList) {
+        this.sectionNamesList = sectionNamesList;
     }
 
     /**
@@ -64,19 +72,33 @@ public class DetailFragment extends LifecycleFragment {
         linearLayout = rootView.findViewById(R.id.linearlayout_detail_fragment);
 
 
-        // Get the ViewModel from the factory
-        DetailViewModelFactory factory = InjectorUtils.provideDetailFragmentModelFactory(this.getActivity().getApplicationContext(), mSectionName);
-        mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);
+        if (sectionNamesList != null && sectionNamesList.size() > 0) {
+            for (int i = 0; i < sectionNamesList.size(); i++) {
 
-        // Observers changes in the SectionEntry with the name
-        mViewModel.getSection().observe(this, sectionEntry -> {
-            // If the section details change, update the UI
-            if (sectionEntry != null) {
-                bindSectionToUI(sectionEntry);
-            } else {
-                showProgressBar();
+                String currentSectionName = sectionNamesList.get(i);
+
+                // Get the ViewModel from the factory
+                DetailViewModelFactory factory = InjectorUtils.provideDetailFragmentModelFactory(this.getActivity()
+                        .getApplicationContext(), currentSectionName);
+
+                mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);
+
+                factory.getRepository().getSectionByName(currentSectionName);
+                factory.getRepository().getAndSaveSingleSectionEntryDetails();
+
+                // Observers changes in the SectionEntry with the name
+                mViewModel.getSection().observe(this, sectionEntry -> {
+
+                    // If the section details change, update the UI
+                    if(sectionEntry == null){
+                        showProgressBar();
+                    } else if(currentSectionName.equals(sectionNamesList.get(0))) {
+                        bindSectionToUI(sectionEntry);
+                    }
+                });
             }
-        });
+        }
+
 
         return rootView;
     }

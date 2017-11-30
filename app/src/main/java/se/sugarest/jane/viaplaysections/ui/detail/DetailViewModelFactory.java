@@ -21,6 +21,10 @@ public class DetailViewModelFactory extends ViewModelProvider.NewInstanceFactory
         this.mSectionName = sectionName;
     }
 
+    public SectionRepository getRepository() {
+        return mRepository;
+    }
+
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         // noinspection unchecked

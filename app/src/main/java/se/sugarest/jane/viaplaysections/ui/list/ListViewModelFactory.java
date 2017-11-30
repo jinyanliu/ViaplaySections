@@ -19,6 +19,10 @@ public class ListViewModelFactory extends ViewModelProvider.NewInstanceFactory {
         this.mRepository = repository;
     }
 
+    public SectionRepository getRepository() {
+        return mRepository;
+    }
+
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         //noinspection unchecked

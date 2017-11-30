@@ -33,9 +33,14 @@ public class SectionRepository {
         mSectionNetworkDataSource = sectionNetworkDataSource;
         mExecutors = executors;
 
+
+    }
+
+    public void getAndSaveSingleSectionEntryDetails() {
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
-        LiveData<SectionEntry> networkDataSectionInforamtion = mSectionNetworkDataSource.getCurrentSectionInformation();
+        LiveData<SectionEntry> networkDataSectionInforamtion = mSectionNetworkDataSource
+                .getCurrentSectionInformation();
         networkDataSectionInforamtion.observeForever(newSectionInfoFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
                 if (newSectionInfoFromNetwork != null) {
@@ -46,7 +51,9 @@ public class SectionRepository {
                 }
             });
         });
+    }
 
+    public void getAndSaveSectionEntryList() {
         LiveData<List<SectionEntry>> networkDataSectionList = mSectionNetworkDataSource.getSectionList();
         networkDataSectionList.observeForever(newSectionListFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
@@ -56,12 +63,12 @@ public class SectionRepository {
     }
 
     public synchronized static SectionRepository getInstance(
-            SectionDao weatherDao, SectionNetworkDataSource weatherNetworkDataSource,
+            SectionDao weatherDao, SectionNetworkDataSource sectionNetworkDataSource,
             AppExecutors executors) {
         Log.d(LOG_TAG, "Getting the repository");
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new SectionRepository(weatherDao, weatherNetworkDataSource,
+                sInstance = new SectionRepository(weatherDao, sectionNetworkDataSource,
                         executors);
                 Log.d(LOG_TAG, "Made new repository");
             }
@@ -82,11 +89,6 @@ public class SectionRepository {
     }
 
     private synchronized void initializeDataBySectionName(String sectionName) {
-
-//        // Only perform initialization once per app lifetime. If initialization has already been
-//        // performed, we have nothing to do in this method.
-//        if (mInitialized) return;
-//        mInitialized = true;
 
         mExecutors.diskIO().execute(() -> {
             startFetchSectionByName(sectionName);

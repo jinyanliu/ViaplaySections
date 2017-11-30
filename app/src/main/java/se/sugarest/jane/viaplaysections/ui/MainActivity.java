@@ -27,7 +27,8 @@ import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity implements ListFragment.OnFirstSectionNameGetListener {
+public class MainActivity extends AppCompatActivity implements //ListFragment.OnCurrentSectionSelectedListener ,
+        ListFragment.OnDataBackListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -138,18 +139,32 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
         getIdlingResource();
     }
 
-    @Override
-    public void onFirstSectionNameGet(String firstSectionName) {
+//    @Override
+//    public void onCurrentSectionSelected(String sectionName) {
+//
+//        drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
+//        populateSectionNameOnTheAppBar(sectionName);
+//
+//        DetailFragment sectionDetailContentFragment = new DetailFragment();
+//        sectionDetailContentFragment.setSectionName(sectionName);
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
+//                .commit();
+//
+//    }
 
+
+    @Override
+    public void onDataBack(ArrayList<String> sectionNamesList) {
         drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
-        populateSectionNameOnTheAppBar(firstSectionName);
+        populateSectionNameOnTheAppBar(sectionNamesList.get(0));
 
         DetailFragment sectionDetailContentFragment = new DetailFragment();
-        sectionDetailContentFragment.setSectionName(firstSectionName);
+        sectionDetailContentFragment.setSectionNamesList(sectionNamesList);
+        // sectionDetailContentFragment.setSectionName(sectionNamesList.get(0));
         fragmentManager.beginTransaction()
                 .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
                 .commit();
-
     }
 
     private void populateSectionNameOnTheAppBar(String sectionName) {
@@ -221,58 +236,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
 //        }
 //    }
 
-//
-//
-//    private void loadEverythingFromDataBase() {
-//        getLoaderManager().initLoader(VIAPLAY_LOADER, null, MainActivity.this);
-//    }
-//
-//    private void loadNavigationBarItemsFromInternet(List<ViaplaySection> viaplaySections) {
-//        for (int i = 0; i < viaplaySections.size(); i++) {
-//            filterOutDifferentSectionNames(viaplaySections.get(i).getTitle());
-//        }
-//        mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
-//    }
-//
-//    private void putSectionTitleDataIntoDatabase() {
-//        cleanSectionTableFromDatabase();
-//        int count = mSectionTitlesString.size();
-//        Vector<ContentValues> cVVector = new Vector<>(count);
-//
-//        for (int i = 0; i < count; i++) {
-//            ContentValues values = new ContentValues();
-//            // Temporarily store section title's information to every column because they couldn't be null
-//            values.put(SectionEntry.COLUMN_SECTION_TITLE, mSectionTitlesString.get(i).toLowerCase());
-//            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, mSectionTitlesString.get(i));
-//            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, mSectionTitlesString.get(i));
-//            cVVector.add(values);
-//        }
-//
-//        if (cVVector.size() > 0) {
-//            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-//            cVVector.toArray(cvArray);
-//            int bulkInsertRows = getContentResolver().bulkInsert(
-//                    SectionEntry.CONTENT_URI,
-//                    cvArray);
-//
-//            if (bulkInsertRows == cVVector.size()) {
-//                Log.i(LOG_TAG, "DB bulkInsert into SectionEntry successful.");
-//            } else {
-//                Log.e(LOG_TAG, "DB bulkInsert into SectionEntry unsuccessful. The number of bulkInsertRows is: "
-//                        + bulkInsertRows + " and the number of data size is: " + cVVector.size());
-//            }
-//        }
-//    }
-//
-//    private void cleanSectionTableFromDatabase() {
-//        int rowsDeleted = getContentResolver().delete(SectionEntry.CONTENT_URI, null, null);
-//        if (rowsDeleted != -1) {
-//            Log.i(LOG_TAG, rowsDeleted + " rows in section table is been cleaned.");
-//        } else {
-//            Log.e(LOG_TAG, "delete section table in database failed.");
-//        }
-//    }
-
 //    private void getSectionsInformationFromInternet() {
 //        mFirstSectionName = mSectionTitlesString.get(0).toLowerCase();
 //        for (int i = 0; i < mSectionTitlesString.size(); i++) {
@@ -285,43 +248,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
 //            });
 //        }
 //    }
-
-//    private void putSectionInformationIntoDatabase(String sectionName, SingleJSONResponse singleJSONResponse) {
-//        String currentLongTitle = singleJSONResponse.getTitle();
-//        String currentDescription = singleJSONResponse.getDescription();
-//
-//        if (null != currentLongTitle && !currentLongTitle.isEmpty() && null != currentDescription
-//                && !currentDescription.isEmpty()) {
-//
-//            // Set up the first state of the app
-//            if (sectionName.equalsIgnoreCase(mFirstSectionName)) {
-//                populateContentViews(currentLongTitle, currentDescription);
-//                populateSectionNameOnTheAppBar(mFirstSectionName);
-//            }
-//
-//            // Set up clicked section information
-//            if (mClickedSectionName != null && !mClickedSectionName.isEmpty()) {
-//                populateContentViews(currentLongTitle, currentDescription);
-//            }
-//
-//            // Update database with complete information for one specific ViaplaySection
-//            ContentValues values = new ContentValues();
-//            values.put(SectionEntry.COLUMN_SECTION_LONG_TITLE, currentLongTitle);
-//            values.put(SectionEntry.COLUMN_SECTION_DESCRIPTION, currentDescription);
-//            String selection = SectionEntry.COLUMN_SECTION_TITLE;
-//            String[] selectionArgs = {sectionName};
-//
-//            int rowsUpdated = getContentResolver().update(SectionEntry.CONTENT_URI, values,
-//                    selection, selectionArgs);
-//
-//            if (rowsUpdated > 0) {
-//                Log.i(LOG_TAG, "DB Update long title and description information for "
-//                        + sectionName + " section is successful.");
-//            }
-//        }
-//    }
-//
-
 
 //    private void populateContentViews(String currentLongTitle, String currentDescription) {
 //        if (mToast != null) {
