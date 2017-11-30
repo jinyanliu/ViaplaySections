@@ -113,6 +113,6 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
     @Override
     public void onClick(String title) {
-
+        mCallback.onFirstSectionNameGet(title.toLowerCase());
     }
 }

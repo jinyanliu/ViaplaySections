@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -139,11 +140,21 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
 
     @Override
     public void onFirstSectionNameGet(String firstSectionName) {
+
+        drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
+        populateSectionNameOnTheAppBar(firstSectionName);
+
         DetailFragment sectionDetailContentFragment = new DetailFragment();
         sectionDetailContentFragment.setSectionName(firstSectionName);
         fragmentManager.beginTransaction()
                 .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
                 .commit();
+
+    }
+
+    private void populateSectionNameOnTheAppBar(String sectionName) {
+        TextView titleOnTheBar = findViewById(R.id.title_on_the_app_bar);
+        titleOnTheBar.setText(sectionName);
     }
 
 //    private void initialScreenWithInternet() {
@@ -310,9 +321,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
 //        }
 //    }
 //
-//    private void populateSectionNameOnTheAppBar(String sectionName) {
-//        mBinding.appBar.titleOnTheAppBar.setText(sectionName);
-//    }
+
 
 //    private void populateContentViews(String currentLongTitle, String currentDescription) {
 //        if (mToast != null) {
@@ -329,21 +338,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnFi
 //
 //        if (mIdlingResource != null) {
 //            mIdlingResource.setIdleState(true);
-//        }
-//    }
-
-//    @Override
-//    public void onClick(String sectionTitle) {
-//
-//        showContentView();
-//        mBinding.drawerLayout.closeDrawer(mBinding.leftDrawer);
-//        populateSectionNameOnTheAppBar(sectionTitle);
-//        mClickedSectionName = sectionTitle.toLowerCase();
-
-//        if (hasInternet()) {
-//            refreshOneScreenWithInternet();
-//        } else {
-//            loadEverythingFromDataBase();
 //        }
 //    }
 
