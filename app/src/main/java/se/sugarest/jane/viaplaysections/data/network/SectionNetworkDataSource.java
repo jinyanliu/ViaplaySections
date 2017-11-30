@@ -5,6 +5,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,7 +17,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import se.sugarest.jane.viaplaysections.AppExecutors;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
+import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
+import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_BASE_URL;
@@ -36,12 +41,14 @@ public class SectionNetworkDataSource {
 
     // LiveData storing the latest downloaded weather forecasts
     private final MutableLiveData<SectionEntry> mDownloadedSectionInformation;
+    private final MutableLiveData<List<SectionEntry>> mDownloadedSectionList;
     private final AppExecutors mExecutors;
 
     private SectionNetworkDataSource(Context context, AppExecutors executors) {
         mContext = context;
         mExecutors = executors;
         mDownloadedSectionInformation = new MutableLiveData<>();
+        mDownloadedSectionList = new MutableLiveData<>();
     }
 
     /**
@@ -60,6 +67,10 @@ public class SectionNetworkDataSource {
 
     public LiveData<SectionEntry> getCurrentSectionInformation() {
         return mDownloadedSectionInformation;
+    }
+
+    public LiveData<List<SectionEntry>> getSectionList() {
+        return mDownloadedSectionList;
     }
 
     public void fetchSectionInformation(String sectionName) {
@@ -107,5 +118,61 @@ public class SectionNetworkDataSource {
                 }
             });
         });
+    }
+
+    public void fetchSectionList() {
+
+        Log.d(LOG_TAG, "Fetch section list started.");
+
+        mExecutors.networkIO().execute(() -> {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+            httpClient.connectTimeout(1, MINUTES)
+                    .writeTimeout(1, MINUTES)
+                    .readTimeout(1, MINUTES);
+
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl(VIAPLAY_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
+
+            Retrofit retrofit = builder.client(httpClient.build()).build();
+
+            ViaplayClient client = retrofit.create(ViaplayClient.class);
+
+            Call<JSONResponse> call = client.getSections();
+
+            call.enqueue(new Callback<JSONResponse>() {
+                @Override
+                public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+                    if (response.body() != null && response.body().getLinks() != null
+                            && response.body().getLinks().getViaplaySections() != null
+                            && !response.body().getLinks().getViaplaySections().isEmpty()) {
+
+                        List<ViaplaySection> viaplaySectionList = response.body().getLinks().getViaplaySections();
+                        List<SectionEntry> sectionEntryList = new ArrayList<>();
+
+                        for (int i = 0; i < viaplaySectionList.size(); i++) {
+                            String currentSectionName = viaplaySectionList.get(i).getTitle();
+                            SectionEntry currentSectionEntry
+                                    = new SectionEntry(currentSectionName, currentSectionName, currentSectionName);
+                            sectionEntryList.add(currentSectionEntry);
+                        }
+
+                        mDownloadedSectionList.postValue(sectionEntryList);
+
+                    } else {
+                        Log.e(LOG_TAG, "There is no ViaplaySections comes back from internet with this url: "
+                                + response.raw().request().url().toString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JSONResponse> call, Throwable t) {
+                    Log.e(LOG_TAG, "Failed to get ViaplaySections back.", t);
+                }
+            });
+        });
+
+
     }
 }

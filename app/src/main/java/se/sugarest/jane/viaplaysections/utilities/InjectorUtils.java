@@ -7,6 +7,7 @@ import se.sugarest.jane.viaplaysections.data.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionDatabase;
 import se.sugarest.jane.viaplaysections.data.network.SectionNetworkDataSource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailViewModelFactory;
+import se.sugarest.jane.viaplaysections.ui.list.ListViewModelFactory;
 
 /**
  * Provides static methods to inject the various classes needed for Sunshine
@@ -31,14 +32,14 @@ public class InjectorUtils {
         return SectionNetworkDataSource.getInstance(context.getApplicationContext(), executors);
     }
 
-    public static DetailViewModelFactory provideDetailViewModelFactory(Context context, String sectionName) {
+    public static DetailViewModelFactory provideDetailFragmentModelFactory(Context context, String sectionName) {
         SectionRepository repository = provideRepository(context.getApplicationContext());
         return new DetailViewModelFactory(repository, sectionName);
     }
 
-//    public static MainViewModelFactory provideMainActivityViewModelFactory(Context context) {
-//        SectionRepository repository = provideRepository(context.getApplicationContext());
-//        return new MainViewModelFactory(repository);
-//    }
+    public static ListViewModelFactory provideListFragmentViewModelFactory(Context context) {
+        SectionRepository repository = provideRepository(context.getApplicationContext());
+        return new ListViewModelFactory(repository);
+    }
 
 }

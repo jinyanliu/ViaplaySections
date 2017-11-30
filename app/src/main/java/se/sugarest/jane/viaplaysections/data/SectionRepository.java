@@ -3,6 +3,8 @@ package se.sugarest.jane.viaplaysections.data;
 import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
+import java.util.List;
+
 import se.sugarest.jane.viaplaysections.AppExecutors;
 import se.sugarest.jane.viaplaysections.data.database.SectionDao;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
@@ -33,14 +35,27 @@ public class SectionRepository {
 
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
-        LiveData<SectionEntry> networkData = mSectionNetworkDataSource.getCurrentSectionInformation();
-        networkData.observeForever(newForecastsFromNetwork -> {
+        LiveData<SectionEntry> networkDataSectionInforamtion = mSectionNetworkDataSource.getCurrentSectionInformation();
+        networkDataSectionInforamtion.observeForever(newSectionInfoFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
-                // Insert our new weather data into Sunshine's database
-                mSectionDao.insertSection(newForecastsFromNetwork);
-                Log.d(LOG_TAG, "New values inserted");
+                if (newSectionInfoFromNetwork != null) {
+                    // Delete old Section Information
+                    mSectionDao.deleteSection(newSectionInfoFromNetwork.getName());
+                    // Insert our new weather data into Sunshine's database
+                    mSectionDao.insertSection(newSectionInfoFromNetwork);
+                    Log.d(LOG_TAG, "New values inserted");
+                }
             });
         });
+
+        LiveData<List<SectionEntry>> networkDataSectionList = mSectionNetworkDataSource.getSectionList();
+        networkDataSectionList.observeForever(newSectionListFromNetwork -> {
+            mExecutors.diskIO().execute(() -> {
+                mSectionDao.bulkInsert(newSectionListFromNetwork);
+            });
+        });
+
+
     }
 
     public synchronized static SectionRepository getInstance(
@@ -57,46 +72,52 @@ public class SectionRepository {
         return sInstance;
     }
 
-    private synchronized void initializeData(String sectionName) {
+    private synchronized void initializeData() {
 
-        // Only perform initialization once per app lifetime. If initialization has already been
-        // performed, we have nothing to do in this method.
-        if (mInitialized) return;
-        mInitialized = true;
+//        // Only perform initialization once per app lifetime. If initialization has already been
+//        // performed, we have nothing to do in this method.
+//        if (mInitialized) return;
+//        mInitialized = true;
 
         mExecutors.diskIO().execute(() -> {
-            startFetchSection(sectionName);
+            startFetchSectionList();
         });
     }
 
-//    /**
-//     * Database related operations
-//     **/
-//
-//    public LiveData<List<ListWeatherEntry>> getCurrentWeatherForecasts() {
-//        initializeData();
-//        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
-//        return mWeatherDao.getCurrentWeatherForecasts(today);
-//    }
+    private synchronized void initializeDataBySectionName(String sectionName) {
 
-    public LiveData<SectionEntry> getSectionByName(String sectionName) {
-        initializeData(sectionName);
-        return mSectionDao.getSectionByName(sectionName);
+//        // Only perform initialization once per app lifetime. If initialization has already been
+//        // performed, we have nothing to do in this method.
+//        if (mInitialized) return;
+//        mInitialized = true;
+
+        mExecutors.diskIO().execute(() -> {
+            startFetchSectionByName(sectionName);
+        });
     }
 
-//    /**
-//     * Deletes old weather data because we don't need to keep multiple days' data
-//     */
-//    private void deleteOldData() {
-//        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
-//        mWeatherDao.deleteOldWeather(today);
-//    }
+    /**
+     * Database related operations
+     **/
+    public LiveData<List<SectionEntry>> getSectionsList() {
+        initializeData();
+        return mSectionDao.getSections();
+    }
+
+    public LiveData<SectionEntry> getSectionByName(String sectionName) {
+        initializeDataBySectionName(sectionName);
+        return mSectionDao.getSectionByName(sectionName);
+    }
 
     /**
      * Network related operation
      */
-    private void startFetchSection(String sectionName) {
+    private void startFetchSectionByName(String sectionName) {
         mSectionNetworkDataSource.fetchSectionInformation(sectionName);
+    }
+
+    private void startFetchSectionList() {
+        mSectionNetworkDataSource.fetchSectionList();
     }
 
 }

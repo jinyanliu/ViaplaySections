@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.architecture_components.viewModels.SectionNameViewModel;
 import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragmentViewModel;
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity //implements android.app.Loa
     private String mClickedSectionName;
     private String mFirstSectionName;
     private Toast mToast;
-    private SectionNameViewModel mSectionNameViewModel;
     private DetailFragmentViewModel mDetailFragmentViewModel;
     private ImageView menuImage;
     private DrawerLayout drawerLayout;

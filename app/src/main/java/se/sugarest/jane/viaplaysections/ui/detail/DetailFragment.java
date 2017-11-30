@@ -60,7 +60,7 @@ public class DetailFragment extends LifecycleFragment {
 
 
         // Get the ViewModel from the factory
-        DetailViewModelFactory factory = InjectorUtils.provideDetailViewModelFactory(this.getActivity().getApplicationContext(), mSectionName);
+        DetailViewModelFactory factory = InjectorUtils.provideDetailFragmentModelFactory(this.getActivity().getApplicationContext(), mSectionName);
         mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);
 
         // Observers changes in the SectionEntry with the name
