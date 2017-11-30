@@ -152,7 +152,7 @@ public class SectionNetworkDataSource {
                         List<SectionEntry> sectionEntryList = new ArrayList<>();
 
                         for (int i = 0; i < viaplaySectionList.size(); i++) {
-                            String currentSectionName = viaplaySectionList.get(i).getTitle();
+                            String currentSectionName = viaplaySectionList.get(i).getTitle().toLowerCase();
                             SectionEntry currentSectionEntry
                                     = new SectionEntry(currentSectionName, currentSectionName, currentSectionName);
                             sectionEntryList.add(currentSectionEntry);

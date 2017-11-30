@@ -7,8 +7,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
@@ -27,6 +28,8 @@ public class DetailFragment extends LifecycleFragment {
 
     private TextView title;
     private TextView description;
+    private ProgressBar progressBar;
+    private LinearLayout linearLayout;
 
     public void setSectionName(String mSectionName) {
         this.mSectionName = mSectionName;
@@ -57,6 +60,8 @@ public class DetailFragment extends LifecycleFragment {
 
         title = rootView.findViewById(R.id.section_title_content_text_view);
         description = rootView.findViewById(R.id.section_description_content_text_view);
+        progressBar = rootView.findViewById(R.id.progress_bar);
+        linearLayout = rootView.findViewById(R.id.linearlayout_detail_fragment);
 
 
         // Get the ViewModel from the factory
@@ -69,8 +74,7 @@ public class DetailFragment extends LifecycleFragment {
             if (sectionEntry != null) {
                 bindSectionToUI(sectionEntry);
             } else {
-                Toast newToast = Toast.makeText(getActivity(), "Please enable internet.", Toast.LENGTH_SHORT);
-                newToast.show();
+                showProgressBar();
             }
         });
 
@@ -80,12 +84,24 @@ public class DetailFragment extends LifecycleFragment {
     private void bindSectionToUI(SectionEntry sectionEntry) {
 //        mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
-
-
+        if (sectionEntry.getTitle().equals( sectionEntry.getName())) {
+            showProgressBar();
+        } else {
+            showLinearLayout();
             title.setText(sectionEntry.getTitle());
             description.setText(sectionEntry.getDescription());
+        }
 
+    }
 
+    private void showLinearLayout() {
+        progressBar.setVisibility(View.INVISIBLE);
+        linearLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        linearLayout.setVisibility(View.INVISIBLE);
 
     }
 

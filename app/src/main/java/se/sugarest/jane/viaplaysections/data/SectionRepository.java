@@ -39,10 +39,9 @@ public class SectionRepository {
         networkDataSectionInforamtion.observeForever(newSectionInfoFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
                 if (newSectionInfoFromNetwork != null) {
-                    // Delete old Section Information
-                    mSectionDao.deleteSection(newSectionInfoFromNetwork.getName());
                     // Insert our new weather data into Sunshine's database
-                    mSectionDao.insertSection(newSectionInfoFromNetwork);
+                    mSectionDao.updateSection(newSectionInfoFromNetwork.getTitle(), newSectionInfoFromNetwork.getDescription()
+                            , newSectionInfoFromNetwork.getName().toLowerCase());
                     Log.d(LOG_TAG, "New values inserted");
                 }
             });
@@ -54,8 +53,6 @@ public class SectionRepository {
                 mSectionDao.bulkInsert(newSectionListFromNetwork);
             });
         });
-
-
     }
 
     public synchronized static SectionRepository getInstance(

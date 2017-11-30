@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -61,12 +60,6 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
             mSectionAdapter.setUpTitleStringArray(sectionNamesList);
             if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
             mRecyclerView.smoothScrollToPosition(mPosition);
-
-            if (sectionNamesList.size() == 0) {
-                Toast newToast = Toast.makeText(getActivity(), "Please enable internet.", Toast.LENGTH_SHORT);
-                newToast.show();
-            }
-
         });
 
         return rootView;

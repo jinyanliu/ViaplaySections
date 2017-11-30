@@ -26,8 +26,8 @@ import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity //implements android.app.LoaderManager.LoaderCallbacks<Cursor> {
-{
+public class MainActivity extends AppCompatActivity {
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Bundle backgroundState;
@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity //implements android.app.Loa
                 drawerLayout.openDrawer(findViewById(R.id.navigation_drawer_container));
             }
         });
-
-
 
 
 //        // Set up swipe refresh function
@@ -362,64 +360,6 @@ public class MainActivity extends AppCompatActivity //implements android.app.Loa
 //        });
 //    }
 
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-//
-//        return new CursorLoader(this, SectionEntry.CONTENT_URI, null, null,
-//                null, null);
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-//
-//        if (cursor != null && cursor.getCount() > 0) {
-//
-//            if (!hasInternet()) {
-//                // Opens the app, show first section's information.
-//                if (mClickedSectionName == null || mClickedSectionName.isEmpty()) {
-//                    cursor.moveToFirst();
-//                    mFirstSectionName = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-//                    populateSectionNameOnTheAppBar(mFirstSectionName);
-//
-//                    String firstSectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
-//                    String firstSectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
-//                    populateContentViews(firstSectionTitle, firstSectionDescription);
-//                }
-//            }
-//
-//            for (int i = 0; i < cursor.getCount(); i++) {
-//                cursor.moveToPosition(i);
-//                String currentTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_TITLE));
-//
-//                // Click a section, show specific section's information.
-//                if (mClickedSectionName != null && !mClickedSectionName.isEmpty()) {
-//                    if (currentTitle.equalsIgnoreCase(mClickedSectionName)) {
-//                        cursor.moveToPosition(i);
-//                        String sectionTitle = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_LONG_TITLE));
-//                        String sectionDescription = cursor.getString(cursor.getColumnIndex(SectionEntry.COLUMN_SECTION_DESCRIPTION));
-//                        if (sectionTitle.equalsIgnoreCase(mClickedSectionName)
-//                                || sectionDescription.equalsIgnoreCase(mClickedSectionName)) {
-//                            showEmptyView();
-//                        } else {
-//                            populateContentViews(sectionTitle, sectionDescription);
-//                        }
-//                    }
-//                }
-//
-//                filterOutDifferentSectionNames(currentTitle);
-//                mSectionAdapter.setUpTitleStringArray(mSectionTitlesString);
-//            }
-//
-//        } else {
-//            showEmptyView();
-//        }
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//        mSectionAdapter.setUpTitleStringArray(null);
-//    }
-//
 //    public void filterOutDifferentSectionNames(String sectionName) {
 //        if (!mSectionTitlesString.contains(sectionName.toLowerCase())) {
 //            mSectionTitlesString.add(sectionName.toLowerCase());
