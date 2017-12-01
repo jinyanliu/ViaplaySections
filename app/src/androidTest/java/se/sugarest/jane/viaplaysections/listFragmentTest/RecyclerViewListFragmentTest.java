@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.ListFragmentTest;
+package se.sugarest.jane.viaplaysections.listFragmentTest;
 
 import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
@@ -48,16 +48,14 @@ public class RecyclerViewListFragmentTest {
 
     private IdlingResource mIdlingResource;
 
-    // Registers any resource that needs to be synchronized with Espresso before the test is run.
-    @Before
-    public void registerIdlingResource() {
-        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
-        getInstance().register(mIdlingResource);
-    }
-
     @Before
     public void setUp() {
+        // register IdlingResource
+        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
+        getInstance().register(mIdlingResource);
+        // ListFragment
         fragment = new ListFragment();
+        // sectionAdapter
         sectionAdapter = new SectionAdapter(null);
     }
 
@@ -77,12 +75,9 @@ public class RecyclerViewListFragmentTest {
 
         onView(withId(R.id.navigation_menu)).perform(click());
 
+        // Position index starts from 0
         onView(withId(R.id.navigation_drawer_recycler_view)).check(matches(isDisplayed()))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
-
-//        // Position index starts from 0
-//        onView(withId(R.id.navigation_drawer_recycler_view))
-//                .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
                 .check(matches(withText(secondSection)));

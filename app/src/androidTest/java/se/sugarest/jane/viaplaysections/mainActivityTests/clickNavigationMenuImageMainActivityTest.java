@@ -27,7 +27,7 @@ public class clickNavigationMenuImageMainActivityTest {
             = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void clickNavigationMenuImage_OpensDrawerNavigation() {
+    public void clickNavigationMenuImage_OpensDrawerNavigationContainer() {
         onView(withId(R.id.navigation_menu))
                 .perform(click());
 

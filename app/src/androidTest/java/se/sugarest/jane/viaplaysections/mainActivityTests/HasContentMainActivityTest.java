@@ -24,7 +24,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.notNullValue;
 import static se.sugarest.jane.viaplaysections.mainActivityTests.HasContentMainActivityTest.EspressoTestsMatchers.withDrawable;
 
-
 /**
  * Created by jane on 17-11-16.
  */

@@ -117,14 +117,14 @@ public class DetailFragment extends LifecycleFragment {
                 mViewModel.getSection().observe(this, sectionEntry -> {
 
                     // If the section details change, update the UI
-                    if (sectionEntry == null) {
+                    if (sectionEntry == null && !hasInternet()) {
                         showEmptyView();
                     } else if (sectionName.equals(mCurrentSectionName)) {
                         bindSectionToUI(sectionEntry);
                     }
                 });
             }
-        } else {
+        } else if (!hasInternet()) {
             Log.e(LOG_TAG, "This fragment has a null list of section names.");
             showEmptyView();
         }

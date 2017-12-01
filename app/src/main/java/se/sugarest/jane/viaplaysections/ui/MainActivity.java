@@ -217,11 +217,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
     @Override
     public void onDetailDataBack() {
+        swipeRefreshLayout.setRefreshing(false);
+        showDetailFragment();
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
         }
-        swipeRefreshLayout.setRefreshing(false);
-        showDetailFragment();
     }
 
     private void showProgressBar() {
