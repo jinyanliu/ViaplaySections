@@ -141,21 +141,6 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
         getIdlingResource();
     }
 
-//    @Override
-//    public void onCurrentSectionSelected(String sectionName) {
-//
-//        drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
-//        populateSectionNameOnTheAppBar(sectionName);
-//
-//        DetailFragment sectionDetailContentFragment = new DetailFragment();
-//        sectionDetailContentFragment.setSectionName(sectionName);
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
-//                .commit();
-//
-//    }
-
-
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
         if (sectionNamesList != null && sectionNamesList.size() > 0) {
@@ -164,7 +149,12 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 
             DetailFragment sectionDetailContentFragment = new DetailFragment();
             sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
-            // sectionDetailContentFragment.setSectionName(sectionNamesList.get(0));
+            fragmentManager.beginTransaction()
+                    .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
+                    .commit();
+        } else {
+            DetailFragment sectionDetailContentFragment = new DetailFragment();
+            sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
             fragmentManager.beginTransaction()
                     .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
                     .commit();
@@ -196,15 +186,6 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //            putSectionTitleDataIntoDatabase();
 ////            getSectionsInformationFromInternet();
 //        });
-//    }
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        String currentTitle = getCurrentTitleOnTheAppBarText().toString().toLowerCase();
-//        if (!currentTitle.isEmpty()) {
-//            outState.putString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME, currentTitle);
-//        }
 //    }
 //
 //    @Override
@@ -240,37 +221,6 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //        }
 //    }
 
-//    private void getSectionsInformationFromInternet() {
-//        mFirstSectionName = mSectionTitlesString.get(0).toLowerCase();
-//        for (int i = 0; i < mSectionTitlesString.size(); i++) {
-//            String sectionName = mSectionTitlesString.get(i).toLowerCase();
-//            mDetailFragmentViewModel = ViewModelProviders.of(this)
-//                    .get(DetailFragmentViewModel.class);
-//            mDetailFragmentViewModel.init(sectionName);
-//            mDetailFragmentViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
-//                putSectionInformationIntoDatabase(sectionName, singleJSONResponse);
-//            });
-//        }
-//    }
-
-//    private void populateContentViews(String currentLongTitle, String currentDescription) {
-//        if (mToast != null) {
-//            mToast.cancel();
-//        }
-//        showContentView();
-//
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        DetailFragment sectionDetailContentFragment = new DetailFragment();
-//        sectionDetailContentFragment.setContentText(currentLongTitle, currentDescription);
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
-//                .commit();
-//
-//        if (mIdlingResource != null) {
-//            mIdlingResource.setIdleState(true);
-//        }
-//    }
-
 //    private void refreshOneScreenWithInternet() {
 //        if (mIdlingResource != null) {
 //            mIdlingResource.setIdleState(false);
@@ -288,16 +238,6 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //        mDetailFragmentViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
 //            putSectionInformationIntoDatabase(mClickedSectionName, singleJSONResponse);
 //        });
-//    }
-
-//    public void filterOutDifferentSectionNames(String sectionName) {
-//        if (!mSectionTitlesString.contains(sectionName.toLowerCase())) {
-//            mSectionTitlesString.add(sectionName.toLowerCase());
-//        }
-//    }
-//
-//    private CharSequence getCurrentTitleOnTheAppBarText() {
-//        return mBinding.appBar.titleOnTheAppBar.getText();
 //    }
 
 //    private void showEmptyView() {

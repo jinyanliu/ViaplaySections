@@ -2,6 +2,8 @@ package se.sugarest.jane.viaplaysections.ui.detail;
 
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 import se.sugarest.jane.viaplaysections.utilities.InjectorUtils;
 
 /**
- * Display a single section's information on main screen.
+ * This detail fragment displays a single section's detail information on main screen.
  * <p>
  * Created by jane on 17-11-28.
  */
@@ -29,11 +30,10 @@ public class DetailFragment extends LifecycleFragment {
 
     private TextView title;
     private TextView description;
-    private ProgressBar progressBar;
+    private TextView emptyTextView;
     private LinearLayout linearLayout;
     private ArrayList<String> mSectionNamesList = new ArrayList<>();
     private String mCurrentSectionName;
-
 
     // This field is used for data binding.
     // private FragmentSectionContentTextViewBinding mBinding;
@@ -50,11 +50,13 @@ public class DetailFragment extends LifecycleFragment {
      * Setter method for keeping track of the section names list this fragment can interact with.
      */
     public void setmSectionNamesList(ArrayList<String> mSectionNamesList) {
-        if (mSectionNamesList != null) {
+        if (mSectionNamesList != null && mSectionNamesList.size() > 0) {
             this.mSectionNamesList.clear();
             this.mSectionNamesList.addAll(mSectionNamesList);
             this.mCurrentSectionName = mSectionNamesList.get(0);
             Log.i(LOG_TAG, "CONFIGURATION setter: mSectionNamesList == " + mSectionNamesList.toString());
+        } else {
+            Log.e(LOG_TAG, "This fragment has a null list of section names.");
         }
     }
 
@@ -68,14 +70,8 @@ public class DetailFragment extends LifecycleFragment {
 
         title = rootView.findViewById(R.id.section_title_content_text_view);
         description = rootView.findViewById(R.id.section_description_content_text_view);
-        progressBar = rootView.findViewById(R.id.progress_bar);
+        emptyTextView = rootView.findViewById(R.id.empty_text_view);
         linearLayout = rootView.findViewById(R.id.linearlayout_detail_fragment);
-
-//        // Load the saved state(the list of section names) if there is one
-//        if (savedInstanceState != null) {
-//            mCurrentSectionName = savedInstanceState.getString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME);
-//            Log.i(LOG_TAG, "CONFIGURATION savedInstanceState : mCurrentSectionName == " + mCurrentSectionName);
-//        }
 
         if (mSectionNamesList != null && mSectionNamesList.size() > 0) {
             // Loop through the whole list, to get and save all the section's information after the
@@ -98,7 +94,7 @@ public class DetailFragment extends LifecycleFragment {
 
                     // If the section details change, update the UI
                     if (sectionEntry == null) {
-                        showProgressBar();
+                        showEmptyView();
                     } else if (sectionName.equals(mCurrentSectionName)) {
                         bindSectionToUI(sectionEntry);
                     }
@@ -106,6 +102,7 @@ public class DetailFragment extends LifecycleFragment {
             }
         } else {
             Log.e(LOG_TAG, "This fragment has a null list of secion names.");
+            showEmptyView();
         }
         return rootView;
     }
@@ -115,20 +112,28 @@ public class DetailFragment extends LifecycleFragment {
 //        mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
 //        mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
+
         if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
             showLinearLayout();
             title.setText(sectionEntry.getTitle());
             description.setText(sectionEntry.getDescription());
+        } else if (!hasInternet()) {
+            showEmptyView();
         }
     }
 
     private void showLinearLayout() {
-        progressBar.setVisibility(View.INVISIBLE);
+        emptyTextView.setVisibility(View.INVISIBLE);
         linearLayout.setVisibility(View.VISIBLE);
     }
 
-    private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
+    private void showEmptyView() {
+        emptyTextView.setVisibility(View.VISIBLE);
         linearLayout.setVisibility(View.INVISIBLE);
+    }
+
+    private boolean hasInternet() {
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected();
     }
 }

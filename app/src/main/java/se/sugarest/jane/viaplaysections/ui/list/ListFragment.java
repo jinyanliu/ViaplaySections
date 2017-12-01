@@ -39,16 +39,8 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
     private boolean mInitialized = false;
 
-//    // Define a new interface OnCurrentSectionSelectedListener that triggers a callback in the host activity
-//    OnCurrentSectionSelectedListener mSectionNameCallback;
-
     // Define a new interface OnDataBackListener that triggers a callback in the host activity
     OnDataBackListener mDataCallback;
-
-//    // OnCurrentSectionSelectedListener interface, calls a method in the host activity named onImageSelected
-//    public interface OnCurrentSectionSelectedListener {
-//        void onCurrentSectionSelected(String sectionName);
-//    }
 
     // OnDataBackListener interface, calls a method in the host activity named onDataBack
     public interface OnDataBackListener {
@@ -103,15 +95,6 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
                     sectionNamesList.add(currentSectionName);
                 }
 
-//                if (!mInitialized && savedInstanceState != null) {
-//                    mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
-//                } else if (!mInitialized) {
-//                    mCurrentSectionNameList.clear();
-//                    mCurrentSectionNameList.addAll(sectionNamesList);
-//                    mInitialized = true;
-//                    mDataCallback.onDataBack(sectionNamesList);
-//                }
-
                 if (!mInitialized) {
                     mInitialized = true;
                     if (savedInstanceState != null) {
@@ -125,18 +108,11 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
                     }
                 }
 
-
-//                if (!mInitialized && savedInstanceState == null) {
-//                    mInitialized = true;
-//                    // mSectionNameCallback.onCurrentSectionSelected(sectionNamesList.get(0));
-//                    mDataCallback.onDataBack(sectionNamesList);
-//                } else if (savedInstanceState != null) {
-//                    mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
-//                }
-
                 mSectionAdapter.setUpTitleStringArray(sectionNamesList);
                 if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
                 mRecyclerView.smoothScrollToPosition(mPosition);
+            } else {
+                mDataCallback.onDataBack(mCurrentSectionNameList);
             }
         });
 

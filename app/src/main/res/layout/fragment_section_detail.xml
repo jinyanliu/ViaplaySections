@@ -28,11 +28,12 @@
                 style="@style/main_activity_section_description_text_view_style" />
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
+        <TextView
+            android:id="@+id/empty_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:text="@string/text_message_empty_view"/>
     </FrameLayout>
 </layout>
