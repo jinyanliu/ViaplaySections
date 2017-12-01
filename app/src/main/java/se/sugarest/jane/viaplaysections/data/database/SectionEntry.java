@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Room;
 
 /**
- * Defines the schema of a table in {@link Room} for a single section information.
+ * This class defines the schema of a table in {@link Room} for a single section's information.
  * The data is used as an {@link Index} so that its uniqueness can be ensured.
  * Indexes also allow for fast lookup for the column.
  * <p>

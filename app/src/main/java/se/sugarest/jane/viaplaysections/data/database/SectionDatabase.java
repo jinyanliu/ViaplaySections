@@ -6,16 +6,18 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.util.Log;
 
+import static se.sugarest.jane.viaplaysections.utilities.Constants.DATABASE_NAME;
+
 /**
- * Database for the application including a table for {@link SectionEntry} with the DAO {@link SectionDao}.
+ * This abstract class is the database for the application including a table for {@link SectionEntry}
+ * with the DAO {@link SectionDao}.
  * <p>
  * Created by jane on 17-11-29.
  */
-@Database(entities = {SectionEntry.class}, version = 1)  // Entries listed here
+@Database(entities = {SectionEntry.class}, version = 1)
 public abstract class SectionDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = SectionDatabase.class.getSimpleName();
-    private static final String DATABASE_NAME = "section";
 
     // For Singleton instantiation
     private static final Object LOCK = new Object();
@@ -26,13 +28,13 @@ public abstract class SectionDatabase extends RoomDatabase {
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        SectionDatabase.class, SectionDatabase.DATABASE_NAME).build();
+                        SectionDatabase.class, DATABASE_NAME).build();
                 Log.d(LOG_TAG, "Made new database");
             }
         }
         return sInstance;
     }
 
-    // The associated DAOs for the database
+    // The associated DAO for the database
     public abstract SectionDao sectionDao(); // Getters for Dao
 }
