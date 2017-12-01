@@ -39,15 +39,21 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
     private boolean mInitialized = false;
 
-    // Define a new interface OnDataBackListener that triggers a callback in the host activity
-    OnDataBackListener mDataCallback;
+    // Define a new interface OnDetailDataBackListener that triggers a callback in the host activity
+    private OnDataBackListener mDataCallback;
 
-    // OnDataBackListener interface, calls a method in the host activity named onDataBack
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the fragment
+     */
+    public ListFragment() {
+    }
+
+    // OnDetailDataBackListener interface, calls a method in the host activity named onDataBack
     public interface OnDataBackListener {
         void onDataBack(ArrayList<String> sectionNamesList);
     }
 
-    // Override onAttach to make sure that the container activity has implemented the callbacks
+    // Override onAttach to make sure that the container activity has implemented the callback
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -55,18 +61,11 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
         // This makes sure that the host activity has implemented the callbacks interface
         // If not, it throws an exception
         try {
-            // mSectionNameCallback = (OnCurrentSectionSelectedListener) context;
             mDataCallback = (OnDataBackListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnCurrentSectionSelectedListener");
+                    + " must implement OnDataBackListener");
         }
-    }
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the fragment
-     */
-    public ListFragment() {
     }
 
     @Override

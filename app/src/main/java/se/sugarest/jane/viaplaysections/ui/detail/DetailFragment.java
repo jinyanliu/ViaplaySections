@@ -46,6 +46,29 @@ public class DetailFragment extends LifecycleFragment {
     public DetailFragment() {
     }
 
+    // Define a new interface OnDetailDataBackListener that triggers a callback in the host activity
+    private OnDetailDataBackListener mDataCallback;
+
+    // OnDetailDataBackListener interface, calls a method in the host activity named onDataBack
+    public interface OnDetailDataBackListener {
+        void onDetailDataBack();
+    }
+
+    // Override onAttach to make sure that the container activity has implemented the callback
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // This makes sure that the host activity has implemented the callbacks interface
+        // If not, it throws an exception
+        try {
+            mDataCallback = (OnDetailDataBackListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnDetailDataBackListener");
+        }
+    }
+
     /**
      * Setter method for keeping track of the section names list this fragment can interact with.
      */
@@ -114,6 +137,7 @@ public class DetailFragment extends LifecycleFragment {
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
 
         if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
+            mDataCallback.onDetailDataBack();
             showLinearLayout();
             title.setText(sectionEntry.getTitle());
             description.setText(sectionEntry.getDescription());

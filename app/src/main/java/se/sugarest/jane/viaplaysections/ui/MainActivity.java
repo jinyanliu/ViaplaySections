@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 
@@ -27,8 +28,7 @@ import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
  * This is the main controller of the whole app.
  * It initiates the app.
  */
-public class MainActivity extends AppCompatActivity implements //ListFragment.OnCurrentSectionSelectedListener ,
-        ListFragment.OnDataBackListener {
+public class MainActivity extends AppCompatActivity implements ListFragment.OnDataBackListener, DetailFragment.OnDetailDataBackListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
     private DrawerLayout drawerLayout;
     private FragmentManager fragmentManager;
     private Boolean mInitialized = false;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView titleOnTheBar;
 
 //    private ActivityMainBinding mBinding;
 
@@ -81,14 +83,13 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 
         menuImage = findViewById(R.id.navigation_menu);
         drawerLayout = findViewById(R.id.drawer_layout);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        titleOnTheBar = findViewById(R.id.title_on_the_app_bar);
 
         fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
-            ListFragment navigationDrawerFragment = new ListFragment();
-            fragmentManager.beginTransaction()
-                    .add(R.id.navigation_drawer_container, navigationDrawerFragment)
-                    .commit();
+            initialScreenWithInternet();
         }
 
         // Set up left drawer navigation
@@ -101,28 +102,27 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
         });
 
 
-//        // Set up swipe refresh function
-//        mBinding.swipeRefresh.setOnRefreshListener(
-//                () -> {
-//                    if (!hasInternet()) {
-//                        mBinding.swipeRefresh.setRefreshing(false);
-//                        if (mToast != null) {
-//                            mToast.cancel();
-//                        }
-//                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
-//                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-//                        mToast.show();
-//                    } else {
-//                        if (getCurrentTitleOnTheAppBarText() == null ||
-//                                getCurrentTitleOnTheAppBarText().toString().isEmpty()) {
-//                            initialScreenWithInternet();
-//                        } else {
-//                            mClickedSectionName = getCurrentTitleOnTheAppBarText().toString().toLowerCase();
-//                            refreshOneScreenWithInternet();
-//                        }
-//                    }
-//                }
-//        );
+        // Set up swipe refresh function
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    if (!hasInternet()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
+                        mToast.show();
+                    } else {
+                        if (getCurrentSectionNameOnTheAppBarText().isEmpty()) {
+                            initialScreenWithInternet();
+                        } else {
+                            ArrayList<String> currentList = new ArrayList<>();
+                            currentList.add(getCurrentSectionNameOnTheAppBarText());
+                            refreshOneSectionWithInternet(currentList);
+                        }
+                    }
+                }
+        );
 
 //        // Current content survive while rotates the phone
 //        if (savedInstanceState != null && savedInstanceState.containsKey(DETAIL_FRAGMENT_CURRENT_SECTION_NAME)) {
@@ -141,28 +141,36 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
         getIdlingResource();
     }
 
+    private void initialScreenWithInternet() {
+        ListFragment navigationDrawerFragment = new ListFragment();
+        fragmentManager.beginTransaction()
+                .add(R.id.navigation_drawer_container, navigationDrawerFragment)
+                .commit();
+    }
+
+    private String getCurrentSectionNameOnTheAppBarText() {
+        return titleOnTheBar.getText().toString();
+    }
+
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
         if (sectionNamesList != null && sectionNamesList.size() > 0) {
             drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
             populateSectionNameOnTheAppBar(sectionNamesList.get(0));
 
-            DetailFragment sectionDetailContentFragment = new DetailFragment();
-            sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
-                    .commit();
-        } else {
-            DetailFragment sectionDetailContentFragment = new DetailFragment();
-            sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
-                    .commit();
         }
+        refreshOneSectionWithInternet(sectionNamesList);
+    }
+
+    private void refreshOneSectionWithInternet(ArrayList<String> sectionNamesList) {
+        DetailFragment sectionDetailContentFragment = new DetailFragment();
+        sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
+        fragmentManager.beginTransaction()
+                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
+                .commit();
     }
 
     private void populateSectionNameOnTheAppBar(String sectionName) {
-        TextView titleOnTheBar = findViewById(R.id.title_on_the_app_bar);
         titleOnTheBar.setText(sectionName);
     }
 
@@ -202,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //                loadEverythingFromDataBase();
 //            }
 //        } else {
-//            if (getCurrentTitleOnTheAppBarText() == null || getCurrentTitleOnTheAppBarText().toString().isEmpty()) {
+//            if (getCurrentSectionNameOnTheAppBarText() == null || getCurrentSectionNameOnTheAppBarText().toString().isEmpty()) {
 //                if (hasInternet()) {
 //                    initialScreenWithInternet();
 //                } else {
@@ -215,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //    @Override
 //    protected void onPause() {
 //        super.onPause();
-//        if (getCurrentTitleOnTheAppBarText() != null) {
+//        if (getCurrentSectionNameOnTheAppBarText() != null) {
 //            backgroundState = new Bundle();
-//            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentTitleOnTheAppBarText().toString().toLowerCase());
+//            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentSectionNameOnTheAppBarText().toString().toLowerCase());
 //        }
 //    }
 
@@ -258,4 +266,8 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
     }
 
 
+    @Override
+    public void onDetailDataBack() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
 }
