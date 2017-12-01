@@ -33,7 +33,7 @@ public class SectionRepository {
         mSectionNetworkDataSource = sectionNetworkDataSource;
         mExecutors = executors;
 
-
+        getAndSaveSectionEntryList();
     }
 
     public void getAndSaveSingleSectionEntryDetails() {
@@ -47,7 +47,8 @@ public class SectionRepository {
                     // Insert our new weather data into Sunshine's database
                     mSectionDao.updateSection(newSectionInfoFromNetwork.getTitle(), newSectionInfoFromNetwork.getDescription()
                             , newSectionInfoFromNetwork.getName().toLowerCase());
-                    Log.d(LOG_TAG, "New values inserted");
+                    Log.d(LOG_TAG, "New values updated with the section name: " + newSectionInfoFromNetwork.getName()
+                            + newSectionInfoFromNetwork.getTitle());
                 }
             });
         });
@@ -58,6 +59,7 @@ public class SectionRepository {
         networkDataSectionList.observeForever(newSectionListFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
                 mSectionDao.bulkInsert(newSectionListFromNetwork);
+                Log.d(LOG_TAG, "New values inserted");
             });
         });
     }

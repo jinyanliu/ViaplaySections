@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,7 @@ public class DetailFragment extends LifecycleFragment {
 
     private TextView title;
     private TextView description;
-    private TextView emptyTextView;
+    private ImageView imageView;
     private LinearLayout linearLayout;
     private ArrayList<String> mSectionNamesList = new ArrayList<>();
     private String mCurrentSectionName;
@@ -93,7 +94,7 @@ public class DetailFragment extends LifecycleFragment {
 
         title = rootView.findViewById(R.id.section_title_content_text_view);
         description = rootView.findViewById(R.id.section_description_content_text_view);
-        emptyTextView = rootView.findViewById(R.id.empty_text_view);
+        imageView = rootView.findViewById(R.id.iv_empty_message);
         linearLayout = rootView.findViewById(R.id.linearlayout_detail_fragment);
 
         if (mSectionNamesList != null && mSectionNamesList.size() > 0) {
@@ -127,6 +128,7 @@ public class DetailFragment extends LifecycleFragment {
             Log.e(LOG_TAG, "This fragment has a null list of section names.");
             showEmptyView();
         }
+        mDataCallback.onDetailDataBack();
         return rootView;
     }
 
@@ -137,7 +139,6 @@ public class DetailFragment extends LifecycleFragment {
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
 
         if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
-            mDataCallback.onDetailDataBack();
             showLinearLayout();
             title.setText(sectionEntry.getTitle());
             description.setText(sectionEntry.getDescription());
@@ -147,12 +148,12 @@ public class DetailFragment extends LifecycleFragment {
     }
 
     private void showLinearLayout() {
-        emptyTextView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
         linearLayout.setVisibility(View.VISIBLE);
     }
 
     private void showEmptyView() {
-        emptyTextView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.VISIBLE);
         linearLayout.setVisibility(View.INVISIBLE);
     }
 

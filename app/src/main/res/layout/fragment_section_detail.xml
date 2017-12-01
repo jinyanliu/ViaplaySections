@@ -9,7 +9,8 @@
             android:id="@+id/linearlayout_detail_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/activity_margin">
 
             <TextView
                 android:id="@+id/section_title_label_text_view"
@@ -28,13 +29,13 @@
                 style="@style/main_activity_section_description_text_view_style" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/empty_text_view"
+        <ImageView
+            android:id="@+id/iv_empty_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/text_message_empty_view"
-            android:textSize="20sp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pic_empty_message"
             android:visibility="invisible" />
     </FrameLayout>
 </layout>
