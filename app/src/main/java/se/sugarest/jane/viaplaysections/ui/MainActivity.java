@@ -84,10 +84,12 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 
         fragmentManager = getSupportFragmentManager();
 
-        ListFragment navigationDrawerFragment = new ListFragment();
-        fragmentManager.beginTransaction()
-                .add(R.id.navigation_drawer_container, navigationDrawerFragment)
-                .commit();
+        if(savedInstanceState == null){
+            ListFragment navigationDrawerFragment = new ListFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.navigation_drawer_container, navigationDrawerFragment)
+                    .commit();
+        }
 
         // Set up left drawer navigation
         menuImage.setOnClickListener((View view) -> {
@@ -123,8 +125,8 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //        );
 
 //        // Current content survive while rotates the phone
-//        if (savedInstanceState != null && savedInstanceState.containsKey(CONFIGURATION_KEY)) {
-//            mClickedSectionName = savedInstanceState.getString(CONFIGURATION_KEY);
+//        if (savedInstanceState != null && savedInstanceState.containsKey(DETAIL_FRAGMENT_CURRENT_SECTION_NAME)) {
+//            mClickedSectionName = savedInstanceState.getString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME);
 //            populateSectionNameOnTheAppBar(mClickedSectionName);
 //            loadEverythingFromDataBase();
 //        } else {
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
         populateSectionNameOnTheAppBar(sectionNamesList.get(0));
 
         DetailFragment sectionDetailContentFragment = new DetailFragment();
-        sectionDetailContentFragment.setSectionNamesList(sectionNamesList);
+        sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
         // sectionDetailContentFragment.setSectionName(sectionNamesList.get(0));
         fragmentManager.beginTransaction()
                 .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 //        super.onSaveInstanceState(outState);
 //        String currentTitle = getCurrentTitleOnTheAppBarText().toString().toLowerCase();
 //        if (!currentTitle.isEmpty()) {
-//            outState.putString(CONFIGURATION_KEY, currentTitle);
+//            outState.putString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME, currentTitle);
 //        }
 //    }
 //

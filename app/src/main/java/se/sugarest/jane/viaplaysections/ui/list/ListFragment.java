@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +15,17 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.utilities.InjectorUtils;
+
+import static se.sugarest.jane.viaplaysections.utilities.Constants.LIST_FRAGMENT_SECTION_NAME_LIST;
 
 /**
  * Displays a list of section names.
  * Created by jane on 17-11-30.
  */
 public class ListFragment extends LifecycleFragment implements SectionAdapter.SectionAdapterOnClickHandler {
-    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+
+    private static final String LOG_TAG = ListFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
 
@@ -31,6 +34,8 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
     private ListFragmentViewModel mViewModel;
 
     private int mPosition = RecyclerView.NO_POSITION;
+
+    private ArrayList<String> mCurrentSectionNameList = new ArrayList<>();
 
     private boolean mInitialized = false;
 
@@ -98,11 +103,34 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
                     sectionNamesList.add(currentSectionName);
                 }
 
-                if (mInitialized == false) {
+//                if (!mInitialized && savedInstanceState != null) {
+//                    mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
+//                } else if (!mInitialized) {
+//                    mCurrentSectionNameList.clear();
+//                    mCurrentSectionNameList.addAll(sectionNamesList);
+//                    mInitialized = true;
+//                    mDataCallback.onDataBack(sectionNamesList);
+//                }
+
+                if (!mInitialized) {
                     mInitialized = true;
-                    // mSectionNameCallback.onCurrentSectionSelected(sectionNamesList.get(0));
-                    mDataCallback.onDataBack(sectionNamesList);
+                    if (savedInstanceState != null) {
+                        mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
+                    } else {
+                        mCurrentSectionNameList.clear();
+                        mCurrentSectionNameList.addAll(sectionNamesList);
+                        mDataCallback.onDataBack(sectionNamesList);
+                    }
                 }
+
+
+//                if (!mInitialized && savedInstanceState == null) {
+//                    mInitialized = true;
+//                    // mSectionNameCallback.onCurrentSectionSelected(sectionNamesList.get(0));
+//                    mDataCallback.onDataBack(sectionNamesList);
+//                } else if (savedInstanceState != null) {
+//                    mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
+//                }
 
                 mSectionAdapter.setUpTitleStringArray(sectionNamesList);
                 if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
@@ -128,7 +156,19 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
         ArrayList<String> sectionNamesList = new ArrayList<>();
         sectionNamesList.add(title);
 
+        mCurrentSectionNameList.clear();
+        mCurrentSectionNameList.addAll(sectionNamesList);
+
         //mSectionNameCallback.onCurrentSectionSelected(title.toLowerCase());
         mDataCallback.onDataBack(sectionNamesList);
+    }
+
+    /**
+     * Save the current state of this fragment
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST, mCurrentSectionNameList);
+        Log.i(LOG_TAG, "CONFIGURATION outState: mCurrentSectionNameList == " + mCurrentSectionNameList);
     }
 }
