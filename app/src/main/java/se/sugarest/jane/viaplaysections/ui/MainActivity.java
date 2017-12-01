@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     private Boolean mInitialized = false;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView titleOnTheBar;
+    private ProgressBar progressBar;
+    private FrameLayout frameLayout;
 
 //    private ActivityMainBinding mBinding;
 
@@ -85,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         drawerLayout = findViewById(R.id.drawer_layout);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         titleOnTheBar = findViewById(R.id.title_on_the_app_bar);
+        progressBar = findViewById(R.id.progress_bar);
+        frameLayout = findViewById(R.id.detail_fragment_container);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -124,24 +130,15 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
                 }
         );
 
-//        // Current content survive while rotates the phone
-//        if (savedInstanceState != null && savedInstanceState.containsKey(DETAIL_FRAGMENT_CURRENT_SECTION_NAME)) {
-//            mClickedSectionName = savedInstanceState.getString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME);
-//            populateSectionNameOnTheAppBar(mClickedSectionName);
-//            loadEverythingFromDataBase();
-//        } else {
-//            if (hasInternet()) {
-//                initialScreenWithInternet();
-//            } else {
-//                loadEverythingFromDataBase();
-//            }
-//        }
-
         // Get the IdlingResource instance
         getIdlingResource();
     }
 
     private void initialScreenWithInternet() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+        showProgressBar();
         ListFragment navigationDrawerFragment = new ListFragment();
         fragmentManager.beginTransaction()
                 .add(R.id.navigation_drawer_container, navigationDrawerFragment)
@@ -163,6 +160,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     }
 
     private void refreshOneSectionWithInternet(ArrayList<String> sectionNamesList) {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
+        showProgressBar();
         DetailFragment sectionDetailContentFragment = new DetailFragment();
         sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
         fragmentManager.beginTransaction()
@@ -174,28 +175,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         titleOnTheBar.setText(sectionName);
     }
 
-//    private void initialScreenWithInternet() {
-//        if (mIdlingResource != null) {
-//            mIdlingResource.setIdleState(false);
-//        }
-//        if (mToast != null) {
-//            mToast.cancel();
-//        }
-//        mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
-//        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-//        mToast.show();
-//        // Create a ViewModel the first time the system calls an activity's onCreate() method.
-//        // Re-created activities receive the same SectionNameViewModel instance created by the first activity.
-//        mSectionNameViewModel = ViewModelProviders.of(this).get(SectionNameViewModel.class);
-//        mSectionNameViewModel.init();
-//        mSectionNameViewModel.getSectionNames().observe(this, sectionNames -> {
-//            // Update Navigation Bar items
-//            loadNavigationBarItemsFromInternet(sectionNames);
-//            putSectionTitleDataIntoDatabase();
-////            getSectionsInformationFromInternet();
-//        });
-//    }
-//
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
@@ -229,37 +208,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 //        }
 //    }
 
-//    private void refreshOneScreenWithInternet() {
-//        if (mIdlingResource != null) {
-//            mIdlingResource.setIdleState(false);
-//        }
-//        if (mToast != null) {
-//            mToast.cancel();
-//        }
-//        mToast = Toast.makeText(this, getString(R.string.toast_message_data_is_loading), Toast.LENGTH_SHORT);
-//        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-//        mToast.show();
-//
-//        mDetailFragmentViewModel = ViewModelProviders.of(this)
-//                .get(DetailFragmentViewModel.class);
-//        mDetailFragmentViewModel.init(mClickedSectionName);
-//        mDetailFragmentViewModel.getSingleJSONResponseLiveData().observe(this, singleJSONResponse -> {
-//            putSectionInformationIntoDatabase(mClickedSectionName, singleJSONResponse);
-//        });
-//    }
-
-//    private void showEmptyView() {
-//        mBinding.swipeRefresh.setRefreshing(false);
-//        mBinding.detailFragmentContainer.setVisibility(View.INVISIBLE);
-//        mBinding.emptyView.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void showContentView() {
-//        mBinding.swipeRefresh.setRefreshing(false);
-//        mBinding.detailFragmentContainer.setVisibility(View.VISIBLE);
-//        mBinding.emptyView.setVisibility(View.INVISIBLE);
-//    }
-
     private boolean hasInternet() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected();
@@ -268,6 +216,20 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
     @Override
     public void onDetailDataBack() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
         swipeRefreshLayout.setRefreshing(false);
+        showDetailFragment();
+    }
+
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        frameLayout.setVisibility(View.INVISIBLE);
+    }
+
+    private void showDetailFragment() {
+        progressBar.setVisibility(View.INVISIBLE);
+        frameLayout.setVisibility(View.VISIBLE);
     }
 }

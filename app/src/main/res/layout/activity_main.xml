@@ -19,21 +19,25 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:padding="@dimen/activity_margin">
 
-            <!-- detail content container -->
             <FrameLayout
-                android:id="@+id/detail_fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+                android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/text_message_empty_view"
-            android:textSize="20sp"
-            android:visibility="invisible" />
+                <!-- detail content container -->
+                <FrameLayout
+                    android:id="@+id/detail_fragment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="invisible" />
+            </FrameLayout>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <!-- navigation drawer container -->
         <FrameLayout

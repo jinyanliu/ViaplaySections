@@ -33,7 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="invisible"
-            android:text="@string/text_message_empty_view"/>
+            android:text="@string/text_message_empty_view"
+            android:textSize="20sp"
+            android:visibility="invisible" />
     </FrameLayout>
 </layout>
