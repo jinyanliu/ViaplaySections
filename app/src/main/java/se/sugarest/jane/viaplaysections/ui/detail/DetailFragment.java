@@ -124,7 +124,7 @@ public class DetailFragment extends LifecycleFragment {
                 });
             }
         } else {
-            Log.e(LOG_TAG, "This fragment has a null list of secion names.");
+            Log.e(LOG_TAG, "This fragment has a null list of section names.");
             showEmptyView();
         }
         return rootView;

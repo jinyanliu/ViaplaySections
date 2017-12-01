@@ -26,6 +26,8 @@ import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragmentViewModel;
 import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 
+import static se.sugarest.jane.viaplaysections.utilities.Constants.FORE_BACK_STATE_KEY;
+
 /**
  * This is the main controller of the whole app.
  * It initiates the app.
@@ -138,7 +140,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
         }
-        showProgressBar();
+        if (hasInternet()) {
+            showProgressBar();
+        }
         ListFragment navigationDrawerFragment = new ListFragment();
         fragmentManager.beginTransaction()
                 .add(R.id.navigation_drawer_container, navigationDrawerFragment)
@@ -146,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     }
 
     private String getCurrentSectionNameOnTheAppBarText() {
-        return titleOnTheBar.getText().toString();
+        return titleOnTheBar.getText().toString().toLowerCase();
     }
 
     @Override
@@ -163,7 +167,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(false);
         }
-        showProgressBar();
+        if (hasInternet()) {
+            showProgressBar();
+        }
         DetailFragment sectionDetailContentFragment = new DetailFragment();
         sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
         fragmentManager.beginTransaction()
@@ -175,38 +181,33 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         titleOnTheBar.setText(sectionName);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (backgroundState != null
-//                && backgroundState.getString(FORE_BACK_STATE_KEY) != null && backgroundState.getString(FORE_BACK_STATE_KEY) != null
-//                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
-//            mClickedSectionName = backgroundState.getString(FORE_BACK_STATE_KEY);
-//            populateSectionNameOnTheAppBar(mClickedSectionName);
-//            if (hasInternet()) {
-//                refreshOneScreenWithInternet();
-//            } else {
-//                loadEverythingFromDataBase();
-//            }
-//        } else {
-//            if (getCurrentSectionNameOnTheAppBarText() == null || getCurrentSectionNameOnTheAppBarText().toString().isEmpty()) {
-//                if (hasInternet()) {
-//                    initialScreenWithInternet();
-//                } else {
-//                    loadEverythingFromDataBase();
-//                }
-//            }
-//        }
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (getCurrentSectionNameOnTheAppBarText() != null) {
-//            backgroundState = new Bundle();
-//            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentSectionNameOnTheAppBarText().toString().toLowerCase());
-//        }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundState != null
+                && backgroundState.getString(FORE_BACK_STATE_KEY) != null
+                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
+
+            ArrayList<String> currentList = new ArrayList<>();
+            currentList.add(backgroundState.getString(FORE_BACK_STATE_KEY));
+
+            populateSectionNameOnTheAppBar(currentList.get(0));
+            refreshOneSectionWithInternet(currentList);
+        } else {
+            if (getCurrentSectionNameOnTheAppBarText().isEmpty()) {
+                initialScreenWithInternet();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!getCurrentSectionNameOnTheAppBarText().isEmpty()) {
+            backgroundState = new Bundle();
+            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentSectionNameOnTheAppBarText());
+        }
+    }
 
     private boolean hasInternet() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
