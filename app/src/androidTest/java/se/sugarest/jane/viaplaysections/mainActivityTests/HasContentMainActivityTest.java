@@ -62,23 +62,8 @@ public class HasContentMainActivityTest {
     }
 
     @Test
-    public void mainScreenHasContent_titleLabelTextView() {
-        onView(withId(R.id.section_title_label_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
-    }
-
-    @Test
-    public void mainScreenHasContent_titleContentTextView() {
-        onView(withId(R.id.section_title_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
-    }
-
-    @Test
-    public void mainScreenHasContent_descriptionLabelTextView() {
-        onView(withId(R.id.section_description_label_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
-    }
-
-    @Test
-    public void mainScreenHasContent_descriptionContentTextView() {
-        onView(withId(R.id.section_description_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
+    public void mainScreenHasContent_detailFragmentContainer() {
+        onView(withId(R.id.detail_fragment_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
     }
 
     // Remember to unregister resources when not needed to avoid malfunction.
