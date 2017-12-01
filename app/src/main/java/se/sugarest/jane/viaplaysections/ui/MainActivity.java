@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 
         fragmentManager = getSupportFragmentManager();
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             ListFragment navigationDrawerFragment = new ListFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.navigation_drawer_container, navigationDrawerFragment)
@@ -158,15 +158,17 @@ public class MainActivity extends AppCompatActivity implements //ListFragment.On
 
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
-        drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
-        populateSectionNameOnTheAppBar(sectionNamesList.get(0));
+        if (sectionNamesList != null && sectionNamesList.size() > 0) {
+            drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
+            populateSectionNameOnTheAppBar(sectionNamesList.get(0));
 
-        DetailFragment sectionDetailContentFragment = new DetailFragment();
-        sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
-        // sectionDetailContentFragment.setSectionName(sectionNamesList.get(0));
-        fragmentManager.beginTransaction()
-                .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
-                .commit();
+            DetailFragment sectionDetailContentFragment = new DetailFragment();
+            sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
+            // sectionDetailContentFragment.setSectionName(sectionNamesList.get(0));
+            fragmentManager.beginTransaction()
+                    .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
+                    .commit();
+        }
     }
 
     private void populateSectionNameOnTheAppBar(String sectionName) {

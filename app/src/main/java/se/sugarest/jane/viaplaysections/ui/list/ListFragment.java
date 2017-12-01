@@ -116,6 +116,8 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
                     mInitialized = true;
                     if (savedInstanceState != null) {
                         mDataCallback.onDataBack(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
+                        mCurrentSectionNameList.clear();
+                        mCurrentSectionNameList.addAll(savedInstanceState.getStringArrayList(LIST_FRAGMENT_SECTION_NAME_LIST));
                     } else {
                         mCurrentSectionNameList.clear();
                         mCurrentSectionNameList.addAll(sectionNamesList);

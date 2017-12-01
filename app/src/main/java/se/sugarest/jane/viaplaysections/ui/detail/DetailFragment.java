@@ -115,7 +115,7 @@ public class DetailFragment extends LifecycleFragment {
 //        mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
 //        mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
 //        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
-        if (sectionEntry.getName() != sectionEntry.getTitle()) {
+        if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
             showLinearLayout();
             title.setText(sectionEntry.getTitle());
             description.setText(sectionEntry.getDescription());
@@ -130,15 +130,5 @@ public class DetailFragment extends LifecycleFragment {
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
         linearLayout.setVisibility(View.INVISIBLE);
-
     }
-
-//    /**
-//     * Save the current state of this fragment
-//     */
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        outState.putString(DETAIL_FRAGMENT_CURRENT_SECTION_NAME, mCurrentSectionName);
-//        Log.i(LOG_TAG, "CONFIGURATION outState: mCurrentSectionName == " + mCurrentSectionName);
-//    }
 }
