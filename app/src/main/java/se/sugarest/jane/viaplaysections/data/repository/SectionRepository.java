@@ -55,16 +55,16 @@ public class SectionRepository {
     private void getAndUpdateSingleSectionEntryDetails() {
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
-        LiveData<SectionEntry> networkDataSectionInforamtion = mSectionNetworkDataSource
+        LiveData<SectionEntry> networkDataSectionInformation = mSectionNetworkDataSource
                 .getCurrentSectionInformation();
-        networkDataSectionInforamtion.observeForever(newSectionInfoFromNetwork -> {
+        networkDataSectionInformation.observeForever(newSectionInfoFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
                 if (newSectionInfoFromNetwork != null) {
                     // Update new single section detail data into SectionDatabase
                     mSectionDao.updateSectionByName(newSectionInfoFromNetwork.getTitle(), newSectionInfoFromNetwork.getDescription()
                             , newSectionInfoFromNetwork.getName().toLowerCase());
-                    Log.d(LOG_TAG, "New values updated with the section name: "
-                            + newSectionInfoFromNetwork.getName() + " and the section title: "
+                    Log.d(LOG_TAG, "New values updated with the section name="
+                            + newSectionInfoFromNetwork.getName() + " and the section title="
                             + newSectionInfoFromNetwork.getTitle());
                 }
             });

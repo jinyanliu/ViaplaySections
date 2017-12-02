@@ -37,14 +37,12 @@ public class SectionNetworkDataSource {
     private static SectionNetworkDataSource sInstance;
 
     // LiveData storing the latest downloaded section data
-    private final MutableLiveData<SectionEntry> mDownloadedSectionInformation;
-    private final MutableLiveData<List<SectionEntry>> mDownloadedSectionList;
+    private final MutableLiveData<SectionEntry> mDownloadedSectionInformation = new MutableLiveData<>();
+    private final MutableLiveData<List<SectionEntry>> mDownloadedSectionList = new MutableLiveData<>();
     private final AppExecutors mExecutors;
 
     private SectionNetworkDataSource(AppExecutors executors) {
         mExecutors = executors;
-        mDownloadedSectionInformation = new MutableLiveData<>();
-        mDownloadedSectionList = new MutableLiveData<>();
     }
 
     /**
@@ -70,7 +68,8 @@ public class SectionNetworkDataSource {
     }
 
     public void fetchSectionInformation(String sectionName) {
-        Log.d(LOG_TAG, "Fetch section information started.");
+
+        Log.d(LOG_TAG, "Fetch section information started for section=" + sectionName);
 
         mExecutors.networkIO().execute(() -> {
 
@@ -103,14 +102,14 @@ public class SectionNetworkDataSource {
                         mDownloadedSectionInformation.postValue(responseSectionEntry);
 
                     } else {
-                        Log.e(LOG_TAG, "There is no SingleJSONResponse comes back from internet with this url: "
+                        Log.e(LOG_TAG, "There is no SingleJSONResponse comes back from internet with this url="
                                 + response.raw().request().url().toString());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<SingleJSONResponse> call, Throwable t) {
-                    Log.e(LOG_TAG, "Failed to get SingleJSONResponse back.", t);
+                    Log.e(LOG_TAG, "Failed to get SingleJSONResponse back for section=" + sectionName, t);
                 }
             });
         });
@@ -121,6 +120,7 @@ public class SectionNetworkDataSource {
         Log.d(LOG_TAG, "Fetch section list started.");
 
         mExecutors.networkIO().execute(() -> {
+
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
             httpClient.connectTimeout(1, MINUTES)
@@ -145,10 +145,11 @@ public class SectionNetworkDataSource {
                             && !response.body().getLinks().getViaplaySections().isEmpty()) {
 
                         List<ViaplaySection> viaplaySectionList = response.body().getLinks().getViaplaySections();
+
                         List<SectionEntry> sectionEntryList = new ArrayList<>();
 
-                        for (int i = 0; i < viaplaySectionList.size(); i++) {
-                            String currentSectionName = viaplaySectionList.get(i).getTitle().toLowerCase();
+                        for (ViaplaySection viaplaySection : viaplaySectionList) {
+                            String currentSectionName = viaplaySection.getTitle().toLowerCase();
                             // For the first time, the title and description are not retrieved yet,
                             // so default to empty
                             SectionEntry currentSectionEntry
@@ -159,7 +160,7 @@ public class SectionNetworkDataSource {
                         mDownloadedSectionList.postValue(sectionEntryList);
 
                     } else {
-                        Log.e(LOG_TAG, "There is no ViaplaySections comes back from internet with this url: "
+                        Log.e(LOG_TAG, "There is no ViaplaySections comes back from internet with this url="
                                 + response.raw().request().url().toString());
                     }
                 }
