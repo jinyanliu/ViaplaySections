@@ -106,8 +106,8 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
                 }
 
                 mSectionAdapter.setUpTitleStringArray(sectionNamesList);
-                if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-                mRecyclerView.smoothScrollToPosition(mPosition);
+//                if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+//                mRecyclerView.smoothScrollToPosition(mPosition);
             } else {
                 mDataCallback.onDataBack(mCurrentSectionNameList);
             }

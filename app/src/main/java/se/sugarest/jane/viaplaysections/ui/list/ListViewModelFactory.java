@@ -3,7 +3,7 @@ package se.sugarest.jane.viaplaysections.ui.list;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import se.sugarest.jane.viaplaysections.data.SectionRepository;
+import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 
 /**
  * Factory method that allows us to create a ViewModel with a constructor that takes a

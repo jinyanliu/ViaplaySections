@@ -3,7 +3,7 @@ package se.sugarest.jane.viaplaysections.ui.detail;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import se.sugarest.jane.viaplaysections.data.SectionRepository;
+import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**

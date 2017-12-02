@@ -25,8 +25,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_BASE_URL;
 
 /**
- * /**
- * Provides an API for doing all operations with the server data
+ * This class provides an API for doing all operations with the server data
  * <p>
  * Created by jane on 17-11-30.
  */
@@ -39,7 +38,7 @@ public class SectionNetworkDataSource {
     private static SectionNetworkDataSource sInstance;
     private final Context mContext;
 
-    // LiveData storing the latest downloaded weather forecasts
+    // LiveData storing the latest downloaded section data
     private final MutableLiveData<SectionEntry> mDownloadedSectionInformation;
     private final MutableLiveData<List<SectionEntry>> mDownloadedSectionList;
     private final AppExecutors mExecutors;
@@ -172,7 +171,5 @@ public class SectionNetworkDataSource {
                 }
             });
         });
-
-
     }
 }

@@ -3,7 +3,7 @@ package se.sugarest.jane.viaplaysections.utilities;
 import android.content.Context;
 
 import se.sugarest.jane.viaplaysections.AppExecutors;
-import se.sugarest.jane.viaplaysections.data.SectionRepository;
+import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionDatabase;
 import se.sugarest.jane.viaplaysections.data.network.SectionNetworkDataSource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailViewModelFactory;

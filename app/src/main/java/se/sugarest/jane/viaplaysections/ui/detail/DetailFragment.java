@@ -110,8 +110,9 @@ public class DetailFragment extends LifecycleFragment {
 
                 mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);
 
-                factory.getRepository().getSectionByName(sectionName);
-                factory.getRepository().getAndSaveSingleSectionEntryDetails();
+                //factory.getRepository().getSectionByName(sectionName);
+                factory.getRepository().startFetchSectionByName(sectionName);
+                //factory.getRepository().getAndUpdateSingleSectionEntryDetails();
 
                 // Observers changes in the SectionEntry with the name
                 mViewModel.getSection().observe(this, sectionEntry -> {

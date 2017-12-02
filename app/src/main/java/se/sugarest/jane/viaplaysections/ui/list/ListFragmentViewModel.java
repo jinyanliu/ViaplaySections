@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-import se.sugarest.jane.viaplaysections.data.SectionRepository;
+import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**
