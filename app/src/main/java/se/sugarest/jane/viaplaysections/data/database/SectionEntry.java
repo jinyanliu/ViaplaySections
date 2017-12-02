@@ -6,14 +6,16 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.Room;
 
+import static se.sugarest.jane.viaplaysections.utilities.Constants.TABLE_NAME;
+
 /**
  * This class defines the schema of a table in {@link Room} for a single section's information.
- * The data is used as an {@link Index} so that its uniqueness can be ensured.
+ * The name column is used as an {@link Index} so that its uniqueness can be ensured.
  * Indexes also allow for fast lookup for the column.
  * <p>
  * Created by jane on 17-11-29.
  */
-@Entity(tableName = "sections", indices = {@Index(value = {"name"}, unique = true)})
+@Entity(tableName = TABLE_NAME, indices = {@Index(value = {"name"}, unique = true)})
 public class SectionEntry {
 
     @PrimaryKey(autoGenerate = true)

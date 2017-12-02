@@ -2,7 +2,6 @@ package se.sugarest.jane.viaplaysections.data.network;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -14,12 +13,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import se.sugarest.jane.viaplaysections.utilities.AppExecutors;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.SingleJSONResponse;
 import se.sugarest.jane.viaplaysections.data.datatype.ViaplaySection;
+import se.sugarest.jane.viaplaysections.utilities.AppExecutors;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static se.sugarest.jane.viaplaysections.utilities.Constants.VIAPLAY_BASE_URL;
@@ -36,15 +35,13 @@ public class SectionNetworkDataSource {
     // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static SectionNetworkDataSource sInstance;
-    private final Context mContext;
 
     // LiveData storing the latest downloaded section data
     private final MutableLiveData<SectionEntry> mDownloadedSectionInformation;
     private final MutableLiveData<List<SectionEntry>> mDownloadedSectionList;
     private final AppExecutors mExecutors;
 
-    private SectionNetworkDataSource(Context context, AppExecutors executors) {
-        mContext = context;
+    private SectionNetworkDataSource(AppExecutors executors) {
         mExecutors = executors;
         mDownloadedSectionInformation = new MutableLiveData<>();
         mDownloadedSectionList = new MutableLiveData<>();
@@ -53,11 +50,11 @@ public class SectionNetworkDataSource {
     /**
      * Get the singleton for this class
      */
-    public static SectionNetworkDataSource getInstance(Context context, AppExecutors executors) {
+    public static SectionNetworkDataSource getInstance(AppExecutors executors) {
         Log.d(LOG_TAG, "Getting the network data source");
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new SectionNetworkDataSource(context.getApplicationContext(), executors);
+                sInstance = new SectionNetworkDataSource(executors);
                 Log.d(LOG_TAG, "Made new network data source");
             }
         }

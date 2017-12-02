@@ -4,11 +4,9 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
-import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**
- * This class is a factory method that allows us to create a ViewModel with a constructor that takes a
- * {@link SectionRepository} and an sectionName for the current {@link SectionEntry}
+ * Factory class for {@link DetailFragmentViewModel}.
  * <p>
  * Created by jane on 17-11-30.
  */

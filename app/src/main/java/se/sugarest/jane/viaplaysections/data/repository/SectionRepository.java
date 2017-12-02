@@ -61,7 +61,7 @@ public class SectionRepository {
             mExecutors.diskIO().execute(() -> {
                 if (newSectionInfoFromNetwork != null) {
                     // Update new single section detail data into SectionDatabase
-                    mSectionDao.updateSection(newSectionInfoFromNetwork.getTitle(), newSectionInfoFromNetwork.getDescription()
+                    mSectionDao.updateSectionByName(newSectionInfoFromNetwork.getTitle(), newSectionInfoFromNetwork.getDescription()
                             , newSectionInfoFromNetwork.getName().toLowerCase());
                     Log.d(LOG_TAG, "New values updated with the section name: "
                             + newSectionInfoFromNetwork.getName() + " and the section title: "

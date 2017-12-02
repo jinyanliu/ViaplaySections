@@ -6,8 +6,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 
 /**
- * This class is a factory method that allows us to create a ViewModel with a constructor that takes a
- * {@link SectionRepository}
+ * Factory class for {@link ListFragmentViewModel}.
  * <p>
  * Created by jane on 17-11-30.
  */

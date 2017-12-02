@@ -1,6 +1,7 @@
 package se.sugarest.jane.viaplaysections.utilities;
 
 import se.sugarest.jane.viaplaysections.data.database.SectionDatabase;
+import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**
  * Created by jane on 17-11-15.
@@ -15,6 +16,11 @@ public class Constants {
      * The database name used in {@link SectionDatabase}
      */
     public static final String DATABASE_NAME = "section";
+
+    /**
+     * The table name used in {@link SectionEntry}
+     */
+    public static final String TABLE_NAME = "section";
 
     /**
      * Use with overriding onSaveInstanceState method in ListFragment to save current section name
