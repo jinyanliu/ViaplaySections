@@ -15,8 +15,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.MainActivity;
+import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 
@@ -41,27 +41,29 @@ public class RecyclerViewListFragmentTest {
 
     private Fragment fragment;
     private MainActivity mainActivity;
-
     private SectionAdapter sectionAdapter;
-
     private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
-
     private IdlingResource mIdlingResource;
 
     @Before
     public void setUp() {
+
         // register IdlingResource
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
+
         // ListFragment
         fragment = new ListFragment();
+
         // sectionAdapter
         sectionAdapter = new SectionAdapter(null);
     }
 
     @Test
     public void clickNavigationMenuItem_DataChangeOnMainScreen() {
+
         mainActivity = mActivityTestRule.launchActivity(new Intent());
+
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigation_drawer_container, fragment)
@@ -71,19 +73,22 @@ public class RecyclerViewListFragmentTest {
         String secondSection = "Film";
         sectionTitlesStrings.add(firstSection);
         sectionTitlesStrings.add(secondSection);
+
         sectionAdapter.setUpTitleStringArray(sectionTitlesStrings);
 
         onView(withId(R.id.navigation_menu)).perform(click());
+
+        onView(withId(R.id.navigation_drawer_container)).check(matches(isDisplayed()));
 
         // Position index starts from 0
         onView(withId(R.id.navigation_drawer_recycler_view)).check(matches(isDisplayed()))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
-                .check(matches(withText(secondSection)));
+                .check(matches(withText("film")));
     }
 
-    // Remember to unregister resources when not needed to avoid malfunction.
+    // Unregister IdlingResource to avoid malfunction.
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {

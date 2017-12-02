@@ -16,15 +16,15 @@ public class Constants {
      */
     public static final String DATABASE_NAME = "section";
 
-    // Use with overriding onSaveInstanceState method in DetailFragment to save current section name
-    // list when configuration change happens, e.g., from Portrait to Landscape.
-    public static final String DETAIL_FRAGMENT_CURRENT_SECTION_NAME = "current_section_name";
-
+    /**
+     * Use with overriding onSaveInstanceState method in ListFragment to save current section name
+     * list when configuration change happens, e.g., from Portrait to Landscape.
+     */
     public static final String LIST_FRAGMENT_SECTION_NAME_LIST = "section_name_list";
 
-    // Use with overriding onPause & onResume method in MainActivity to save current section view
-    // when activity lifecycle state transition happens, e.g., from background to foreground.
+    /**
+     * Use with overriding onPause & onResume method in MainActivity to save current section view
+     * when activity lifecycle state transition happens, e.g., from background to foreground.
+     */
     public static final String FORE_BACK_STATE_KEY = "current_title";
-
-
 }

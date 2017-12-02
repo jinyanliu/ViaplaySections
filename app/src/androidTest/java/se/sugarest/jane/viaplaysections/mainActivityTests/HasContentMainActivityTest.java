@@ -36,26 +36,15 @@ public class HasContentMainActivityTest {
 
     private IdlingResource mIdlingResource;
 
-//    @Inject
-//    private SectionDatabase sectionDatabase;
-
-    // Registers any resource that needs to be synchronized with Espresso before the test is run.
     @Before
     public void registerIdlingResource() {
+        // register IdlingResource
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
     }
 
     @Test
     public void mainScreenHasContent_menuImageOnTheAppBar() {
-
-//        List<SectionEntry> allSections = (List<SectionEntry>) sectionDatabase.sectionDao().getSections();
-//        if (allSections == null || allSections.size() == 0) {
-//
-//        } else {
-//
-//        }
-
         onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
                 .check(matches(withDrawable(R.drawable.ic_menu)));
     }

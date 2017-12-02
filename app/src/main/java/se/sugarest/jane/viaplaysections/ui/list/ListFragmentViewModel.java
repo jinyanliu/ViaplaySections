@@ -9,7 +9,7 @@ import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**
- * {@link ViewModel} for {@link ListFragment}
+ * A {@link ViewModel} class for {@link ListFragment}
  * <p>
  * Created by jane on 17-11-30.
  */

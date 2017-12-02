@@ -35,36 +35,39 @@ public class HasContentDetailFragmentTest {
 
     private Fragment fragment;
     private MainActivity mainActivity;
-
     private IdlingResource mIdlingResource;
 
     @Before
     public void setUp() {
+
         // register IdlingResource
         mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
+
         // DetailFragment
         fragment = new DetailFragment();
     }
 
     @Test
     public void DetailFragmentHasContent() {
+
         mainActivity = mActivityTestRule.launchActivity(new Intent());
+
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.detail_fragment_container, fragment)
                 .commit();
 
-        // onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+        onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
         onView(withId(R.id.section_title_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
-        // onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+        onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
         onView(withId(R.id.section_description_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
     }
 
-    // Remember to unregister resources when not needed to avoid malfunction.
+    // Unregister IdlingResource to avoid malfunction.
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {
