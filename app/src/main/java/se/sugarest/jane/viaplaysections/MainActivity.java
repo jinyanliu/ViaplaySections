@@ -62,35 +62,36 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
-            initialScreenWithInternet();
+            initialScreen();
         }
 
         setUpNavigationBar();
-
         setUpSwipeRefreshListener();
 
-        // For Espresso Testing purpose
+        // For Espresso Testing
         getIdlingResource();
     }
 
     private void setUpSwipeRefreshListener() {
         mBinding.swipeRefresh.setOnRefreshListener(
                 () -> {
-                    if (!hasInternet()) {
+                    if (hasInternet()) {
+                        if (getCurrentSectionNameOnTheAppBarText().isEmpty()) {
+                            // Previously no data, now switch from offline to online
+                            initialScreen();
+                        } else {
+                            // Normal refresh current section page
+                            ArrayList<String> currentList = new ArrayList<>();
+                            currentList.add(getCurrentSectionNameOnTheAppBarText());
+                            refreshSectionsDetails(currentList);
+                        }
+                    } else {
                         mBinding.swipeRefresh.setRefreshing(false);
                         if (mToast != null) {
                             mToast.cancel();
                         }
                         mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
                         mToast.show();
-                    } else {
-                        if (getCurrentSectionNameOnTheAppBarText().isEmpty()) {
-                            initialScreenWithInternet();
-                        } else {
-                            ArrayList<String> currentList = new ArrayList<>();
-                            currentList.add(getCurrentSectionNameOnTheAppBarText());
-                            refreshOneSectionWithInternet(currentList);
-                        }
                     }
                 }
         );
@@ -100,19 +101,23 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         mBinding.appBar.navigationMenu.setOnClickListener((View view) -> {
             if (mBinding.drawerLayout.isDrawerOpen(mBinding.navigationDrawerContainer)) {
                 mBinding.drawerLayout.closeDrawer(mBinding.navigationDrawerContainer);
-            } else if (!mBinding.drawerLayout.isDrawerOpen(mBinding.navigationDrawerContainer)) {
+            } else {
                 mBinding.drawerLayout.openDrawer(mBinding.navigationDrawerContainer);
             }
         });
     }
 
-    private void initialScreenWithInternet() {
+    private void initialScreen() {
         if (mIdlingResource != null) {
+            // For Espresso Testing
             mIdlingResource.setIdleState(false);
         }
+
         if (hasInternet()) {
             showProgressBar();
         }
+
+        // ListFragment navigation bar will try to retrieve data on creating view
         ListFragment navigationDrawerFragment = new ListFragment();
         fragmentManager.beginTransaction()
                 .add(R.id.navigation_drawer_container, navigationDrawerFragment)
@@ -125,21 +130,24 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
-        if (sectionNamesList != null && sectionNamesList.size() > 0) {
+        if (sectionNamesList != null && !sectionNamesList.isEmpty()) {
             mBinding.drawerLayout.closeDrawer(mBinding.navigationDrawerContainer);
             populateSectionNameOnTheAppBar(sectionNamesList.get(0));
-
         }
-        refreshOneSectionWithInternet(sectionNamesList);
+        refreshSectionsDetails(sectionNamesList);
     }
 
-    private void refreshOneSectionWithInternet(ArrayList<String> sectionNamesList) {
+    private void refreshSectionsDetails(ArrayList<String> sectionNamesList) {
         if (mIdlingResource != null) {
+            // For Espresso Testing
             mIdlingResource.setIdleState(false);
         }
+
         if (hasInternet()) {
             showProgressBar();
         }
+
+        // DetailFragment will try to retrieve sections details on creating view
         DetailFragment sectionDetailContentFragment = new DetailFragment();
         sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
         fragmentManager.beginTransaction()
@@ -162,10 +170,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
             currentList.add(backgroundState.getString(FORE_BACK_STATE_KEY));
 
             populateSectionNameOnTheAppBar(currentList.get(0));
-            refreshOneSectionWithInternet(currentList);
+            refreshSectionsDetails(currentList);
         } else {
+            // If it is not empty, then the app is resumed from rotating
             if (getCurrentSectionNameOnTheAppBarText().isEmpty()) {
-                initialScreenWithInternet();
+                initialScreen();
             }
         }
     }
@@ -179,17 +188,18 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         }
     }
 
-    private boolean hasInternet() {
+    public boolean hasInternet() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return connMgr.getActiveNetworkInfo() != null && connMgr.getActiveNetworkInfo().isConnected();
     }
-
 
     @Override
     public void onDetailDataBack() {
         mBinding.swipeRefresh.setRefreshing(false);
         showDetailFragment();
+
         if (mIdlingResource != null) {
+            // For Espresso Testing
             mIdlingResource.setIdleState(true);
         }
     }
