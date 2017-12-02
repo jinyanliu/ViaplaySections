@@ -39,7 +39,7 @@ public class SectionRepository {
         getAndUpdateSingleSectionEntryDetails();
     }
 
-    public void getAndSaveSectionEntryList() {
+    private void getAndSaveSectionEntryList() {
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
         LiveData<List<SectionEntry>> networkDataSectionList = mSectionNetworkDataSource.getSectionList();
@@ -52,7 +52,7 @@ public class SectionRepository {
         });
     }
 
-    public void getAndUpdateSingleSectionEntryDetails() {
+    private void getAndUpdateSingleSectionEntryDetails() {
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
         LiveData<SectionEntry> networkDataSectionInforamtion = mSectionNetworkDataSource

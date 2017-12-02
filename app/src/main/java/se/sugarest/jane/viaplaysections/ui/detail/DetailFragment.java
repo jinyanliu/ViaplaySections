@@ -47,21 +47,26 @@ public class DetailFragment extends LifecycleFragment {
     public DetailFragment() {
     }
 
-    // Define a new interface OnDetailDataBackListener that triggers a callback in the host activity
+    // Defines a new interface OnDetailDataBackListener that triggers a callback in the host
+    // activity (MainActivity)
     private OnDetailDataBackListener mDataCallback;
 
-    // OnDetailDataBackListener interface, calls a method in the host activity named onDataBack
+    /**
+     * OnDetailDataBackListener interface, calls a method in the host activity (MainActivity)
+     * named onDataBack
+     */
     public interface OnDetailDataBackListener {
         void onDetailDataBack();
     }
 
-    // Override onAttach to make sure that the container activity has implemented the callback
+    /**
+     * Override onAttach to make sure that the host activity (MainActivity) has implemented the callback.
+     * If not, it throws an exception.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        // This makes sure that the host activity has implemented the callbacks interface
-        // If not, it throws an exception
         try {
             mDataCallback = (OnDetailDataBackListener) context;
         } catch (ClassCastException e) {
@@ -110,14 +115,12 @@ public class DetailFragment extends LifecycleFragment {
 
                 mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);
 
-                //factory.getRepository().getSectionByName(sectionName);
                 factory.getRepository().startFetchSectionByName(sectionName);
-                //factory.getRepository().getAndUpdateSingleSectionEntryDetails();
 
-                // Observers changes in the SectionEntry with the name
+                // Observers changes in the SectionEntry
                 mViewModel.getSection().observe(this, sectionEntry -> {
 
-                    // If the section details change, update the UI
+                    // If the section details change, only update the UI associated with mCurrentSectionName.
                     if (sectionEntry == null && !hasInternet()) {
                         showEmptyView();
                     } else if (sectionName.equals(mCurrentSectionName)) {
