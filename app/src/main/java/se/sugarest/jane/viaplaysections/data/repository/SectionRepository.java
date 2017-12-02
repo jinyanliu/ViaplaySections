@@ -5,7 +5,7 @@ import android.util.Log;
 
 import java.util.List;
 
-import se.sugarest.jane.viaplaysections.AppExecutors;
+import se.sugarest.jane.viaplaysections.utilities.AppExecutors;
 import se.sugarest.jane.viaplaysections.data.database.SectionDao;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.network.SectionNetworkDataSource;

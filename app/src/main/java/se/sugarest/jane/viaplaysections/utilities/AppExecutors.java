@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections;
+package se.sugarest.jane.viaplaysections.utilities;
 
 import android.os.Handler;
 import android.os.Looper;

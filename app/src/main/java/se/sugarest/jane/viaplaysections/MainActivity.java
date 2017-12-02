@@ -1,6 +1,7 @@
-package se.sugarest.jane.viaplaysections.ui;
+package se.sugarest.jane.viaplaysections;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,22 +9,15 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.ProgressBar;
-import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
-import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.databinding.ActivityMainBinding;
 import se.sugarest.jane.viaplaysections.idling_resource.SimpleIdlingResource;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
-import se.sugarest.jane.viaplaysections.ui.detail.DetailFragmentViewModel;
 import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 
 import static se.sugarest.jane.viaplaysections.utilities.Constants.FORE_BACK_STATE_KEY;
@@ -34,30 +28,10 @@ import static se.sugarest.jane.viaplaysections.utilities.Constants.FORE_BACK_STA
  */
 public class MainActivity extends AppCompatActivity implements ListFragment.OnDataBackListener, DetailFragment.OnDetailDataBackListener {
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
     private Bundle backgroundState;
-
-    private String mClickedSectionName;
-    private String mFirstSectionName;
     private Toast mToast;
-    private DetailFragmentViewModel mDetailFragmentViewModel;
-    private ImageView menuImage;
-    private DrawerLayout drawerLayout;
     private FragmentManager fragmentManager;
-    private Boolean mInitialized = false;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private TextView titleOnTheBar;
-    private ProgressBar progressBar;
-    private FrameLayout frameLayout;
-
-//    private ActivityMainBinding mBinding;
-
-    public ArrayList<String> mSectionTitlesString = new ArrayList<>();
-
-    public ArrayList<String> getmSectionTitlesString() {
-        return mSectionTitlesString;
-    }
+    private ActivityMainBinding mBinding;
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -79,20 +53,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-//        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-//        // Set up ToolBar
-//        setSupportActionBar(mBinding.appBar.toolbar);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        menuImage = findViewById(R.id.navigation_menu);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
-        titleOnTheBar = findViewById(R.id.title_on_the_app_bar);
-        progressBar = findViewById(R.id.progress_bar);
-        frameLayout = findViewById(R.id.detail_fragment_container);
+        // Set up ToolBar
+        setSupportActionBar(mBinding.appBar.toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -100,21 +65,19 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
             initialScreenWithInternet();
         }
 
-        // Set up left drawer navigation
-        menuImage.setOnClickListener((View view) -> {
-            if (drawerLayout.isDrawerOpen(findViewById(R.id.navigation_drawer_container))) {
-                drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
-            } else if (!drawerLayout.isDrawerOpen(findViewById(R.id.navigation_drawer_container))) {
-                drawerLayout.openDrawer(findViewById(R.id.navigation_drawer_container));
-            }
-        });
+        setUpNavigationBar();
 
+        setUpSwipeRefreshListener();
 
-        // Set up swipe refresh function
-        swipeRefreshLayout.setOnRefreshListener(
+        // For Espresso Testing purpose
+        getIdlingResource();
+    }
+
+    private void setUpSwipeRefreshListener() {
+        mBinding.swipeRefresh.setOnRefreshListener(
                 () -> {
                     if (!hasInternet()) {
-                        swipeRefreshLayout.setRefreshing(false);
+                        mBinding.swipeRefresh.setRefreshing(false);
                         if (mToast != null) {
                             mToast.cancel();
                         }
@@ -131,9 +94,16 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
                     }
                 }
         );
+    }
 
-        // Get the IdlingResource instance
-        getIdlingResource();
+    private void setUpNavigationBar() {
+        mBinding.appBar.navigationMenu.setOnClickListener((View view) -> {
+            if (mBinding.drawerLayout.isDrawerOpen(mBinding.navigationDrawerContainer)) {
+                mBinding.drawerLayout.closeDrawer(mBinding.navigationDrawerContainer);
+            } else if (!mBinding.drawerLayout.isDrawerOpen(mBinding.navigationDrawerContainer)) {
+                mBinding.drawerLayout.openDrawer(mBinding.navigationDrawerContainer);
+            }
+        });
     }
 
     private void initialScreenWithInternet() {
@@ -150,13 +120,13 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     }
 
     private String getCurrentSectionNameOnTheAppBarText() {
-        return titleOnTheBar.getText().toString().toLowerCase();
+        return mBinding.appBar.titleOnTheAppBar.getText().toString().toLowerCase();
     }
 
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
         if (sectionNamesList != null && sectionNamesList.size() > 0) {
-            drawerLayout.closeDrawer(findViewById(R.id.navigation_drawer_container));
+            mBinding.drawerLayout.closeDrawer(mBinding.navigationDrawerContainer);
             populateSectionNameOnTheAppBar(sectionNamesList.get(0));
 
         }
@@ -178,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     }
 
     private void populateSectionNameOnTheAppBar(String sectionName) {
-        titleOnTheBar.setText(sectionName);
+        mBinding.appBar.titleOnTheAppBar.setText(sectionName);
     }
 
     @Override
@@ -217,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
     @Override
     public void onDetailDataBack() {
-        swipeRefreshLayout.setRefreshing(false);
+        mBinding.swipeRefresh.setRefreshing(false);
         showDetailFragment();
         if (mIdlingResource != null) {
             mIdlingResource.setIdleState(true);
@@ -225,12 +195,12 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     }
 
     private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-        frameLayout.setVisibility(View.INVISIBLE);
+        mBinding.progressBar.setVisibility(View.VISIBLE);
+        mBinding.detailFragmentContainer.setVisibility(View.INVISIBLE);
     }
 
     private void showDetailFragment() {
-        progressBar.setVisibility(View.INVISIBLE);
-        frameLayout.setVisibility(View.VISIBLE);
+        mBinding.progressBar.setVisibility(View.INVISIBLE);
+        mBinding.detailFragmentContainer.setVisibility(View.VISIBLE);
     }
 }

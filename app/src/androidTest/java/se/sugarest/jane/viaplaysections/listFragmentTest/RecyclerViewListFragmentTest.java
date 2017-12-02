@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.ui.MainActivity;
+import se.sugarest.jane.viaplaysections.MainActivity;
 import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 

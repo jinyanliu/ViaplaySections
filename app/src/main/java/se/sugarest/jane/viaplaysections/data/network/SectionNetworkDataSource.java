@@ -14,7 +14,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import se.sugarest.jane.viaplaysections.AppExecutors;
+import se.sugarest.jane.viaplaysections.utilities.AppExecutors;
 import se.sugarest.jane.viaplaysections.api.ViaplayClient;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 import se.sugarest.jane.viaplaysections.data.datatype.JSONResponse;
