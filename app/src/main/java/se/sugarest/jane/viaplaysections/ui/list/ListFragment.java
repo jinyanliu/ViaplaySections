@@ -77,11 +77,13 @@ public class ListFragment extends LifecycleFragment implements SectionAdapter.Se
 
         setUpRecyclerViewWithAdapter();
 
+        // Get the ViewModel from the factory
         ListViewModelFactory factory = InjectorUtils.provideListFragmentViewModelFactory(getActivity()
                 .getApplicationContext());
 
         mViewModel = ViewModelProviders.of(this, factory).get(ListFragmentViewModel.class);
 
+        // Observers changes in the SectionEntry
         mViewModel.getSections().observe(this, sectionEntries -> {
 
             if (sectionEntries != null && !sectionEntries.isEmpty()) {

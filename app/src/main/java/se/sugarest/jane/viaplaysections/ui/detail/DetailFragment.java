@@ -3,6 +3,7 @@ package se.sugarest.jane.viaplaysections.ui.detail;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,18 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
+import se.sugarest.jane.viaplaysections.databinding.FragmentSectionDetailBinding;
 import se.sugarest.jane.viaplaysections.utilities.InjectorUtils;
 
 /**
- * This detail fragment displays a single section's detail information on main screen.
+ * This fragment class displays a single section's detail information on main screen.
  * <p>
  * Created by jane on 17-11-28.
  */
@@ -29,17 +28,11 @@ public class DetailFragment extends LifecycleFragment {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
-    private TextView title;
-    private TextView description;
-    private ImageView imageView;
-    private LinearLayout linearLayout;
     private ArrayList<String> mSectionNamesList = new ArrayList<>();
     private String mCurrentSectionName;
-
-    // This field is used for data binding.
-    // private FragmentSectionContentTextViewBinding mBinding;
-
     private DetailFragmentViewModel mViewModel;
+
+    private FragmentSectionDetailBinding mBinding;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
@@ -47,13 +40,11 @@ public class DetailFragment extends LifecycleFragment {
     public DetailFragment() {
     }
 
-    // Defines a new interface OnDetailDataBackListener that triggers a callback in the host
-    // activity (MainActivity)
+    // Defines a new interface that triggers a callback in the host activity (MainActivity)
     private OnDetailDataBackListener mDataCallback;
 
     /**
-     * OnDetailDataBackListener interface, calls a method in the host activity (MainActivity)
-     * named onDataBack
+     * Calls a method in the host activity (MainActivity) named onDetailDataBack
      */
     public interface OnDetailDataBackListener {
         void onDetailDataBack();
@@ -79,7 +70,7 @@ public class DetailFragment extends LifecycleFragment {
      * Setter method for keeping track of the section names list this fragment can interact with.
      */
     public void setmSectionNamesList(ArrayList<String> mSectionNamesList) {
-        if (mSectionNamesList != null && mSectionNamesList.size() > 0) {
+        if (mSectionNamesList != null && !mSectionNamesList.isEmpty()) {
             this.mSectionNamesList.clear();
             this.mSectionNamesList.addAll(mSectionNamesList);
             this.mCurrentSectionName = mSectionNamesList.get(0);
@@ -91,19 +82,14 @@ public class DetailFragment extends LifecycleFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        mBinding = DataBindingUtil.inflate(
-//                inflater, R.layout.fragment_section_detail, container, false);
-//        View rootView = mBinding.getRoot();
 
-        View rootView = inflater.inflate(R.layout.fragment_section_detail, container, false);
+        mBinding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_section_detail, container, false);
+        View rootView = mBinding.getRoot();
 
-        title = rootView.findViewById(R.id.section_title_content_text_view);
-        description = rootView.findViewById(R.id.section_description_content_text_view);
-        imageView = rootView.findViewById(R.id.iv_empty_message);
-        linearLayout = rootView.findViewById(R.id.linearlayout_detail_fragment);
 
-        if (mSectionNamesList != null && mSectionNamesList.size() > 0) {
-            // Loop through the whole list, to get and save all the section's information after the
+        if (mSectionNamesList != null && !mSectionNamesList.isEmpty()) {
+            // Loop through the whole list, to get and save all the sections details after the
             // first installation with internet, so user is able to see all the information while offline
             for (int i = 0; i < mSectionNamesList.size(); i++) {
 
@@ -120,7 +106,7 @@ public class DetailFragment extends LifecycleFragment {
                 // Observers changes in the SectionEntry
                 mViewModel.getSection().observe(this, sectionEntry -> {
 
-                    // If the section details change, only update the UI associated with mCurrentSectionName.
+                    // If the sections details change, only update the UI associated with mCurrentSectionName.
                     if (sectionEntry == null && !hasInternet()) {
                         showEmptyView();
                     } else if (sectionName.equals(mCurrentSectionName)) {
@@ -137,28 +123,26 @@ public class DetailFragment extends LifecycleFragment {
     }
 
     private void bindSectionToUI(SectionEntry sectionEntry) {
-        //        mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
-//        mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
-//        mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
-//        mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
 
         if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
             showLinearLayout();
-            title.setText(sectionEntry.getTitle());
-            description.setText(sectionEntry.getDescription());
+            mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
+            mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
+            mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
+            mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
         } else if (!hasInternet()) {
             showEmptyView();
         }
     }
 
     private void showLinearLayout() {
-        imageView.setVisibility(View.INVISIBLE);
-        linearLayout.setVisibility(View.VISIBLE);
+        mBinding.ivEmptyMessage.setVisibility(View.INVISIBLE);
+        mBinding.linearlayoutDetailFragment.setVisibility(View.VISIBLE);
     }
 
     private void showEmptyView() {
-        imageView.setVisibility(View.VISIBLE);
-        linearLayout.setVisibility(View.INVISIBLE);
+        mBinding.ivEmptyMessage.setVisibility(View.VISIBLE);
+        mBinding.linearlayoutDetailFragment.setVisibility(View.INVISIBLE);
     }
 
     private boolean hasInternet() {
