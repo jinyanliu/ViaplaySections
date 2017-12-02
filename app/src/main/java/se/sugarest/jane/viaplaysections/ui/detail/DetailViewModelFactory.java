@@ -7,8 +7,9 @@ import se.sugarest.jane.viaplaysections.data.repository.SectionRepository;
 import se.sugarest.jane.viaplaysections.data.database.SectionEntry;
 
 /**
- * Factory method that allows us to create a ViewModel with a constructor that takes a
+ * This class is a factory method that allows us to create a ViewModel with a constructor that takes a
  * {@link SectionRepository} and an sectionName for the current {@link SectionEntry}
+ * <p>
  * Created by jane on 17-11-30.
  */
 public class DetailViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -27,7 +28,6 @@ public class DetailViewModelFactory extends ViewModelProvider.NewInstanceFactory
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        // noinspection unchecked
-        return (T) new DetailFragmentViewModel(mRepository,mSectionName);
+        return (T) new DetailFragmentViewModel(mRepository, mSectionName);
     }
 }
