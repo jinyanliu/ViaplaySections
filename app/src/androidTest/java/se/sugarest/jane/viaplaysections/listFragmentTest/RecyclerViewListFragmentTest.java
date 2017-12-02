@@ -85,7 +85,7 @@ public class RecyclerViewListFragmentTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
         onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
-                .check(matches(withText("film")));
+                .check(matches(withText(secondSection)));
     }
 
     // Unregister IdlingResource to avoid malfunction.
