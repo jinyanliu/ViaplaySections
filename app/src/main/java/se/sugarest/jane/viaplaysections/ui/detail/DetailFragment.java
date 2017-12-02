@@ -1,6 +1,5 @@
 package se.sugarest.jane.viaplaysections.ui.detail;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -11,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.app.Fragment;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ import se.sugarest.jane.viaplaysections.utilities.InjectorUtils;
  * <p>
  * Created by jane on 17-11-28.
  */
-public class DetailFragment extends LifecycleFragment {
+public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
@@ -67,7 +67,7 @@ public class DetailFragment extends LifecycleFragment {
     }
 
     /**
-     * Setter method for keeping track of the section names list this fragment can interact with.
+     * Setter method for keeping track of the sections names list this fragment can interact with.
      */
     public void setmSectionNamesList(ArrayList<String> mSectionNamesList) {
         if (mSectionNamesList != null && !mSectionNamesList.isEmpty()) {
@@ -76,7 +76,7 @@ public class DetailFragment extends LifecycleFragment {
             this.mCurrentSectionName = mSectionNamesList.get(0);
             Log.i(LOG_TAG, "CONFIGURATION setter: mSectionNamesList == " + mSectionNamesList.toString());
         } else {
-            Log.e(LOG_TAG, "This fragment has a null list of section names.");
+            Log.w(LOG_TAG, "This fragment has an empty list of section names.");
         }
     }
 
@@ -86,7 +86,6 @@ public class DetailFragment extends LifecycleFragment {
         mBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_section_detail, container, false);
         View rootView = mBinding.getRoot();
-
 
         if (mSectionNamesList != null && !mSectionNamesList.isEmpty()) {
             // Loop through the whole list, to get and save all the sections details after the
@@ -115,16 +114,17 @@ public class DetailFragment extends LifecycleFragment {
                 });
             }
         } else if (!hasInternet()) {
-            Log.e(LOG_TAG, "This fragment has a null list of section names.");
+            Log.w(LOG_TAG, "This fragment has a empty list of section names.");
             showEmptyView();
         }
+        // Tells host activity (MainActivity) to switch to idle mode
         mDataCallback.onDetailDataBack();
         return rootView;
     }
 
     private void bindSectionToUI(SectionEntry sectionEntry) {
 
-        if (!(sectionEntry.getName()).equals(sectionEntry.getTitle())) {
+        if (!sectionEntry.getTitle().isEmpty()) {
             showLinearLayout();
             mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
             mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);

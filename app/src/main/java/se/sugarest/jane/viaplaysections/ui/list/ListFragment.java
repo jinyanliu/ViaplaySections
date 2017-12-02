@@ -1,11 +1,11 @@
 package se.sugarest.jane.viaplaysections.ui.list;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +25,7 @@ import static se.sugarest.jane.viaplaysections.utilities.Constants.LIST_FRAGMENT
  * <p>
  * Created by jane on 17-11-30.
  */
-public class ListFragment extends LifecycleFragment implements SectionAdapter.SectionAdapterOnClickHandler {
+public class ListFragment extends Fragment implements SectionAdapter.SectionAdapterOnClickHandler {
 
     private static final String LOG_TAG = ListFragment.class.getSimpleName();
 

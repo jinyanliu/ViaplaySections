@@ -152,8 +152,10 @@ public class SectionNetworkDataSource {
 
                         for (int i = 0; i < viaplaySectionList.size(); i++) {
                             String currentSectionName = viaplaySectionList.get(i).getTitle().toLowerCase();
+                            // For the first time, the title and description are not retrieved yet,
+                            // so default to empty
                             SectionEntry currentSectionEntry
-                                    = new SectionEntry(currentSectionName, currentSectionName, currentSectionName);
+                                    = new SectionEntry(currentSectionName, "", "");
                             sectionEntryList.add(currentSectionEntry);
                         }
 
