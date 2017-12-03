@@ -14,7 +14,7 @@ A small app to navigate Viaplay’s content categories retrieved via API.
 2. Used a single activity and two fragment classes for implementation. This increases modularity and re-usability.
 3. Used dataBinding.
 4. Used Retrofit HTTP client to perform API requests: e.g., getting sections list and a single section’s details.
-5. A user friendly image with message is displayed if no data is available, e.g., first time use under  offline mode.
+5. Displays a user friendly image with message if no data is available, e.g., first time use under offline mode.
 6. Current data on the screen survives configuration change, e.g., screen orientation. 
 7. Ongoing background task (e.g., fetching data via network) survives configuration change.
 8. Recently viewed category information survives activity lifecycle state transition, e.g., from background to foreground.
