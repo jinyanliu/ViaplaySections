@@ -126,8 +126,6 @@ public class DetailFragment extends Fragment {
 
         if (!sectionEntry.getTitle().isEmpty()) {
             showLinearLayout();
-            mBinding.sectionTitleLabelTextView.setText(R.string.section_title_label);
-            mBinding.sectionDescriptionLabelTextView.setText(R.string.section_description_label);
             mBinding.sectionTitleContentTextView.setText(sectionEntry.getTitle());
             mBinding.sectionDescriptionContentTextView.setText(sectionEntry.getDescription());
         } else if (!hasInternet()) {

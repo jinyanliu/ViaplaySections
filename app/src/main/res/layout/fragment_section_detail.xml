@@ -14,7 +14,8 @@
 
             <TextView
                 android:id="@+id/section_title_label_text_view"
-                style="@style/main_activity_section_label_text_view_style" />
+                style="@style/main_activity_section_label_text_view_style"
+                android:text="@string/section_title_label" />
 
             <TextView
                 android:id="@+id/section_title_content_text_view"
@@ -22,7 +23,8 @@
 
             <TextView
                 android:id="@+id/section_description_label_text_view"
-                style="@style/main_activity_section_label_text_view_style" />
+                style="@style/main_activity_section_label_text_view_style"
+                android:text="@string/section_description_label" />
 
             <TextView
                 android:id="@+id/section_description_content_text_view"
