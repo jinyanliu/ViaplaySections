@@ -6,7 +6,7 @@ import android.support.test.espresso.IdlingResource;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A simple implementation of {@link IdlingResource}.
+ * This class is a simple implementation of {@link IdlingResource}.
  * <p>
  * Created by jane on 17-11-21.
  */

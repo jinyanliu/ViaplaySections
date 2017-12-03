@@ -1,14 +1,13 @@
-package se.sugarest.jane.viaplaysections.data;
+package se.sugarest.jane.viaplaysections.ui.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.databinding.DrawerListItemBinding;
 
 /**
  * This class gets a list of section titles from inputs, then populates to the recycler view, which
@@ -45,8 +44,11 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
     @Override
     public SectionAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.drawer_list_item, parent, false);
-        return new SectionAdapterViewHolder(view);
+
+        DrawerListItemBinding drawerListItemBinding
+                = DrawerListItemBinding.inflate(inflater, parent, false);
+
+        return new SectionAdapterViewHolder(drawerListItemBinding);
     }
 
     /**
@@ -61,7 +63,8 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
      */
     @Override
     public void onBindViewHolder(SectionAdapterViewHolder holder, int position) {
-        holder.mTitleTextView.setText(mSectionTitleString.get(position));
+        String sectionName = mSectionTitleString.get(position);
+        holder.bind(sectionName);
     }
 
     /**
@@ -97,12 +100,18 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
      * Cache of the children views for a section's title.
      */
     public class SectionAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final TextView mTitleTextView;
 
-        public SectionAdapterViewHolder(View itemView) {
-            super(itemView);
-            mTitleTextView = itemView.findViewById(R.id.drawer_list_item);
-            itemView.setOnClickListener(this);
+        private final DrawerListItemBinding mBinding;
+
+        public SectionAdapterViewHolder(DrawerListItemBinding mBinding) {
+            super(mBinding.getRoot());
+            this.mBinding = mBinding;
+            mBinding.drawerListItem.setOnClickListener(this);
+        }
+
+        public void bind(String sectionName) {
+            mBinding.drawerListItem.setText(sectionName);
+            mBinding.executePendingBindings();
         }
 
         @Override

@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import se.sugarest.jane.viaplaysections.data.SectionAdapter;
+import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 
 /**
  * Created by jane on 17-11-16.
@@ -18,29 +18,29 @@ import se.sugarest.jane.viaplaysections.data.SectionAdapter;
 @RunWith(AndroidJUnit4.class)
 public class SectionAdapterTest {
 
-    private SectionAdapter sectionAdapter;
-    private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
+    private SectionAdapter mSectionAdapter;
+    private ArrayList<String> mSectionTitlesStrings = new ArrayList<>();
 
     @Before
     public void setUp() {
-        sectionAdapter = new SectionAdapter(null);
+        mSectionAdapter = new SectionAdapter(null);
     }
 
     @Test
     public void getItemCountTest_oneSection() throws Exception {
         String oneSection = "Serier";
-        sectionTitlesStrings.add(oneSection);
-        sectionAdapter.setUpTitleStringArray(sectionTitlesStrings);
-        Assert.assertEquals(1, sectionAdapter.getItemCount());
+        mSectionTitlesStrings.add(oneSection);
+        mSectionAdapter.setUpTitleStringArray(mSectionTitlesStrings);
+        Assert.assertEquals(1, mSectionAdapter.getItemCount());
     }
 
     @Test
     public void getItemCountTest_twoSection() throws Exception {
         String firstSection = "Serier";
         String secondSection = "Film";
-        sectionTitlesStrings.add(firstSection);
-        sectionTitlesStrings.add(secondSection);
-        sectionAdapter.setUpTitleStringArray(sectionTitlesStrings);
-        Assert.assertEquals(2, sectionAdapter.getItemCount());
+        mSectionTitlesStrings.add(firstSection);
+        mSectionTitlesStrings.add(secondSection);
+        mSectionAdapter.setUpTitleStringArray(mSectionTitlesStrings);
+        Assert.assertEquals(2, mSectionAdapter.getItemCount());
     }
 }
