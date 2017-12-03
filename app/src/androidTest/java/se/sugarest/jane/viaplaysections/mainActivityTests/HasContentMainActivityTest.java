@@ -1,8 +1,10 @@
 package se.sugarest.jane.viaplaysections.mainActivityTests;
 
+import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -12,8 +14,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.MainActivity;
+import se.sugarest.jane.viaplaysections.R;
+import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
 import se.sugarest.jane.viaplaysections.util.DrawableMatcher;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -31,41 +34,61 @@ import static se.sugarest.jane.viaplaysections.mainActivityTests.HasContentMainA
 public class HasContentMainActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule
+    public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
     private IdlingResource mIdlingResource;
+    private Fragment mFragment;
+    private MainActivity mMainActivity;
 
     @Before
-    public void registerIdlingResource() {
+    public void setUp() {
+
         // register IdlingResource
-        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
+        mIdlingResource = activityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
+
+        // DetailFragment
+        mFragment = new DetailFragment();
     }
 
     @Test
-    public void mainScreenHasContent_menuImageOnTheAppBar() {
-        onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                .check(matches(withDrawable(R.drawable.ic_menu)));
+    public void mainScreenHasContent() {
+
+        mMainActivity = activityTestRule.launchActivity(new Intent());
+
+        mMainActivity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.detail_fragment_container, mFragment)
+                .commit();
+
+        if (mMainActivity.getmSectionNamesListForTesting() != null && !mMainActivity.getmSectionNamesListForTesting().isEmpty()) {
+
+            // Menu image on the app bar
+            onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withDrawable(R.drawable.ic_menu)));
+
+            // Title on the app bar
+            onView(withId(R.id.title_on_the_app_bar)).check(matches(isDisplayed())).check(matches(notNullValue()));
+
+            // Viaplay logo on the app bar
+            onView(withId(R.id.viaplay_logo)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withDrawable(R.drawable.viaplay_logo)));
+
+            // Detail fragment container
+            onView(withId(R.id.detail_fragment_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
+
+
+        } else {
+
+            // Empty message image
+            onView(withId(R.id.iv_empty_message)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withDrawable(R.drawable.pic_empty_message)));
+
+        }
     }
 
-    @Test
-    public void mainScreenHasContent_titleOnTheAppBar() {
-        onView(withId(R.id.title_on_the_app_bar)).check(matches(isDisplayed())).check(matches(notNullValue()));
-    }
-
-    @Test
-    public void mainScreenHasContent_viaplayLogoOnTheAppBar() {
-        onView(withId(R.id.viaplay_logo)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                .check(matches(withDrawable(R.drawable.viaplay_logo)));
-    }
-
-    @Test
-    public void mainScreenHasContent_detailFragmentContainer() {
-        onView(withId(R.id.detail_fragment_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
-    }
-
-    // Remember to unregister resources when not needed to avoid malfunction.
+    // Unregister resources when not needed to avoid malfunction.
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {
