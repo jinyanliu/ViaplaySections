@@ -20,10 +20,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  * Created by jane on 17-11-21.
  */
 @RunWith(AndroidJUnit4.class)
-public class clickNavigationMenuImageMainActivityTest {
+public class ClickNavigationMenuImageMainActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule
+    public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
     @Test
