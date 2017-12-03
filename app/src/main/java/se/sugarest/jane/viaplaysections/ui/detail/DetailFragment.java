@@ -31,7 +31,6 @@ public class DetailFragment extends Fragment {
     private ArrayList<String> mSectionNamesList = new ArrayList<>();
     private String mCurrentSectionName;
     private DetailFragmentViewModel mViewModel;
-
     private FragmentSectionDetailBinding mBinding;
 
     /**

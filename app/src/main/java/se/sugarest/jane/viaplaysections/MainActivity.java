@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
                         if (mToast != null) {
                             mToast.cancel();
                         }
-                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
+                        mToast = Toast.makeText(MainActivity.this,
+                                getString(R.string.toast_message_offline_cannot_refresh), Toast.LENGTH_SHORT);
                         mToast.show();
                     }
                 }

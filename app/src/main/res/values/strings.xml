@@ -1,19 +1,15 @@
 <resources>
     <string name="app_name" translatable="false">ViaplaySections</string>
 
-    <!-- The fake title for one section provided for design reason.
-    Used in drawer_list_item.xml and app_bar.xml -->
+    <!-- The fake title for one section provided for design reason. -->
     <string name="section_title" translatable="false">SERIER</string>
 
-    <!-- The label of section title in the main screen.
-    Used in activity_main.xml -->
+    <!-- The label of section title in the main screen. -->
     <string name="section_title_label" translatable="true">Title:</string>
 
-    <!-- The label of section description in the main screen.
-    Used in activity_main.xml -->
+    <!-- The label of section description in the main screen. -->
     <string name="section_description_label" translatable="true">Description:</string>
 
-    <!-- The toast message to remind user that the page cannot be refreshed while offline.
-    Used in MainActivity.java -->
+    <!-- The toast message to remind user that the page cannot be refreshed while offline. -->
     <string name="toast_message_offline_cannot_refresh" translatable="true">Cannot refresh page without internet !</string>
 </resources>

@@ -33,8 +33,7 @@ public class ListFragment extends Fragment implements SectionAdapter.SectionAdap
     private ListFragmentViewModel mViewModel;
     private ArrayList<String> mCurrentSectionNameList = new ArrayList<>();
     private boolean mInitialized = false;
-
-    FragmentNavigationRecyclerViewBinding mBinding;
+    private FragmentNavigationRecyclerViewBinding mBinding;
 
     // Defines a new interface that triggers a callback in the host activity (MainActivity)
     private OnDataBackListener mDataCallback;
