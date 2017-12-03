@@ -28,10 +28,11 @@ import static se.sugarest.jane.viaplaysections.utilities.Constants.FORE_BACK_STA
  */
 public class MainActivity extends AppCompatActivity implements ListFragment.OnDataBackListener, DetailFragment.OnDetailDataBackListener {
 
-    private Bundle backgroundState;
+    private Bundle mBackgroundState;
     private Toast mToast;
-    private FragmentManager fragmentManager;
+    private FragmentManager mFragmentManager;
     private ActivityMainBinding mBinding;
+    private ArrayList<String> mSectionNamesListForTesting = new ArrayList<>();
 
     // The Idling Resource which will be null in production.
     @Nullable
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         setSupportActionBar(mBinding.appBar.toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        fragmentManager = getSupportFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
             initialScreen();
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
         // ListFragment navigation bar will try to retrieve data on creating view
         ListFragment navigationDrawerFragment = new ListFragment();
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .add(R.id.navigation_drawer_container, navigationDrawerFragment)
                 .commit();
     }
@@ -130,10 +131,19 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
 
     @Override
     public void onDataBack(ArrayList<String> sectionNamesList) {
+
+        mSectionNamesListForTesting = sectionNamesList;
+
         if (sectionNamesList != null && !sectionNamesList.isEmpty()) {
             mBinding.drawerLayout.closeDrawer(mBinding.navigationDrawerContainer);
             populateSectionNameOnTheAppBar(sectionNamesList.get(0));
+        } else if (!hasInternet()) {
+            if (mIdlingResource != null) {
+                // For Espresso Testing
+                mIdlingResource.setIdleState(true);
+            }
         }
+
         refreshSectionsDetails(sectionNamesList);
     }
 
@@ -150,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
         // DetailFragment will try to retrieve sections details on creating view
         DetailFragment sectionDetailContentFragment = new DetailFragment();
         sectionDetailContentFragment.setmSectionNamesList(sectionNamesList);
-        fragmentManager.beginTransaction()
+        mFragmentManager.beginTransaction()
                 .replace(R.id.detail_fragment_container, sectionDetailContentFragment)
                 .commit();
     }
@@ -162,12 +172,12 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     @Override
     protected void onResume() {
         super.onResume();
-        if (backgroundState != null
-                && backgroundState.getString(FORE_BACK_STATE_KEY) != null
-                && !backgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
+        if (mBackgroundState != null
+                && mBackgroundState.getString(FORE_BACK_STATE_KEY) != null
+                && !mBackgroundState.getString(FORE_BACK_STATE_KEY).isEmpty()) {
 
             ArrayList<String> currentList = new ArrayList<>();
-            currentList.add(backgroundState.getString(FORE_BACK_STATE_KEY));
+            currentList.add(mBackgroundState.getString(FORE_BACK_STATE_KEY));
 
             populateSectionNameOnTheAppBar(currentList.get(0));
             refreshSectionsDetails(currentList);
@@ -183,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     protected void onPause() {
         super.onPause();
         if (!getCurrentSectionNameOnTheAppBarText().isEmpty()) {
-            backgroundState = new Bundle();
-            backgroundState.putString(FORE_BACK_STATE_KEY, getCurrentSectionNameOnTheAppBarText());
+            mBackgroundState = new Bundle();
+            mBackgroundState.putString(FORE_BACK_STATE_KEY, getCurrentSectionNameOnTheAppBarText());
         }
     }
 
@@ -212,5 +222,13 @@ public class MainActivity extends AppCompatActivity implements ListFragment.OnDa
     private void showDetailFragment() {
         mBinding.progressBar.setVisibility(View.INVISIBLE);
         mBinding.detailFragmentContainer.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Only called from test, to check if there is data in the app.
+     */
+    @VisibleForTesting
+    public ArrayList<String> getmSectionNamesListForTesting() {
+        return mSectionNamesListForTesting;
     }
 }
