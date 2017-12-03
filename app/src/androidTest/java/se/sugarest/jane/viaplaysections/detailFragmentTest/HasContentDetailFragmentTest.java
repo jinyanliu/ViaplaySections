@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class HasContentDetailFragmentTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule
+    public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
     private Fragment mFragment;
@@ -42,7 +42,7 @@ public class HasContentDetailFragmentTest {
     public void setUp() {
 
         // register IdlingResource
-        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
+        mIdlingResource = activityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
 
         // DetailFragment
@@ -52,22 +52,26 @@ public class HasContentDetailFragmentTest {
     @Test
     public void DetailFragmentHasContent() {
 
-        mMainActivity = mActivityTestRule.launchActivity(new Intent());
+        mMainActivity = activityTestRule.launchActivity(new Intent());
 
         mMainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.detail_fragment_container, mFragment)
                 .commit();
 
-        onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                .check(matches(withText(R.string.section_title_label)));
+        if (mMainActivity.getmSectionNamesListForTesting() != null && !mMainActivity.getmSectionNamesListForTesting().isEmpty()) {
 
-        onView(withId(R.id.section_title_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+            onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withText(R.string.section_title_label)));
 
-        onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                .check(matches(withText(R.string.section_description_label)));
+            onView(withId(R.id.section_title_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
-        onView(withId(R.id.section_description_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+            onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withText(R.string.section_description_label)));
+
+            onView(withId(R.id.section_description_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+
+        }
     }
 
     // Unregister IdlingResource to avoid malfunction.
