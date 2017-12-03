@@ -13,12 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-
 import se.sugarest.jane.viaplaysections.MainActivity;
 import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
-import se.sugarest.jane.viaplaysections.ui.list.SectionAdapter;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.IdlingRegistry.getInstance;
@@ -36,56 +33,48 @@ import static se.sugarest.jane.viaplaysections.util.IgnoreCaseTextMatcher.withTe
 public class RecyclerViewListFragmentTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule
+    public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
-    private Fragment fragment;
-    private MainActivity mainActivity;
-    private SectionAdapter sectionAdapter;
-    private ArrayList<String> sectionTitlesStrings = new ArrayList<>();
+    private Fragment mFragment;
+    private MainActivity mMainActivity;
     private IdlingResource mIdlingResource;
 
     @Before
     public void setUp() {
 
         // register IdlingResource
-        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
+        mIdlingResource = activityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
 
         // ListFragment
-        fragment = new ListFragment();
-
-        // sectionAdapter
-        sectionAdapter = new SectionAdapter(null);
+        mFragment = new ListFragment();
     }
 
     @Test
     public void clickNavigationMenuItem_DataChangeOnMainScreen() {
 
-        mainActivity = mActivityTestRule.launchActivity(new Intent());
+        mMainActivity = activityTestRule.launchActivity(new Intent());
 
-        mainActivity.getSupportFragmentManager()
+        mMainActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.navigation_drawer_container, fragment)
+                .replace(R.id.navigation_drawer_container, mFragment)
                 .commit();
 
-        String firstSection = "Serier";
-        String secondSection = "Film";
-        sectionTitlesStrings.add(firstSection);
-        sectionTitlesStrings.add(secondSection);
+        if (mMainActivity.getmSectionNamesListForTesting() != null && !mMainActivity.getmSectionNamesListForTesting().isEmpty()) {
 
-        sectionAdapter.setUpTitleStringArray(sectionTitlesStrings);
+            String secondSectionName = mMainActivity.getmSectionNamesListForTesting().get(1);
 
-        onView(withId(R.id.navigation_menu)).perform(click());
+            onView(withId(R.id.navigation_menu)).perform(click());
 
-        onView(withId(R.id.navigation_drawer_container)).check(matches(isDisplayed()));
+            onView(withId(R.id.navigation_drawer_container)).check(matches(isDisplayed()));
 
-        // Position index starts from 0
-        onView(withId(R.id.navigation_drawer_recycler_view)).check(matches(isDisplayed()))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+            onView(withId(R.id.navigation_drawer_recycler_view)).check(matches(isDisplayed()))
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
 
-        onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
-                .check(matches(withText(secondSection)));
+            onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
+                    .check(matches(withText(secondSectionName)));
+        }
     }
 
     // Unregister IdlingResource to avoid malfunction.
