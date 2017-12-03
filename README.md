@@ -1,73 +1,41 @@
-# ViaplaySections
-A small app navigates between different sections from Viaplay API.
+A small app to navigate Viaplay’s content categories retrieved via API. 
 
-README
+# Functions
 
+1. Presents the first section’s name, title and description when opening the app.
+2. Navigates all categories from a navigation bar in the left side.
+3. The name, title and description are displayed for each category, when clicking the category name from the navigation bar.
+4. Supports both online and offline use. The data is stored locally after used in online mode. 
+5. Swipe down to load latest data from API. 
 
+# Implementation Highlights
 
-Functions
+1. Implemented with Android Architecture Components framework, e.g., using ViewModel, LiveData and Room. 
+2. Used a single activity and two fragment classes for implementation. This increases modularity and re-usability.
+3. Used dataBinding.
+4. Used Retrofit HTTP client to perform API requests: e.g., getting sections list and a single section’s details.
+5. A user friendly image with message is displayed if no data is available, e.g., first time use under  offline mode.
+6. Current data on the screen survives configuration change, e.g., screen orientation. 
+7. Ongoing background task (e.g., fetching data via network) survives configuration change.
+8. Recently viewed category information survives activity lifecycle state transition, e.g., from background to foreground.
+9. Retrieves and populates data when resuming from background under online mode. 
+10. A loading indicator could be displayed if the data is not loaded immediately.
+11. Put all the strings into strings.xml to support easy localization.
+12. Created and reused custom styles to UI widgets, e.g., reusing TextView styles for labels  and contents.
 
+# Tests
 
+Used Espresso for instrumented tests.
 
-Presents the first section’s title and description when the user opens the app. I choose not to show the list of all sections on the main screen, because I prefer the drawer navigation, i.e., the left side bar.   
+1. Tests the corresponding UI widgets are displayed based on availability of data.
+2. Tests that clicking on the menu image will open drawer navigation bar. 
+3. Tests that clicking on single category name from navigation bar will populate the right content.
+4. Tests the getItemCount() method in SectionAdapter class.
+5. Added IdlingResources in MainActivity for Espresso.
+6. Created two customized Matcher classes, e.g., a DrawableMatcher to check if an ImageView has the correct image.
 
-The user is able to navigate to all sections from the left side drawer navigation, which is implemented with RecyclerView.
+# Design
 
-The title and description are displayed for each section, which the user chooses from the drawer navigation. The implementation uses a SectionAdapterOnClickHandler. It listens to the clicking event and populates corresponding title and description for the selected section. 
-
-The app supports both online and offline modes. It stores necessary data to database when opened for the first time, i.e., right after new installation. If there is no internet connection for the first time use after new installation, then a text message will be displayed, e.g., Please enable internet at first use! When working at online mode, the app always downloads the latest data from Viaplay API and replace the data in the database. When working at offline mode, it reads the data from the database. 
-
-
-
-Performance
-
-
-
-Current viewing page information survives configuration change, e.g., from portrait view to landscape view. 
-
-Previous viewing page information survives activity lifecycle state transition, e.g., from background to foreground.
-
-If it’s offline mode when used for the first time after new installation, then the app will retrieve & populate data when internet is enabled and the app is resumed from background. Or if the app is at foreground, then user can swipe the screen to load data.
-
-A Toast message will pop up while waiting for the data comes back from Viaplay API, saying “Data is loading…”. While there is internet, I try to get newest data from Viaplay API, even though this app has old data saved in the database. 
-
-Put all the strings into string.xml file with the attribute: translatable=“true” or “false”.  Each of them has comments, e.g. explaining “ What is this string for? ”, “ When is it presented to the user? ” and “Where is this in the layout? ” So if I need this app to be localized, the translator can easily translate the strings without changing Java code. 
-
-Created and reused custom styles to UI widgets, e.g., reusing TextViews for label  and content on main screen. 
-
-Used Retrofit http client to perform API requests: e.g., getting sections list and a single section’s details.
-
-
-
-Tests
-
-
-
-Most of the tests use Espresso.
-
-Test all UI widgets on the main screen. Because my app has a dynamic main screen, it is important to check that every widget exists. 
-
-Test static views, e.g., Viaplay logo ImageView and title label TextView, have the correct images or texts. 
-
-Created 2 customized Matcher classes. One is DrawableMatcher, which checks if an ImageView has a correct image. The other is IgnoreCaseTextMatcher class, which checks if a TextView has the correct text, case-insensitive.
-
-Test the menu image on the left side of the app bar. Performs clicking on the menu image, which opens up drawer navigation RecyclerView. Because this is a widget that the user can interact with.
-
-Test getItemCount() method in SectionAdapter class. It is important because it indicates how many different section items this app gets back from Viaplay API or database. This is the number of section items displayed on the drawer navigation RecyclerView.
-
-Test performing clicking on one of the section items. The app should populate the right page on the main screen. Because this is a widget that the user can interact with.
-
-Implemented IdlingResource to control Espresso while the app is doing long-running operations, e.g., retrieving data from REST API during testing.
-
-
-
-
-Design
-
-
-
-Choose drawer navigation instead of others, e.g., tab navigation. It is because I visited Viaplay’s Android app on Google Play Store and wanted to stay consistent with the design. Besides drawer navigation saves up activities and the space on one activity.
-
-Shows 5 different sections on the drawer navigation RecyclerView, even though the returned sections’ number from Viaplay API is 7. That is because there are 3 sport sections with the same title and description. Besides, I looked up at: https://viaplay.se/serier, and found there was only 1 sport tab on the website. So I decided to show 5 sections. 
-
-Set colorPrimary to “#212D33” and colorPrimaryDark to “#141B1F” on purpose. I don't know if they are exactly the same colors that Viaplay used on android app. I tried to get them from Viaplay’s Android app screenshots on Google Play Store.  
+1. Used drawer navigation to stay consistent with Viaplay’s Android app.
+2. Showed one Sport category instead of three returned from the API. Because they have the same  content. 
+3. Set colorPrimary to “#212D33” and colorPrimaryDark to “#141B1F” on purpose, with reference to Viaplay’s Android app. 
