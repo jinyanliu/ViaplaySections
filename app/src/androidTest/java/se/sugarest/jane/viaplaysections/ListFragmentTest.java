@@ -1,7 +1,8 @@
-package se.sugarest.jane.viaplaysections.detailFragmentTest;
+package se.sugarest.jane.viaplaysections;
 
 import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.Fragment;
@@ -12,23 +13,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import se.sugarest.jane.viaplaysections.MainActivity;
-import se.sugarest.jane.viaplaysections.R;
-import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
+import se.sugarest.jane.viaplaysections.ui.list.ListFragment;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.IdlingRegistry.getInstance;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.notNullValue;
+import static se.sugarest.jane.viaplaysections.util.IgnoreCaseTextMatcher.withText;
 
 /**
  * Created by jane on 17-12-1.
  */
 @RunWith(AndroidJUnit4.class)
-public class HasContentDetailFragmentTest {
+public class ListFragmentTest {
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule
@@ -45,32 +45,33 @@ public class HasContentDetailFragmentTest {
         mIdlingResource = activityTestRule.getActivity().getIdlingResource();
         getInstance().register(mIdlingResource);
 
-        // DetailFragment
-        mFragment = new DetailFragment();
+        // ListFragment
+        mFragment = new ListFragment();
     }
 
     @Test
-    public void DetailFragmentHasContent() {
+    public void testClickNavigationMenuItem_DataChangeOnMainScreen() {
 
         mMainActivity = activityTestRule.launchActivity(new Intent());
 
         mMainActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.detail_fragment_container, mFragment)
+                .replace(R.id.navigation_drawer_container, mFragment)
                 .commit();
 
         if (mMainActivity.getmSectionNamesListForTesting() != null && !mMainActivity.getmSectionNamesListForTesting().isEmpty()) {
 
-            onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                    .check(matches(withText(R.string.section_title_label)));
+            String secondSectionName = mMainActivity.getmSectionNamesListForTesting().get(0);
 
-            onView(withId(R.id.section_title_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+            onView(withId(R.id.navigation_menu)).perform(click());
 
-            onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                    .check(matches(withText(R.string.section_description_label)));
+            onView(withId(R.id.navigation_drawer_container)).check(matches(isDisplayed()));
 
-            onView(withId(R.id.section_description_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
+            onView(withId(R.id.navigation_drawer_recycler_view)).check(matches(isDisplayed()))
+                    .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+            onView(withId(R.id.title_on_the_app_bar)).check(matches(notNullValue()))
+                    .check(matches(withText(secondSectionName)));
         }
     }
 

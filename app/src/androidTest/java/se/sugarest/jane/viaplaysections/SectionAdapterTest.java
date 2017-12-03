@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.sectionAdapterTest;
+package se.sugarest.jane.viaplaysections;
 
 import android.support.test.runner.AndroidJUnit4;
 

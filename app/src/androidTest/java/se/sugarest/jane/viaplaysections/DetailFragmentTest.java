@@ -1,45 +1,40 @@
-package se.sugarest.jane.viaplaysections.mainActivityTests;
+package se.sugarest.jane.viaplaysections;
 
 import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.Fragment;
-import android.view.View;
 
-import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import se.sugarest.jane.viaplaysections.MainActivity;
-import se.sugarest.jane.viaplaysections.R;
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
-import se.sugarest.jane.viaplaysections.util.DrawableMatcher;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.IdlingRegistry.getInstance;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.notNullValue;
-import static se.sugarest.jane.viaplaysections.mainActivityTests.HasContentMainActivityTest.EspressoTestsMatchers.withDrawable;
 
 /**
- * Created by jane on 17-11-16.
+ * Created by jane on 17-12-1.
  */
 @RunWith(AndroidJUnit4.class)
-public class HasContentMainActivityTest {
+public class DetailFragmentTest {
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class);
 
-    private IdlingResource mIdlingResource;
     private Fragment mFragment;
     private MainActivity mMainActivity;
+    private IdlingResource mIdlingResource;
 
     @Before
     public void setUp() {
@@ -53,7 +48,7 @@ public class HasContentMainActivityTest {
     }
 
     @Test
-    public void mainScreenHasContent() {
+    public void testContent() {
 
         mMainActivity = activityTestRule.launchActivity(new Intent());
 
@@ -64,46 +59,24 @@ public class HasContentMainActivityTest {
 
         if (mMainActivity.getmSectionNamesListForTesting() != null && !mMainActivity.getmSectionNamesListForTesting().isEmpty()) {
 
-            // Menu image on the app bar
-            onView(withId(R.id.navigation_menu)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                    .check(matches(withDrawable(R.drawable.ic_menu)));
+            onView(withId(R.id.section_title_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withText(R.string.section_title_label)));
 
-            // Title on the app bar
-            onView(withId(R.id.title_on_the_app_bar)).check(matches(isDisplayed())).check(matches(notNullValue()));
+            onView(withId(R.id.section_title_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
-            // Viaplay logo on the app bar
-            onView(withId(R.id.viaplay_logo)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                    .check(matches(withDrawable(R.drawable.viaplay_logo)));
+            onView(withId(R.id.section_description_label_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()))
+                    .check(matches(withText(R.string.section_description_label)));
 
-            // Detail fragment container
-            onView(withId(R.id.detail_fragment_container)).check(matches(isDisplayed())).check(matches(notNullValue()));
-
-
-        } else {
-
-            // Empty message image
-            onView(withId(R.id.iv_empty_message)).check(matches(isDisplayed())).check(matches(notNullValue()))
-                    .check(matches(withDrawable(R.drawable.pic_empty_message)));
+            onView(withId(R.id.section_description_content_text_view)).check(matches(isDisplayed())).check(matches(notNullValue()));
 
         }
     }
 
-    // Unregister resources when not needed to avoid malfunction.
+    // Unregister IdlingResource to avoid malfunction.
     @After
     public void unregisterIdlingResource() {
         if (mIdlingResource != null) {
             getInstance().unregister(mIdlingResource);
-        }
-    }
-
-    public static class EspressoTestsMatchers {
-
-        public static Matcher<View> withDrawable(final int resourceId) {
-            return new DrawableMatcher(resourceId);
-        }
-
-        public static Matcher<View> noDrawable() {
-            return new DrawableMatcher(-1);
         }
     }
 }
