@@ -14,7 +14,7 @@ import static se.sugarest.jane.viaplaysections.utilities.Constants.DATABASE_NAME
  * <p>
  * Created by jane on 17-11-29.
  */
-@Database(entities = {SectionEntry.class}, version = 1)
+@Database(entities = {SectionEntry.class}, version = 1, exportSchema = false)
 public abstract class SectionDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = SectionDatabase.class.getSimpleName();

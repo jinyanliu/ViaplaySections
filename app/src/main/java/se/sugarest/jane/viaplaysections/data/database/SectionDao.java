@@ -17,7 +17,7 @@ import java.util.List;
 public interface SectionDao {
 
     /**
-     * Inserts a list of {@link SectionEntry} into the sections table. If there is a conflicting
+     * Inserts a list of {@link SectionEntry} into the section table. If there is a conflicting
      * name, the section entry uses the {@link OnConflictStrategy} of replacing the section
      * information. The required uniqueness of these values is defined in the {@link SectionEntry}.
      *
