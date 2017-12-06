@@ -8,6 +8,8 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import static se.sugarest.jane.viaplaysections.utilities.Constants.TABLE_NAME;
+
 /**
  * This interface provides an api for all database operations
  * <p>
@@ -18,8 +20,8 @@ public interface SectionDao {
 
     /**
      * Inserts a list of {@link SectionEntry} into the section table. If there is a conflicting
-     * name, the section entry uses the {@link OnConflictStrategy} of replacing the section
-     * information. The required uniqueness of these values is defined in the {@link SectionEntry}.
+     * name, uses the {@link OnConflictStrategy} of replacing the section information.
+     * The required uniqueness of these values is defined in the {@link SectionEntry}.
      *
      * @param sectionEntries A list of section information to insert
      */
@@ -33,7 +35,7 @@ public interface SectionDao {
      * @param description The description value to update
      * @param name        The name of the matching section to update
      */
-    @Query("UPDATE section SET title = :title, description = :description WHERE name = :name")
+    @Query("UPDATE " + TABLE_NAME + " SET title = :title, description = :description WHERE name = :name")
     void updateSectionByName(String title, String description, String name);
 
     /**
@@ -41,7 +43,7 @@ public interface SectionDao {
      *
      * @return a list of all the sections
      */
-    @Query("SELECT * FROM section")
+    @Query("SELECT * FROM " + TABLE_NAME)
     LiveData<List<SectionEntry>> getSections();
 
     /**
@@ -50,7 +52,7 @@ public interface SectionDao {
      * @param name The name of the section to query
      * @return section for a specific name
      */
-    @Query("SELECT * FROM section WHERE name = :name")
+    @Query("SELECT * FROM " + TABLE_NAME + " WHERE name = :name")
     LiveData<SectionEntry> getSectionByName(String name);
 }
 

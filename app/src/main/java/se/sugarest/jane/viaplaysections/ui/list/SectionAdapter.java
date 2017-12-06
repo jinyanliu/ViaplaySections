@@ -18,7 +18,7 @@ import se.sugarest.jane.viaplaysections.databinding.DrawerListItemBinding;
  * Created by jane on 17-11-14.
  */
 public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionAdapterViewHolder> {
-    // An On-click handler to make it easy for MainActivity to interact with the RecyclerView
+    // An On-click handler to make it easy for ListFragment to interact with the RecyclerView
     private final SectionAdapterOnClickHandler mClickHandler;
     private ArrayList<String> mSectionTitleString = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class SectionAdapter extends RecyclerView.Adapter<SectionAdapter.SectionA
      * @param parent   The ViewGroup that these ViewHolders are contained within.
      * @param viewType If RecyclerView has more than one type of item (which this one don't)
      *                 this viewType can be used to provide a different layout.
-     * @return A new NoteAdapterViewHolder that holds the View for each list item
+     * @return A new SectionAdapterViewHolder that holds the View for each list item
      */
     @Override
     public SectionAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
