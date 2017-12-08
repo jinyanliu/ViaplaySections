@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import se.sugarest.jane.viaplaysections.ui.detail.DetailFragment;
-import se.sugarest.jane.viaplaysections.util.DrawableMatcher;
+import se.sugarest.jane.viaplaysections.utilities.DrawableMatcher;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.IdlingRegistry.getInstance;

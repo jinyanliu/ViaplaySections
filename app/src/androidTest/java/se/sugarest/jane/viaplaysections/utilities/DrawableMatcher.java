@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.util;
+package se.sugarest.jane.viaplaysections.utilities;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -11,6 +11,8 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
+ * Reference: https://github.com/dbottillo/Blog/blob/espresso_match_imageview/app/src/androidTest/java/com/danielebottillo/blog/config/DrawableMatcher.java
+ * <p>
  * Created by jane on 17-11-16.
  */
 public class DrawableMatcher extends TypeSafeMatcher<View> {

@@ -27,7 +27,7 @@ public class SectionAdapterTest {
     }
 
     @Test
-    public void getItemCountTest_oneSection() throws Exception {
+    public void testGetItemCount_OneSection() throws Exception {
         String oneSection = "Serier";
         mSectionTitlesStrings.add(oneSection);
         mSectionAdapter.setUpTitleStringArray(mSectionTitlesStrings);
@@ -35,7 +35,7 @@ public class SectionAdapterTest {
     }
 
     @Test
-    public void getItemCountTest_twoSection() throws Exception {
+    public void testGetItemCount_TwoSection() throws Exception {
         String firstSection = "Serier";
         String secondSection = "Film";
         mSectionTitlesStrings.add(firstSection);

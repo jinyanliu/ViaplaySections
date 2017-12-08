@@ -1,4 +1,4 @@
-package se.sugarest.jane.viaplaysections.util;
+package se.sugarest.jane.viaplaysections.utilities;
 
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.view.View;
