@@ -2,7 +2,6 @@ package se.sugarest.jane.viaplaysections.utilities
 
 import android.os.Handler
 import android.os.Looper
-
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -30,21 +29,16 @@ class AppExecutors private constructor(private val diskIO: Executor, private val
 
     companion object {
 
-
         private var sInstance: AppExecutors? = null
 
-
-        val instance: AppExecutors
-            @Synchronized
-            get() {
-                if (sInstance == null) {
-
-                        sInstance = AppExecutors(Executors.newSingleThreadExecutor(),
-                                Executors.newFixedThreadPool(3),
-                                MainThreadExecutor())
-
-                }
-                return sInstance as AppExecutors
+        @Synchronized
+        fun getInstance(): AppExecutors {
+            if (sInstance == null) {
+                sInstance = AppExecutors(Executors.newSingleThreadExecutor(),
+                        Executors.newFixedThreadPool(3),
+                        MainThreadExecutor())
             }
+            return sInstance as AppExecutors
+        }
     }
 }
