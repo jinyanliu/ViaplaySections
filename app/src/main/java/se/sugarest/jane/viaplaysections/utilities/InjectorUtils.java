@@ -17,7 +17,7 @@ public class InjectorUtils {
 
     public static SectionRepository provideRepository(Context context) {
         SectionDatabase database = SectionDatabase.getInstance(context.getApplicationContext());
-        AppExecutors executors = AppExecutors.getInstance();
+        AppExecutors executors = AppExecutors.Companion.getInstance();
         SectionNetworkDataSource networkDataSource = SectionNetworkDataSource.getInstance(executors);
         return SectionRepository.getInstance(database.sectionDao(), networkDataSource, executors);
     }
