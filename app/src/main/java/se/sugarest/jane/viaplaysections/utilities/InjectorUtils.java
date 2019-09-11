@@ -19,7 +19,7 @@ public class InjectorUtils {
         SectionDatabase database = SectionDatabase.getInstance(context.getApplicationContext());
         AppExecutors executors = AppExecutors.Companion.getInstance();
         SectionNetworkDataSource networkDataSource = SectionNetworkDataSource.Companion.getInstance(executors);
-        return SectionRepository.getInstance(database.sectionDao(), networkDataSource, executors);
+        return SectionRepository.Companion.getInstance(database.sectionDao(), networkDataSource, executors);
     }
 
     public static DetailViewModelFactory provideDetailFragmentModelFactory(Context context, String sectionName) {
