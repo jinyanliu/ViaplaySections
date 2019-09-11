@@ -94,7 +94,7 @@ public class DetailFragment extends Fragment {
                 String sectionName = mSectionNamesList.get(i);
 
                 // Get the ViewModel from the factory
-                DetailViewModelFactory factory = InjectorUtils.provideDetailFragmentModelFactory(this.getActivity()
+                DetailViewModelFactory factory = InjectorUtils.INSTANCE.provideDetailFragmentModelFactory(this.getActivity()
                         .getApplicationContext(), sectionName);
 
                 mViewModel = ViewModelProviders.of(this, factory).get(DetailFragmentViewModel.class);

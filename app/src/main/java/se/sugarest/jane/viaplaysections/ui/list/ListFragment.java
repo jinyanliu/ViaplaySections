@@ -77,7 +77,7 @@ public class ListFragment extends Fragment implements SectionAdapter.SectionAdap
         setUpRecyclerViewWithAdapter();
 
         // Get the ViewModel from the factory
-        ListViewModelFactory factory = InjectorUtils.provideListFragmentViewModelFactory(getActivity()
+        ListViewModelFactory factory = InjectorUtils.INSTANCE.provideListFragmentViewModelFactory(getActivity()
                 .getApplicationContext());
 
         mViewModel = ViewModelProviders.of(this, factory).get(ListFragmentViewModel.class);
